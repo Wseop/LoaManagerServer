@@ -8,12 +8,12 @@ export class CharacterController {
   constructor(private readonly characterService: CharacterService) {}
 
   @Get('/:category')
-  findAll(@Param('category') category: string) {
+  findCharacters(@Param('category') category: string) {
     return this.characterService.findCharacters(category);
   }
 
   @Get('/:category/:className')
-  findByClass(
+  findCharactersByClass(
     @Param('category') category: string,
     @Param('className') className: string,
   ) {
