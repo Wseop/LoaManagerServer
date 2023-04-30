@@ -16,32 +16,24 @@ export class CharacterService {
     private readonly characterSkillModel: Model<CharacterSkill>,
   ) {}
 
-  findAll(category: string) {
+  async findCharacters(category: string) {
     if (category === 'setting') {
-      return this.findSettings();
+      return await this.characterSettingModel.find().exec();
     } else if (category === 'skill') {
-      return this.findSkills();
+      return await this.characterSkillModel.find().exec();
     } else {
       throw new BadRequestException();
     }
   }
 
-  findByClass(category: string, className: string) {
+  async findCharactersByClass(category: string, className: string) {
     if (category === 'setting') {
-      return this.findSettingsByClass(className);
+      return await this.characterSettingModel.find({ className }).exec();
     } else if (category === 'skill') {
-      return this.findSkillsByClass(className);
+      return await this.characterSkillModel.find({ className }).exec();
     } else {
       throw new BadRequestException();
     }
-  }
-
-  async findSettings() {
-    return await this.characterSettingModel.find().exec();
-  }
-
-  async findSettingsByClass(className: string) {
-    return await this.characterSettingModel.find({ className }).exec();
   }
 
   async createSetting(createCharacterSettingDto: CreateCharacterSettingDto) {
@@ -50,14 +42,6 @@ export class CharacterService {
       createCharacterSettingDto,
       { upsert: true },
     );
-  }
-
-  async findSkills() {
-    return await this.characterSkillModel.find().exec();
-  }
-
-  async findSkillsByClass(className: string) {
-    return await this.characterSkillModel.find({ className }).exec();
   }
 
   async createSkill(createCharacterSkillDto: CreateCharacterSkillDto) {

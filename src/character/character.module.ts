@@ -15,8 +15,6 @@ import {
   imports: [
     MongooseModule.forFeature([
       { name: CharacterSetting.name, schema: CharacterSettingSchema },
-    ]),
-    MongooseModule.forFeature([
       { name: CharacterSkill.name, schema: CharacterSkillSchema },
     ]),
   ],

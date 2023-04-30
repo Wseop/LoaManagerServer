@@ -9,7 +9,7 @@ export class CharacterController {
 
   @Get('/:category')
   findAll(@Param('category') category: string) {
-    return this.characterService.findAll(category);
+    return this.characterService.findCharacters(category);
   }
 
   @Get('/:category/:className')
@@ -17,7 +17,7 @@ export class CharacterController {
     @Param('category') category: string,
     @Param('className') className: string,
   ) {
-    return this.characterService.findByClass(category, className);
+    return this.characterService.findCharactersByClass(category, className);
   }
 
   @Post('/setting')
