@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CharacterSetting } from './schemas/characterSetting.schema';
 import { Model } from 'mongoose';
@@ -15,6 +15,26 @@ export class CharacterService {
     @InjectModel(CharacterSkill.name)
     private readonly characterSkillModel: Model<CharacterSkill>,
   ) {}
+
+  findAll(category: string) {
+    if (category === 'setting') {
+      return this.findSettings();
+    } else if (category === 'skill') {
+      return this.findSkills();
+    } else {
+      throw new BadRequestException();
+    }
+  }
+
+  findByClass(category: string, className: string) {
+    if (category === 'setting') {
+      return this.findSettingsByClass(className);
+    } else if (category === 'skill') {
+      return this.findSkillsByClass(className);
+    } else {
+      throw new BadRequestException();
+    }
+  }
 
   async findSettings() {
     return await this.characterSettingModel.find().exec();
