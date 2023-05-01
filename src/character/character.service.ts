@@ -37,18 +37,18 @@ export class CharacterService {
   }
 
   async createSetting(createCharacterSettingDto: CreateCharacterSettingDto) {
-    return await this.characterSettingModel.replaceOne(
+    return await this.characterSettingModel.findOneAndUpdate(
       { characterName: createCharacterSettingDto.characterName },
       createCharacterSettingDto,
-      { upsert: true },
+      { upsert: true, new: true },
     );
   }
 
   async createSkill(createCharacterSkillDto: CreateCharacterSkillDto) {
-    return await this.characterSkillModel.replaceOne(
+    return await this.characterSkillModel.findOneAndUpdate(
       { characterName: createCharacterSkillDto.characterName },
       createCharacterSkillDto,
-      { upsert: true },
+      { upsert: true, new: true },
     );
   }
 }
