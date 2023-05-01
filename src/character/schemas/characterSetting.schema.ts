@@ -15,7 +15,7 @@ export class CharacterSetting {
   ability: string;
 
   @Prop()
-  elixir?: string;
+  elixir: string;
 
   @Prop()
   engrave: string;

@@ -6,8 +6,8 @@ export class ISkill {
   skillName: string;
 
   @IsString({ each: true })
-  tripodNames?: string[];
+  tripodNames: string[];
 
   @IsString()
-  runeName?: string;
+  runeName: string;
 }

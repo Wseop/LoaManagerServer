@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreateCharacterSettingDto {
   @IsNotEmpty()
@@ -11,13 +17,13 @@ export class CreateCharacterSettingDto {
 
   @IsNotEmpty()
   @IsNumber()
+  @Min(0)
   itemLevel: number;
 
   @IsNotEmpty()
   @IsString()
   ability: string;
 
-  @IsOptional()
   @IsString()
   elixir: string;
 
