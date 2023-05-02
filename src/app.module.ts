@@ -5,6 +5,7 @@ import { AdminModule } from './admin/admin.module';
 import { ApiKeyModule } from './apikey/apikey.module';
 import { CharacterModule } from './character/character.module';
 import { RewardModule } from './reward/reward.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RewardModule } from './reward/reward.module';
     ApiKeyModule,
     CharacterModule,
     RewardModule,
+    UserModule,
   ],
 })
 export class AppModule {}

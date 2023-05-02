@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { RewardService } from './reward.service';
 import { CreateRewardChaosDto } from './dto/createRewardChaos.dto';
 import { CreateRewardGuardianDto } from './dto/createRewardGuardian.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('reward')
 export class RewardController {
@@ -20,11 +21,13 @@ export class RewardController {
     return this.rewardService.findRewardsByLevel(category, level);
   }
 
+  @UseGuards(AuthGuard('access'))
   @Post('/chaos')
   createRewardChaos(@Body() createRewardChaosDto: CreateRewardChaosDto) {
     return this.rewardService.createRewardChaos(createRewardChaosDto);
   }
 
+  @UseGuards(AuthGuard('access'))
   @Post('/guardian')
   createRewardGuardian(
     @Body() createRewardGuardianDto: CreateRewardGuardianDto,
