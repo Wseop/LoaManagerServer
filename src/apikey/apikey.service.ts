@@ -11,6 +11,6 @@ export class ApiKeyService {
   ) {}
 
   async findAll() {
-    return await this.apiKeyModel.find().exec();
+    return await this.apiKeyModel.find();
   }
 }

@@ -18,9 +18,9 @@ export class RewardService {
 
   async findRewards(category: string) {
     if (category === 'chaos') {
-      return await this.rewardChaosModel.find().exec();
+      return await this.rewardChaosModel.find();
     } else if (category === 'guardian') {
-      return await this.rewardGuardianModel.find().exec();
+      return await this.rewardGuardianModel.find();
     } else {
       throw new BadRequestException();
     }
@@ -28,9 +28,9 @@ export class RewardService {
 
   async findRewardsByLevel(category: string, level: string) {
     if (category === 'chaos') {
-      return await this.rewardChaosModel.find({ level }).exec();
+      return await this.rewardChaosModel.find({ level });
     } else if (category === 'guardian') {
-      return await this.rewardGuardianModel.find({ level }).exec();
+      return await this.rewardGuardianModel.find({ level });
     } else {
       throw new BadRequestException();
     }

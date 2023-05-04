@@ -18,9 +18,9 @@ export class CharacterService {
 
   async findCharacters(category: string) {
     if (category === 'setting') {
-      return await this.characterSettingModel.find().exec();
+      return await this.characterSettingModel.find();
     } else if (category === 'skill') {
-      return await this.characterSkillModel.find().exec();
+      return await this.characterSkillModel.find();
     } else {
       throw new BadRequestException();
     }
@@ -28,9 +28,9 @@ export class CharacterService {
 
   async findCharactersByClass(category: string, className: string) {
     if (category === 'setting') {
-      return await this.characterSettingModel.find({ className }).exec();
+      return await this.characterSettingModel.find({ className });
     } else if (category === 'skill') {
-      return await this.characterSkillModel.find({ className }).exec();
+      return await this.characterSkillModel.find({ className });
     } else {
       throw new BadRequestException();
     }

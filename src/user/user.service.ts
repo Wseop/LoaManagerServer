@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   async findUser(userId: string) {
-    return await this.userModel.findOne({ userId }).exec();
+    return await this.userModel.findOne({ userId });
   }
 
   async createUser(createUserDto: CreateUserDto) {
