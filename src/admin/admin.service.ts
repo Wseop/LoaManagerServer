@@ -10,10 +10,10 @@ export class AdminService {
   ) {}
 
   async findAll() {
-    return await this.adminModel.find().exec();
+    return await this.adminModel.find();
   }
 
   async find(key: string) {
-    return await this.adminModel.findOne({ key }).exec();
+    return await this.adminModel.findOne({ key });
   }
 }
