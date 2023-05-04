@@ -1,5 +1,7 @@
+import { Admin } from 'src/admin/schemas/admin.schema';
+
 export class MockAdminModel {
-  datas = [
+  datas: Admin[] = [
     { key: 'key1', value: 'value1' },
     { key: 'key2', value: 'value2' },
     { key: 'key3', value: 'value3' },
