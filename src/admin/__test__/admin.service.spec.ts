@@ -6,7 +6,7 @@ import { Admin } from '../schemas/admin.schema';
 
 describe('AdminService', () => {
   let adminService: AdminService;
-  let adminRepository: MockAdminModel;
+  let adminModel: MockAdminModel;
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
@@ -20,7 +20,7 @@ describe('AdminService', () => {
     }).compile();
 
     adminService = app.get<AdminService>(AdminService);
-    adminRepository = app.get<MockAdminModel>(getModelToken(Admin.name));
+    adminModel = app.get<MockAdminModel>(getModelToken(Admin.name));
   });
 
   describe('findAll', () => {
@@ -31,7 +31,7 @@ describe('AdminService', () => {
         { key: 'key3', value: 'value3' },
       ];
 
-      const findSpy = jest.spyOn(adminRepository, 'find');
+      const findSpy = jest.spyOn(adminModel, 'find');
       const result = await adminService.findAll();
 
       expect(findSpy).toBeCalledTimes(1);
@@ -43,7 +43,7 @@ describe('AdminService', () => {
     it('findByKey', async () => {
       const expected = { key: 'key1', value: 'value1' };
 
-      const findOneSpy = jest.spyOn(adminRepository, 'findOne');
+      const findOneSpy = jest.spyOn(adminModel, 'findOne');
       const result = await adminService.find('key1');
 
       expect(result).toStrictEqual(expected);
