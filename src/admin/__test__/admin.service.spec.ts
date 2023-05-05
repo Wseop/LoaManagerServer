@@ -1,15 +1,37 @@
-import { Test } from '@nestjs/testing';
+import { Model } from 'mongoose';
 import { AdminService } from '../admin.service';
-import { MockAdminModel } from './mocks/admin.mock';
-import { getModelToken } from '@nestjs/mongoose';
 import { Admin } from '../schemas/admin.schema';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+
+class MockAdminModel {
+  datas = [
+    {
+      key: 'key1',
+      value: 'value1',
+    },
+    {
+      key: 'key2',
+      value: 'value2',
+    },
+    {
+      key: 'key3',
+      value: 'value3',
+    },
+  ];
+
+  find = jest.fn().mockReturnValue(this.datas);
+  findOne = jest.fn(({ key }) => {
+    return this.datas.find((data) => data.key === key);
+  });
+}
 
 describe('AdminService', () => {
   let adminService: AdminService;
-  let adminModel: MockAdminModel;
+  let adminModel: Model<Admin>;
 
   beforeEach(async () => {
-    const app = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminService,
         {
@@ -19,35 +41,42 @@ describe('AdminService', () => {
       ],
     }).compile();
 
-    adminService = app.get<AdminService>(AdminService);
-    adminModel = app.get<MockAdminModel>(getModelToken(Admin.name));
+    adminService = module.get<AdminService>(AdminService);
+    adminModel = module.get<Model<Admin>>(getModelToken(Admin.name));
   });
 
-  describe('findAll', () => {
-    it('findAll', async () => {
-      const expected = [
-        { key: 'key1', value: 'value1' },
-        { key: 'key2', value: 'value2' },
-        { key: 'key3', value: 'value3' },
-      ];
-
-      const findSpy = jest.spyOn(adminModel, 'find');
+  describe('findAll()', () => {
+    it('return an array of Adminds', async () => {
       const result = await adminService.findAll();
+      const expected = [
+        {
+          key: 'key1',
+          value: 'value1',
+        },
+        {
+          key: 'key2',
+          value: 'value2',
+        },
+        {
+          key: 'key3',
+          value: 'value3',
+        },
+      ];
+      const spyFindAll = jest.spyOn(adminModel, 'find');
 
-      expect(findSpy).toBeCalledTimes(1);
       expect(result).toStrictEqual(expected);
+      expect(spyFindAll).toBeCalledTimes(1);
     });
   });
 
-  describe('find', () => {
-    it('findByKey', async () => {
-      const expected = { key: 'key1', value: 'value1' };
-
-      const findOneSpy = jest.spyOn(adminModel, 'findOne');
-      const result = await adminService.find('key1');
+  describe('find(key)', () => {
+    it('find and return an Admin by key', async () => {
+      const result = await adminService.find('key3');
+      const expected = { key: 'key3', value: 'value3' };
+      const spyFind = jest.spyOn(adminModel, 'findOne');
 
       expect(result).toStrictEqual(expected);
-      expect(findOneSpy).toBeCalledTimes(1);
+      expect(spyFind).toBeCalledTimes(1);
     });
   });
 });
