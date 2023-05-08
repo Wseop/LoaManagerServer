@@ -7,19 +7,15 @@ export class SkillDto {
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  skills: [
-    {
-      skillName: string;
-      skillCode: number;
-      iconPath: string;
-      isCounter: boolean;
-      tripods: [
-        {
-          tripodName: string;
-          tripodCode: number;
-          iconIndex: number;
-        },
-      ];
-    },
-  ];
+  skills: {
+    skillName: string;
+    skillCode: number;
+    iconPath: string;
+    isCounter: boolean;
+    tripods: {
+      tripodName: string;
+      tripodCode: number;
+      iconIndex: number;
+    }[];
+  }[];
 }

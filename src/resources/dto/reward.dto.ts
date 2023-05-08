@@ -7,16 +7,12 @@ export class RewardDto {
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  rewards: [
-    {
-      level: string;
-      cost?: number;
-      items: [
-        {
-          item: string;
-          count: number;
-        },
-      ];
-    },
-  ];
+  rewards: {
+    level: string;
+    cost?: number;
+    items: {
+      item: string;
+      count: number;
+    }[];
+  }[];
 }
