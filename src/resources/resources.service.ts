@@ -19,13 +19,36 @@ export class ResourcesService {
     @InjectModel(Skill.name) private readonly skillModel: Model<Skill>,
   ) {}
 
-  // Class
-  async findAllClasses() {
-    return await this.classModel.find();
+  async findResources(category: string) {
+    if (category === 'class') {
+      return await this.classModel.find();
+    } else if (category === 'engrave') {
+      return await this.engraveModel.find();
+    } else if (category === 'reward') {
+      return await this.rewardModel.find();
+    } else if (category === 'skill') {
+      return await this.skillModel.find();
+    }
   }
 
-  async createClass(classDto: ClassDto) {
-    return await this.classModel.create(classDto);
+  async findRewardByContent(content: string) {
+    return await this.rewardModel.findOne({ content });
+  }
+
+  async findSkillByClass(className: string) {
+    return await this.skillModel.findOne({ className });
+  }
+
+  async createResource(category: string, createResourceDto) {
+    if (category === 'class') {
+      return await this.classModel.create(createResourceDto);
+    } else if (category === 'engrave') {
+      return await this.engraveModel.create(createResourceDto);
+    } else if (category === 'reward') {
+      return await this.rewardModel.create(createResourceDto);
+    } else if (category === 'skill') {
+      return await this.skillModel.create(createResourceDto);
+    }
   }
 
   async replaceClass(classDto: ClassDto) {
@@ -41,24 +64,6 @@ export class ResourcesService {
     }
   }
 
-  // Engrave
-  async findAllEngraves() {
-    return await this.engraveModel.find();
-  }
-
-  async createEngrave(engraveDto: EngraveDto) {
-    return await this.engraveModel.create(engraveDto);
-  }
-
-  // Reward
-  async findRewardByContent(content: string) {
-    return await this.rewardModel.find({ content });
-  }
-
-  async createReward(rewardDto: RewardDto) {
-    return await this.rewardModel.create(rewardDto);
-  }
-
   async replaceReward(rewardDto: RewardDto) {
     const result = await this.rewardModel.replaceOne(
       { content: rewardDto.content },
@@ -70,15 +75,6 @@ export class ResourcesService {
     } else {
       throw new BadRequestException();
     }
-  }
-
-  // Skill
-  async findSkillByClass(className: string) {
-    return await this.skillModel.find({ className });
-  }
-
-  async createSkill(skillDto: SkillDto) {
-    return await this.skillModel.create(skillDto);
   }
 
   async replaceSkill(skillDto: SkillDto) {

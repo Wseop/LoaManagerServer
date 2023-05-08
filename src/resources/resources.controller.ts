@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -18,15 +19,38 @@ import { SkillDto } from './dto/skill.dto';
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
-  @Get('/class')
-  findAllClasses() {
-    return this.resourcesService.findAllClasses();
+  @Get('/:category')
+  findResources(@Param('category') category: string) {
+    if (
+      category !== 'class' &&
+      category !== 'engrave' &&
+      category !== 'reward' &&
+      category !== 'skill'
+    ) {
+      throw new BadRequestException();
+    } else {
+      return this.resourcesService.findResources(category);
+    }
+  }
+
+  @Get('/:category/:filter')
+  findResourcesByFilter(
+    @Param('category') category: string,
+    @Param('filter') filter: string,
+  ) {
+    if (category === 'reward') {
+      return this.resourcesService.findRewardByContent(filter);
+    } else if (category === 'skill') {
+      return this.resourcesService.findSkillByClass(filter);
+    } else {
+      throw new BadRequestException();
+    }
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/class')
   createClass(@Body() classDto: ClassDto) {
-    return this.resourcesService.createClass(classDto);
+    return this.resourcesService.createResource('class', classDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -35,26 +59,16 @@ export class ResourcesController {
     return this.resourcesService.replaceClass(classDto);
   }
 
-  @Get('/engrave')
-  findAllEngraves() {
-    return this.resourcesService.findAllEngraves();
-  }
-
   @UseGuards(AuthGuard('access'))
   @Post('/engrave')
   createEngrave(@Body() engraveDto: EngraveDto) {
-    return this.resourcesService.createEngrave(engraveDto);
-  }
-
-  @Get('/reward/:content')
-  findRewardByContent(@Param('content') content: string) {
-    return this.resourcesService.findRewardByContent(content);
+    return this.resourcesService.createResource('engrave', engraveDto);
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/reward')
   createReward(@Body() rewardDto: RewardDto) {
-    return this.resourcesService.createReward(rewardDto);
+    return this.resourcesService.createResource('reward', rewardDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -63,15 +77,10 @@ export class ResourcesController {
     return this.resourcesService.replaceReward(rewardDto);
   }
 
-  @Get('/skill/:className')
-  findSkillByClass(@Param('className') className: string) {
-    return this.resourcesService.findSkillByClass(className);
-  }
-
   @UseGuards(AuthGuard('access'))
   @Post('/skill')
   createSkill(@Body() skillDto: SkillDto) {
-    return this.resourcesService.createSkill(skillDto);
+    return this.resourcesService.createResource('skill', skillDto);
   }
 
   @UseGuards(AuthGuard('access'))
