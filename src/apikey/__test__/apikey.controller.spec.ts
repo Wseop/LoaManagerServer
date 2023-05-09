@@ -1,21 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiKeyController } from '../apikey.controller';
 import { ApiKeyService } from '../apikey.service';
+import { ApiKey } from '../schemas/apikey.schema';
+
+const mockApikey: ApiKey = {
+  apiKey: 'apiKey',
+};
 
 class MockApiKeyService {
-  datas = [
-    {
-      apiKey: 'apiKey1',
-    },
-    {
-      apiKey: 'apiKey2',
-    },
-    {
-      apiKey: 'apiKey3',
-    },
-  ];
-
-  findAll = jest.fn().mockReturnValue(this.datas);
+  findAll = jest.fn().mockReturnValue([mockApikey]);
 }
 
 describe('ApiKeyController', () => {
@@ -38,23 +31,11 @@ describe('ApiKeyController', () => {
   });
 
   describe('findAll()', () => {
-    it('return an array of ApiKeys', () => {
+    it('should return an array of apiKeys', () => {
       const result = apiKeyController.findAll();
-      const expected = [
-        {
-          apiKey: 'apiKey1',
-        },
-        {
-          apiKey: 'apiKey2',
-        },
-        {
-          apiKey: 'apiKey3',
-        },
-      ];
-      const spyFindAll = jest.spyOn(apiKeyService, 'findAll');
 
-      expect(result).toStrictEqual(expected);
-      expect(spyFindAll).toBeCalledTimes(1);
+      expect(result).toStrictEqual([mockApikey]);
+      expect(jest.spyOn(apiKeyService, 'findAll')).toBeCalledTimes(1);
     });
   });
 });

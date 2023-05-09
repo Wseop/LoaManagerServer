@@ -1,27 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminController } from '../admin.controller';
 import { AdminService } from '../admin.service';
+import { Admin } from '../schemas/admin.schema';
+
+const mockAdmin: Admin = {
+  key: 'key',
+  value: 'value',
+};
 
 class MockAdminService {
-  datas = [
-    {
-      key: 'key1',
-      value: 'value1',
-    },
-    {
-      key: 'key2',
-      value: 'value2',
-    },
-    {
-      key: 'key3',
-      value: 'value3',
-    },
-  ];
-
-  findAll = jest.fn().mockReturnValue(this.datas);
-  find = jest.fn((key) => {
-    return this.datas.find((data) => data.key === key);
-  });
+  findAll = jest.fn().mockReturnValue([mockAdmin]);
+  find = jest.fn().mockReturnValue(mockAdmin);
 }
 
 describe('AdminController', () => {
@@ -44,37 +33,20 @@ describe('AdminController', () => {
   });
 
   describe('findAll()', () => {
-    it('return an array of Admins', () => {
+    it('should return an array of admins', () => {
       const result = adminController.findAll();
-      const expected = [
-        {
-          key: 'key1',
-          value: 'value1',
-        },
-        {
-          key: 'key2',
-          value: 'value2',
-        },
-        {
-          key: 'key3',
-          value: 'value3',
-        },
-      ];
-      const spyFindAll = jest.spyOn(adminService, 'findAll');
 
-      expect(result).toStrictEqual(expected);
-      expect(spyFindAll).toBeCalledTimes(1);
+      expect(result).toStrictEqual([mockAdmin]);
+      expect(jest.spyOn(adminService, 'findAll')).toBeCalledTimes(1);
     });
   });
 
   describe('find(key)', () => {
-    it('find and return an Admin by key', () => {
-      const result = adminController.find('key2');
-      const expected = { key: 'key2', value: 'value2' };
-      const spyFind = jest.spyOn(adminService, 'find');
+    it('should return an admin', () => {
+      const result = adminController.find('key');
 
-      expect(result).toStrictEqual(expected);
-      expect(spyFind).toBeCalledTimes(1);
+      expect(result).toStrictEqual(mockAdmin);
+      expect(jest.spyOn(adminService, 'find')).toBeCalledTimes(1);
     });
   });
 });

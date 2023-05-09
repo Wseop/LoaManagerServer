@@ -4,20 +4,12 @@ import { ApiKey } from '../schemas/apikey.schema';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 
-class MockApiKeyModel {
-  datas = [
-    {
-      apiKey: 'apiKey1',
-    },
-    {
-      apiKey: 'apiKey2',
-    },
-    {
-      apiKey: 'apiKey3',
-    },
-  ];
+const mockApikey: ApiKey = {
+  apiKey: 'apiKey',
+};
 
-  find = jest.fn().mockReturnValue(this.datas);
+class MockApiKeyModel {
+  find = jest.fn().mockReturnValue([mockApikey]);
 }
 
 describe('ApiKeyService', () => {
@@ -40,23 +32,11 @@ describe('ApiKeyService', () => {
   });
 
   describe('findAll()', () => {
-    it('return an array of ApiKeys', async () => {
+    it('should return an array of apiKeys', async () => {
       const result = await apiKeyService.findAll();
-      const expected = [
-        {
-          apiKey: 'apiKey1',
-        },
-        {
-          apiKey: 'apiKey2',
-        },
-        {
-          apiKey: 'apiKey3',
-        },
-      ];
-      const spyFind = jest.spyOn(apiKeyModel, 'find');
 
-      expect(result).toStrictEqual(expected);
-      expect(spyFind).toBeCalledTimes(1);
+      expect(result).toStrictEqual([mockApikey]);
+      expect(jest.spyOn(apiKeyModel, 'find')).toBeCalledTimes(1);
     });
   });
 });

@@ -8,19 +8,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { BadRequestException } from '@nestjs/common';
 
-const mockClass = {
+const mockClass: Class = {
   parent: 'parent',
   child: ['child'],
 };
 
-const mockEngrave = {
+const mockEngrave: Engrave = {
   code: 0,
   engraveName: 'engraveName',
   className: 'className',
   isPenalty: false,
 };
 
-const mockReward = {
+const mockReward: Reward = {
   content: 'content',
   rewards: [
     {
@@ -36,7 +36,7 @@ const mockReward = {
   ],
 };
 
-const mockSkill = {
+const mockSkill: Skill = {
   className: 'className',
   skills: [
     {

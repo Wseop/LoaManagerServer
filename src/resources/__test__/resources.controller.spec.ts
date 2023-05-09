@@ -2,20 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ResourcesController } from '../resources.controller';
 import { ResourcesService } from '../resources.service';
 import { BadRequestException } from '@nestjs/common';
+import { Class } from '../schemas/class.schema';
+import { Engrave } from '../schemas/engrave.schema';
+import { Reward } from '../schemas/reward.schema';
+import { Skill } from '../schemas/skill.schema';
 
-const mockClass = {
+const mockClass: Class = {
   parent: 'parent',
   child: ['child'],
 };
 
-const mockEngrave = {
+const mockEngrave: Engrave = {
   code: 0,
   engraveName: 'engraveName',
   className: 'className',
   isPenalty: false,
 };
 
-const mockReward = {
+const mockReward: Reward = {
   content: 'content',
   rewards: [
     {
@@ -31,7 +35,7 @@ const mockReward = {
   ],
 };
 
-const mockSkill = {
+const mockSkill: Skill = {
   className: 'className',
   skills: [
     {
@@ -52,32 +56,22 @@ const mockSkill = {
 
 class MockResourcesService {
   findResources = jest.fn((category) => {
-    return mockClass;
+    if (category === 'class') {
+      return mockClass;
+    } else if (category === 'engrave') {
+      return mockEngrave;
+    } else if (category === 'reward') {
+      return mockReward;
+    } else if (category === 'skill') {
+      return mockSkill;
+    }
   });
-
-  findRewardByContent = jest.fn((filiter) => {
-    return mockReward;
-  });
-
-  findSkillByClass = jest.fn((filter) => {
-    return mockSkill;
-  });
-
-  createResource = jest.fn((category, mockResource) => {
-    return mockResource;
-  });
-
-  replaceClass = jest.fn((mockResource) => {
-    return mockResource;
-  });
-
-  replaceReward = jest.fn((mockResource) => {
-    return mockResource;
-  });
-
-  replaceSkill = jest.fn((mockResource) => {
-    return mockResource;
-  });
+  findRewardByContent = jest.fn().mockReturnValue(mockReward);
+  findSkillByClass = jest.fn().mockReturnValue(mockSkill);
+  createResource = jest.fn((category, mockResource) => mockResource);
+  replaceClass = jest.fn().mockReturnValue(mockClass);
+  replaceReward = jest.fn().mockReturnValue(mockReward);
+  replaceSkill = jest.fn().mockReturnValue(mockSkill);
 }
 
 describe('ResourcesController', () => {
@@ -100,83 +94,73 @@ describe('ResourcesController', () => {
   });
 
   describe('findResources()', () => {
-    it('should return mockResource', () => {
+    it('should return resource', () => {
       const categories = ['class', 'engrave', 'reward', 'skill'];
-      const spyFindResources = jest.spyOn(resourcesService, 'findResources');
+      const expects = [mockClass, mockEngrave, mockReward, mockSkill];
 
-      for (const category of categories) {
-        const result = resourcesController.findResources(category);
-        expect(result).toStrictEqual(mockClass);
+      for (let i = 0; i < categories.length; i++) {
+        const result = resourcesController.findResources(categories[i]);
+        expect(result).toStrictEqual(expects[i]);
       }
 
-      expect(spyFindResources).toBeCalledTimes(categories.length);
+      expect(jest.spyOn(resourcesService, 'findResources')).toBeCalledTimes(
+        categories.length,
+      );
     });
-
     it('should throw BadRequestException', () => {
-      const spyFindResources = jest.spyOn(resourcesService, 'findResources');
-
       try {
         resourcesController.findResources('invalid category');
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       } finally {
-        expect(spyFindResources).toBeCalledTimes(0);
+        expect(jest.spyOn(resourcesService, 'findResources')).toBeCalledTimes(
+          0,
+        );
       }
     });
   });
 
   describe('findResourcesByFilter()', () => {
-    it('should return mockReward', () => {
+    it('should return a reward', () => {
       const result = resourcesController.findResourcesByFilter(
         'reward',
         'filter',
       );
-      const spyFindRewardByContent = jest.spyOn(
-        resourcesService,
-        'findRewardByContent',
-      );
 
       expect(result).toStrictEqual(mockReward);
-      expect(spyFindRewardByContent).toBeCalledTimes(1);
+      expect(
+        jest.spyOn(resourcesService, 'findRewardByContent'),
+      ).toBeCalledTimes(1);
     });
-
-    it('should return mockSkill', () => {
+    it('should return a skill', () => {
       const result = resourcesController.findResourcesByFilter(
         'skill',
         'filter',
       );
-      const spyFindSkillByClass = jest.spyOn(
-        resourcesService,
-        'findSkillByClass',
-      );
 
       expect(result).toStrictEqual(mockSkill);
-      expect(spyFindSkillByClass).toBeCalledTimes(1);
+      expect(jest.spyOn(resourcesService, 'findSkillByClass')).toBeCalledTimes(
+        1,
+      );
     });
-
     it('should throw BadRequestException', () => {
-      const spyFindRewardByContent = jest.spyOn(
-        resourcesService,
-        'findRewardByContent',
-      );
-      const spyFindSkillByClass = jest.spyOn(
-        resourcesService,
-        'findSkillByClass',
-      );
-
       try {
         resourcesController.findResourcesByFilter('invalid category', 'filter');
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       } finally {
-        expect(spyFindRewardByContent).toBeCalledTimes(0);
-        expect(spyFindSkillByClass).toBeCalledTimes(0);
+        expect(
+          jest.spyOn(resourcesService, 'findRewardByContent'),
+        ).toBeCalledTimes(0);
+        expect(
+          jest.spyOn(resourcesService, 'findSkillByClass'),
+        ).toBeCalledTimes(0);
       }
     });
   });
 
   describe('createClass()', () => {
-    it('should return mockClass', () => {
+    it('should return a class', () => {
       const result = resourcesController.createClass(mockClass);
 
       expect(result).toStrictEqual(mockClass);
@@ -185,7 +169,7 @@ describe('ResourcesController', () => {
   });
 
   describe('replaceClass()', () => {
-    it('should return mockClass', () => {
+    it('should return a class', () => {
       const result = resourcesController.replaceClass(mockClass);
 
       expect(result).toStrictEqual(mockClass);
@@ -194,7 +178,7 @@ describe('ResourcesController', () => {
   });
 
   describe('createEngrave()', () => {
-    it('should return mockEngrave', () => {
+    it('should return an engrave', () => {
       const result = resourcesController.createEngrave(mockEngrave);
 
       expect(result).toStrictEqual(mockEngrave);
@@ -203,7 +187,7 @@ describe('ResourcesController', () => {
   });
 
   describe('createReward()', () => {
-    it('should return mockReward', () => {
+    it('should return a reward', () => {
       const result = resourcesController.createReward(mockReward);
 
       expect(result).toStrictEqual(mockReward);
@@ -212,7 +196,7 @@ describe('ResourcesController', () => {
   });
 
   describe('replaceReward()', () => {
-    it('should return mockReward', () => {
+    it('should return a reward', () => {
       const result = resourcesController.replaceReward(mockReward);
 
       expect(result).toStrictEqual(mockReward);
@@ -221,7 +205,7 @@ describe('ResourcesController', () => {
   });
 
   describe('createSkill()', () => {
-    it('should return mockSkill', () => {
+    it('should return a skill', () => {
       const result = resourcesController.createSkill(mockSkill);
 
       expect(result).toStrictEqual(mockSkill);
@@ -230,7 +214,7 @@ describe('ResourcesController', () => {
   });
 
   describe('replaceSkill()', () => {
-    it('should return mockSkill', () => {
+    it('should return a skill', () => {
       const result = resourcesController.replaceSkill(mockSkill);
 
       expect(result).toStrictEqual(mockSkill);
