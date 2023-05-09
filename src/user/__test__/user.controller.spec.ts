@@ -1,32 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
-import { CreateUserDto } from '../dto/createUser.dto';
-import { SigninUserDto } from '../dto/signinUser.dto';
 import {
   ConflictException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { User } from '../schemas/user.schema';
+import * as bcrypt from 'bcrypt';
+
+const mockUser: User = {
+  userId: 'userId',
+  password: 'password',
+};
 
 class MockUserService {
-  datas = [
-    {
-      userId: 'userId',
-      password: '$2b$10$VgMJGhBKJ0wm3WhV0mjqDeCVQ0zk1WWjBSURNPnBMaKiJoYN43fNm',
-    },
-  ];
-
   findUser = jest.fn((userId) => {
-    return this.datas.find((data) => data.userId === userId);
+    if (userId === 'userId') {
+      return mockUser;
+    } else {
+      return undefined;
+    }
   });
-
-  createUser = jest.fn((createUserDto: CreateUserDto) => {
-    return this.datas[this.datas.push(createUserDto) - 1];
-  });
-
-  getAccessToken = jest.fn((signinUserDto: SigninUserDto) => {
-    return 'jwt';
-  });
+  createUser = jest.fn((user) => user);
+  getAccessToken = jest.fn().mockReturnValue('jwt');
 }
 
 describe('UserController', () => {
@@ -49,92 +45,67 @@ describe('UserController', () => {
   });
 
   describe('createUser()', () => {
-    it('create new user', async () => {
-      const createUserDto = {
-        userId: 'newUser',
-        password: '1234',
-      };
+    it('should return an user', async () => {
       const expected = {
         userId: 'newUser',
         password: expect.anything(),
       };
-      const result = await userController.createUser(createUserDto);
-      const spyFindUser = jest.spyOn(userService, 'findUser');
-      const spyCreateUser = jest.spyOn(userService, 'createUser');
+      const result = await userController.createUser({
+        userId: 'newUser',
+        password: 'pw',
+      });
 
       expect(result).toStrictEqual(expected);
-      expect(spyFindUser).toBeCalledTimes(1);
-      expect(spyCreateUser).toBeCalledTimes(1);
+      expect(jest.spyOn(userService, 'findUser')).toBeCalledTimes(1);
+      expect(jest.spyOn(userService, 'createUser')).toBeCalledTimes(1);
     });
-
-    it('throw ConflictException', async () => {
-      const createUserDto = {
-        userId: 'userId',
-        password: '1234',
-      };
-      const spyFindUser = jest.spyOn(userService, 'findUser');
-      const spyCreateUser = jest.spyOn(userService, 'createUser');
-
+    it('should throw ConflictException', async () => {
       try {
-        await userController.createUser(createUserDto);
+        await userController.createUser({
+          userId: 'userId',
+          password: expect.anything(),
+        });
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
       } finally {
-        expect(spyFindUser).toBeCalledTimes(1);
-        expect(spyCreateUser).toBeCalledTimes(0);
+        expect(jest.spyOn(userService, 'findUser')).toBeCalledTimes(1);
+        expect(jest.spyOn(userService, 'createUser')).toBeCalledTimes(0);
       }
     });
   });
 
   describe('signin()', () => {
-    it('signin', async () => {
-      const signinUserDto = {
-        userId: 'userId',
-        password: '1234',
-      };
-      const expected = 'jwt';
-      const result = await userController.signin(signinUserDto);
-      const spyFindUser = jest.spyOn(userService, 'findUser');
-      const spyGetAccessToken = jest.spyOn(userService, 'getAccessToken');
+    it('should return jwt', async () => {
+      jest.spyOn(bcrypt, 'compare').mockImplementation(() => true);
 
-      expect(result).toBe(expected);
-      expect(spyFindUser).toBeCalledTimes(1);
-      expect(spyGetAccessToken).toBeCalledTimes(1);
+      const result = await userController.signin(mockUser);
+
+      expect(result).toBe('jwt');
+      expect(jest.spyOn(userService, 'findUser')).toBeCalledTimes(1);
+      expect(jest.spyOn(userService, 'getAccessToken')).toBeCalledTimes(1);
     });
-
-    it('invalid userId', async () => {
-      const signinUserDto = {
-        userId: 'invalid',
-        password: '1234',
-      };
-      const spyFindUser = jest.spyOn(userService, 'findUser');
-      const spyGetAccessToken = jest.spyOn(userService, 'getAccessToken');
+    it('should throw UnprocessableEntityException 1', async () => {
+      jest.spyOn(bcrypt, 'compare').mockImplementation(() => true);
 
       try {
-        await userController.signin(signinUserDto);
+        await userController.signin({ userId: 'invalid', password: 'pw' });
       } catch (error) {
         expect(error).toBeInstanceOf(UnprocessableEntityException);
       } finally {
-        expect(spyFindUser).toBeCalledTimes(1);
-        expect(spyGetAccessToken).toBeCalledTimes(0);
+        expect(jest.spyOn(userService, 'findUser')).toBeCalledTimes(1);
+        expect(jest.spyOn(userService, 'getAccessToken')).toBeCalledTimes(0);
       }
     });
-
-    it('invalid password', async () => {
-      const signinUserDto = {
-        userId: 'userId',
-        password: '4321',
-      };
-      const spyFindUser = jest.spyOn(userService, 'findUser');
-      const spyGetAccessToken = jest.spyOn(userService, 'getAccessToken');
+    it('should throw UnprocessableEntityException 2', async () => {
+      jest.spyOn(bcrypt, 'compare').mockImplementation(() => false);
 
       try {
-        await userController.signin(signinUserDto);
+        await userController.signin(mockUser);
       } catch (error) {
         expect(error).toBeInstanceOf(UnprocessableEntityException);
       } finally {
-        expect(spyFindUser).toBeCalledTimes(1);
-        expect(spyGetAccessToken).toBeCalledTimes(0);
+        expect(jest.spyOn(userService, 'findUser')).toBeCalledTimes(1);
+        expect(jest.spyOn(userService, 'getAccessToken')).toBeCalledTimes(0);
       }
     });
   });
