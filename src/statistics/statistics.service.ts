@@ -10,47 +10,47 @@ import { StatsSkill } from './schemas/statsSkill.schema';
 export class StatisticsService {
   constructor(
     @InjectModel(StatsChaos.name)
-    private readonly chaosStatsModel: Model<StatsChaos>,
+    private readonly statsChaosModel: Model<StatsChaos>,
 
     @InjectModel(StatsGuardian.name)
-    private readonly guardianStatsModel: Model<StatsGuardian>,
+    private readonly statsGuardianModel: Model<StatsGuardian>,
 
     @InjectModel(StatsSetting.name)
-    private readonly settingStatsModel: Model<StatsSetting>,
+    private readonly statsSettingModel: Model<StatsSetting>,
 
     @InjectModel(StatsSkill.name)
-    private readonly skillStatsModel: Model<StatsSkill>,
+    private readonly statsSkillModel: Model<StatsSkill>,
   ) {}
 
   async findStatsByLevel(category: string, level: string) {
     if (category === 'chaos') {
-      return await this.chaosStatsModel.find({ level });
+      return await this.statsChaosModel.find({ level });
     } else if (category === 'guardian') {
-      return await this.guardianStatsModel.find({ level });
+      return await this.statsGuardianModel.find({ level });
     }
   }
 
   async findStatsByClass(category: string, className: string) {
     if (category === 'setting') {
-      return await this.settingStatsModel.find({ className });
+      return await this.statsSettingModel.find({ className });
     } else if (category === 'skill') {
-      return await this.skillStatsModel.find({ className });
+      return await this.statsSkillModel.find({ className });
     }
   }
 
   async createStats(category: string, newStatsDto) {
     if (category === 'chaos') {
-      return await this.chaosStatsModel.create(newStatsDto);
+      return await this.statsChaosModel.create(newStatsDto);
     } else if (category === 'guardian') {
-      return await this.guardianStatsModel.create(newStatsDto);
+      return await this.statsGuardianModel.create(newStatsDto);
     } else if (category === 'setting') {
-      return await this.settingStatsModel.findOneAndUpdate(
+      return await this.statsSettingModel.findOneAndUpdate(
         { characterName: newStatsDto.characterName },
         newStatsDto,
         { upsert: true, new: true },
       );
     } else if (category === 'skill') {
-      return await this.skillStatsModel.findOneAndUpdate(
+      return await this.statsSkillModel.findOneAndUpdate(
         { characterName: newStatsDto.characterName },
         newStatsDto,
         { upsert: true, new: true },

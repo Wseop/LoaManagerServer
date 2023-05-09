@@ -34,25 +34,25 @@ export class StatisticsController {
 
   @UseGuards(AuthGuard('access'))
   @Post('/chaos')
-  createChaosStats(@Body() chaosStatsDto: StatsChaosDto) {
-    return this.statisticsService.createStats('chaos', chaosStatsDto);
+  createChaosStats(@Body() statsChaosDto: StatsChaosDto) {
+    return this.statisticsService.createStats('chaos', statsChaosDto);
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/guardian')
-  createGuardianStats(@Body() guardianStatsDto: StatsGuardianDto) {
-    return this.statisticsService.createStats('guardian', guardianStatsDto);
+  createGuardianStats(@Body() statsGuardianDto: StatsGuardianDto) {
+    return this.statisticsService.createStats('guardian', statsGuardianDto);
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/setting')
-  createSettingStats(@Body() settingStatsDto: StatsSettingDto) {
-    return this.statisticsService.createStats('setting', settingStatsDto);
+  createSettingStats(@Body() statsSettingDto: StatsSettingDto) {
+    return this.statisticsService.createStats('setting', statsSettingDto);
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/skill')
-  createSkillStats(@Body() skillStatsDto: StatsSkillDto) {
-    return this.statisticsService.createStats('skill', skillStatsDto);
+  createSkillStats(@Body() statsSkillDto: StatsSkillDto) {
+    return this.statisticsService.createStats('skill', statsSkillDto);
   }
 }
