@@ -11,8 +11,3 @@ services:
       - ./.env
     ports:
       - 3000:3000
-
-  mongo-database:
-    image: mongo:6
-    ports:
-      - 27017:27017
