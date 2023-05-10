@@ -44,13 +44,11 @@ export class StatisticsController {
     return this.statisticsService.createStats('guardian', statsGuardianDto);
   }
 
-  @UseGuards(AuthGuard('access'))
   @Post('/setting')
   createSettingStats(@Body() statsSettingDto: StatsSettingDto) {
     return this.statisticsService.createStats('setting', statsSettingDto);
   }
 
-  @UseGuards(AuthGuard('access'))
   @Post('/skill')
   createSkillStats(@Body() statsSkillDto: StatsSkillDto) {
     return this.statisticsService.createStats('skill', statsSkillDto);
