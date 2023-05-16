@@ -10,4 +10,4 @@ LoaManager 서비스 제공을 위한 REST API Server
 - FrontEnd 페이지는 [여기](https://github.com/Wseop/QT_LoaManager)로
 ![loa-manager](https://github.com/Wseop/QT_LoaManager/assets/18005580/0c626eb4-46f2-459a-93fb-b63b6daba2f8)
 ## API
-- 추가 예정...
+[LoaManager API Specification](https://loamgr.xyz/api)
