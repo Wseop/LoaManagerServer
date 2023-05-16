@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { StatsSkillElement } from '../schemas/statsSkill.schema';
+import {
+  ArrayNotEmpty,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { StatsSkillElement } from '../schemas/stats-skill.schema';
+import { Type } from 'class-transformer';
 
-export class StatsSkillDto {
+export class CreateStatsSkillDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -19,7 +25,8 @@ export class StatsSkillDto {
   classEngraves: string[];
 
   @ApiProperty({ type: [StatsSkillElement] })
-  @IsNotEmpty()
+  @ArrayNotEmpty()
   @ValidateNested({ each: true })
+  @Type(() => StatsSkillElement)
   skills: StatsSkillElement[];
 }

@@ -1,51 +1,44 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
-export class StatsChaosDto {
+export class CreateStatsSettingDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  level: string;
+  characterName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  className: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
-  count: number;
+  itemLevel: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  silling: number;
+  @IsString()
+  ability: string;
+
+  @ApiProperty()
+  @IsString()
+  elixir: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  shard: number;
+  @IsString()
+  engrave: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  destruction: number;
+  @IsString()
+  engraveLevel: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  protection: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  leapStone: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  gem: number;
+  @IsString()
+  itemSet: string;
 }

@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AuthGuard } from '@nestjs/passport';
-import { StatsChaosDto } from './dto/statsChaos.dto';
-import { StatsGuardianDto } from './dto/statsGuardian.dto';
-import { StatsSettingDto } from './dto/statsSetting.dto';
-import { StatsSkillDto } from './dto/statsSkill.dto';
+import { CreateStatsChaosDto } from './dto/create-stats-chaos.dto';
+import { CreateStatsGuardianDto } from './dto/create-stats-guardian.dto';
+import { CreateStatsSettingDto } from './dto/create-stats-setting.dto';
+import { CreateStatsSkillDto } from './dto/create-stats-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -47,8 +47,8 @@ export class StatisticsController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createChaosStats(@Body() statsChaosDto: StatsChaosDto) {
-    return this.statisticsService.createStats('chaos', statsChaosDto);
+  createChaosStats(@Body() createStatsChaosDto: CreateStatsChaosDto) {
+    return this.statisticsService.createStats('chaos', createStatsChaosDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -56,21 +56,24 @@ export class StatisticsController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createGuardianStats(@Body() statsGuardianDto: StatsGuardianDto) {
-    return this.statisticsService.createStats('guardian', statsGuardianDto);
+  createGuardianStats(@Body() createStatsGuardianDto: CreateStatsGuardianDto) {
+    return this.statisticsService.createStats(
+      'guardian',
+      createStatsGuardianDto,
+    );
   }
 
   @Post('/setting')
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createSettingStats(@Body() statsSettingDto: StatsSettingDto) {
-    return this.statisticsService.createStats('setting', statsSettingDto);
+  createSettingStats(@Body() createStatsSettingDto: CreateStatsSettingDto) {
+    return this.statisticsService.createStats('setting', createStatsSettingDto);
   }
 
   @Post('/skill')
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createSkillStats(@Body() statsSkillDto: StatsSkillDto) {
-    return this.statisticsService.createStats('skill', statsSkillDto);
+  createSkillStats(@Body() createStatsSkillDto: CreateStatsSkillDto) {
+    return this.statisticsService.createStats('skill', createStatsSkillDto);
   }
 }

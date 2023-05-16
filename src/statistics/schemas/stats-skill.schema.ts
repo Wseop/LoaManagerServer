@@ -1,14 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class StatsSkillElement {
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   skillName: string;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString({ each: true })
   tripodNames: string[];
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   runeName: string;
 }
 

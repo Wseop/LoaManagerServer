@@ -6,9 +6,9 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { SigninUserDto } from './dto/signinUser.dto';
+import { SigninUserDto } from './dto/signin-user.dto';
 import {
   ApiConflictResponse,
   ApiCreatedResponse,

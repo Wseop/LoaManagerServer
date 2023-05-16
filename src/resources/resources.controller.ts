@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { ResourcesService } from './resources.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ClassDto } from './dto/class.dto';
-import { EngraveDto } from './dto/engrave.dto';
-import { RewardDto } from './dto/reward.dto';
-import { SkillDto } from './dto/skill.dto';
+import { CreateClassDto } from './dto/create-class.dto';
+import { CreateEngraveDto } from './dto/create-engrave.dto';
+import { CreateRewardDto } from './dto/create-reward.dto';
+import { CreateSkillDto } from './dto/create-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -64,8 +64,8 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createClass(@Body() classDto: ClassDto) {
-    return this.resourcesService.createResource('class', classDto);
+  createClass(@Body() createClassDto: CreateClassDto) {
+    return this.resourcesService.createResource('class', createClassDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -73,8 +73,8 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  replaceClass(@Body() classDto: ClassDto) {
-    return this.resourcesService.replaceClass(classDto);
+  replaceClass(@Body() createClassDto: CreateClassDto) {
+    return this.resourcesService.replaceClass(createClassDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -82,8 +82,8 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createEngrave(@Body() engraveDto: EngraveDto) {
-    return this.resourcesService.createResource('engrave', engraveDto);
+  createEngrave(@Body() createEngraveDto: CreateEngraveDto) {
+    return this.resourcesService.createResource('engrave', createEngraveDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -91,8 +91,8 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createReward(@Body() rewardDto: RewardDto) {
-    return this.resourcesService.createResource('reward', rewardDto);
+  createReward(@Body() createRewardDto: CreateRewardDto) {
+    return this.resourcesService.createResource('reward', createRewardDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -100,8 +100,8 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  replaceReward(@Body() rewardDto: RewardDto) {
-    return this.resourcesService.replaceReward(rewardDto);
+  replaceReward(@Body() createRewardDto: CreateRewardDto) {
+    return this.resourcesService.replaceReward(createRewardDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -109,8 +109,8 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  createSkill(@Body() skillDto: SkillDto) {
-    return this.resourcesService.createResource('skill', skillDto);
+  createSkill(@Body() createSkillDto: CreateSkillDto) {
+    return this.resourcesService.createResource('skill', createSkillDto);
   }
 
   @UseGuards(AuthGuard('access'))
@@ -118,7 +118,7 @@ export class ResourcesController {
   @ApiUnauthorizedResponse({ description: 'valid jwt required' })
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
-  replaceSkill(@Body() skillDto: SkillDto) {
-    return this.resourcesService.replaceSkill(skillDto);
+  replaceSkill(@Body() createSkillDto: CreateSkillDto) {
+    return this.resourcesService.replaceSkill(createSkillDto);
   }
 }
