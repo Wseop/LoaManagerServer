@@ -9,6 +9,7 @@ import { CreateClassDto } from './dto/create-class.dto';
 import { CreateEngraveDto } from './dto/create-engrave.dto';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { CreateSkillDto } from './dto/create-skill.dto';
+import { ResourceCategory } from './enums/resource-category.enum';
 
 @Injectable()
 export class ResourcesService {
@@ -20,13 +21,13 @@ export class ResourcesService {
   ) {}
 
   async findResources(category: string) {
-    if (category === 'class') {
+    if (category === ResourceCategory.Class) {
       return await this.classModel.find();
-    } else if (category === 'engrave') {
+    } else if (category === ResourceCategory.Engrave) {
       return await this.engraveModel.find();
-    } else if (category === 'reward') {
+    } else if (category === ResourceCategory.Reward) {
       return await this.rewardModel.find();
-    } else if (category === 'skill') {
+    } else if (category === ResourceCategory.Skill) {
       return await this.skillModel.find();
     }
   }
@@ -40,13 +41,13 @@ export class ResourcesService {
   }
 
   async createResource(category: string, createResourceDto) {
-    if (category === 'class') {
+    if (category === ResourceCategory.Class) {
       return await this.classModel.create(createResourceDto);
-    } else if (category === 'engrave') {
+    } else if (category === ResourceCategory.Engrave) {
       return await this.engraveModel.create(createResourceDto);
-    } else if (category === 'reward') {
+    } else if (category === ResourceCategory.Reward) {
       return await this.rewardModel.create(createResourceDto);
-    } else if (category === 'skill') {
+    } else if (category === ResourceCategory.Skill) {
       return await this.skillModel.create(createResourceDto);
     }
   }

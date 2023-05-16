@@ -5,6 +5,7 @@ import { StatsChaos } from './schemas/stats-chaos.schema';
 import { StatsGuardian } from './schemas/stats-guardian.schema';
 import { StatsSetting } from './schemas/stats-setting.schema';
 import { StatsSkill } from './schemas/stats-skill.schema';
+import { StatsCategory } from './enums/statistics-category.enum';
 
 @Injectable()
 export class StatisticsService {
@@ -23,33 +24,33 @@ export class StatisticsService {
   ) {}
 
   async findStatsByLevel(category: string, level: string) {
-    if (category === 'chaos') {
+    if (category === StatsCategory.Chaos) {
       return await this.statsChaosModel.find({ level });
-    } else if (category === 'guardian') {
+    } else if (category === StatsCategory.Guardian) {
       return await this.statsGuardianModel.find({ level });
     }
   }
 
   async findStatsByClass(category: string, className: string) {
-    if (category === 'setting') {
+    if (category === StatsCategory.Setting) {
       return await this.statsSettingModel.find({ className });
-    } else if (category === 'skill') {
+    } else if (category === StatsCategory.Skill) {
       return await this.statsSkillModel.find({ className });
     }
   }
 
   async createStats(category: string, newStatsDto) {
-    if (category === 'chaos') {
+    if (category === StatsCategory.Chaos) {
       return await this.statsChaosModel.create(newStatsDto);
-    } else if (category === 'guardian') {
+    } else if (category === StatsCategory.Guardian) {
       return await this.statsGuardianModel.create(newStatsDto);
-    } else if (category === 'setting') {
+    } else if (category === StatsCategory.Setting) {
       return await this.statsSettingModel.findOneAndUpdate(
         { characterName: newStatsDto.characterName },
         newStatsDto,
         { upsert: true, new: true },
       );
-    } else if (category === 'skill') {
+    } else if (category === StatsCategory.Skill) {
       return await this.statsSkillModel.findOneAndUpdate(
         { characterName: newStatsDto.characterName },
         newStatsDto,

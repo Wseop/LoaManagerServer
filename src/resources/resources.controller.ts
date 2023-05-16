@@ -21,6 +21,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ResourceCategory } from './enums/resource-category.enum';
 
 @ApiTags('resources')
 @Controller('resources')
@@ -32,10 +33,10 @@ export class ResourcesController {
   @ApiOkResponse()
   findResources(@Param('category') category: string) {
     if (
-      category !== 'class' &&
-      category !== 'engrave' &&
-      category !== 'reward' &&
-      category !== 'skill'
+      category !== ResourceCategory.Class &&
+      category !== ResourceCategory.Engrave &&
+      category !== ResourceCategory.Reward &&
+      category !== ResourceCategory.Skill
     ) {
       throw new BadRequestException();
     } else {
@@ -50,9 +51,9 @@ export class ResourcesController {
     @Param('category') category: string,
     @Param('filter') filter: string,
   ) {
-    if (category === 'reward') {
+    if (category === ResourceCategory.Reward) {
       return this.resourcesService.findRewardByContent(filter);
-    } else if (category === 'skill') {
+    } else if (category === ResourceCategory.Skill) {
       return this.resourcesService.findSkillByClass(filter);
     } else {
       throw new BadRequestException();
@@ -65,7 +66,10 @@ export class ResourcesController {
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
   createClass(@Body() createClassDto: CreateClassDto) {
-    return this.resourcesService.createResource('class', createClassDto);
+    return this.resourcesService.createResource(
+      ResourceCategory.Class,
+      createClassDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
@@ -83,7 +87,10 @@ export class ResourcesController {
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
   createEngrave(@Body() createEngraveDto: CreateEngraveDto) {
-    return this.resourcesService.createResource('engrave', createEngraveDto);
+    return this.resourcesService.createResource(
+      ResourceCategory.Engrave,
+      createEngraveDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
@@ -92,7 +99,10 @@ export class ResourcesController {
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
   createReward(@Body() createRewardDto: CreateRewardDto) {
-    return this.resourcesService.createResource('reward', createRewardDto);
+    return this.resourcesService.createResource(
+      ResourceCategory.Reward,
+      createRewardDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
@@ -110,7 +120,10 @@ export class ResourcesController {
   @ApiBadRequestResponse({ description: 'invalid body' })
   @ApiCreatedResponse()
   createSkill(@Body() createSkillDto: CreateSkillDto) {
-    return this.resourcesService.createResource('skill', createSkillDto);
+    return this.resourcesService.createResource(
+      ResourceCategory.Skill,
+      createSkillDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
