@@ -1,4 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class StatsSkillElement {
+  @ApiProperty()
+  skillName: string;
+
+  @ApiProperty()
+  tripodNames: string[];
+
+  @ApiProperty()
+  runeName: string;
+}
 
 @Schema()
 export class StatsSkill {
@@ -12,13 +24,7 @@ export class StatsSkill {
   classEngraves: string[];
 
   @Prop()
-  skills: [
-    {
-      skillName: string;
-      tripodNames: string[];
-      runeName: string;
-    },
-  ];
+  skills: StatsSkillElement[];
 }
 
 export const StatsSkillSchema = SchemaFactory.createForClass(StatsSkill);
