@@ -6,15 +6,24 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { SigninUserDto } from './dto/signinUser.dto';
+import { SigninUserDto } from './dto/signin-user.dto';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/signup')
+  @ApiConflictResponse({ description: 'userId already in use' })
+  @ApiCreatedResponse({ description: 'success signup' })
   async createUser(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.findUser(createUserDto.userId);
 
@@ -26,6 +35,10 @@ export class UserController {
   }
 
   @Post('/signin')
+  @ApiUnprocessableEntityResponse({
+    description: 'non-existent userId or password mismatch',
+  })
+  @ApiCreatedResponse({ description: 'success signin' })
   async signin(@Body() signinUserDto: SigninUserDto) {
     const user = await this.userService.findUser(signinUserDto.userId);
 

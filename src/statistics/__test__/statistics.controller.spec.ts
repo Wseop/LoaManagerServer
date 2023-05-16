@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StatisticsController } from '../statistics.controller';
 import { StatisticsService } from '../statistics.service';
-import { StatsChaos } from '../schemas/statsChaos.schema';
-import { StatsGuardian } from '../schemas/statsGuardian.schema';
-import { StatsSetting } from '../schemas/statsSetting.schema';
-import { StatsSkill } from '../schemas/statsSkill.schema';
+import { StatsChaos } from '../schemas/stats-chaos.schema';
+import { StatsGuardian } from '../schemas/stats-guardian.schema';
+import { StatsSetting } from '../schemas/stats-setting.schema';
+import { StatsSkill } from '../schemas/stats-skill.schema';
 import { BadRequestException } from '@nestjs/common';
 
 const mockStatsChaos: StatsChaos = {

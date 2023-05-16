@@ -10,22 +10,33 @@ import {
 } from '@nestjs/common';
 import { ResourcesService } from './resources.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ClassDto } from './dto/class.dto';
-import { EngraveDto } from './dto/engrave.dto';
-import { RewardDto } from './dto/reward.dto';
-import { SkillDto } from './dto/skill.dto';
+import { CreateClassDto } from './dto/create-class.dto';
+import { CreateEngraveDto } from './dto/create-engrave.dto';
+import { CreateRewardDto } from './dto/create-reward.dto';
+import { CreateSkillDto } from './dto/create-skill.dto';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ResourceCategory } from './enums/resource-category.enum';
 
+@ApiTags('resources')
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Get('/:category')
+  @ApiBadRequestResponse({ description: 'invalid category' })
+  @ApiOkResponse()
   findResources(@Param('category') category: string) {
     if (
-      category !== 'class' &&
-      category !== 'engrave' &&
-      category !== 'reward' &&
-      category !== 'skill'
+      category !== ResourceCategory.Class &&
+      category !== ResourceCategory.Engrave &&
+      category !== ResourceCategory.Reward &&
+      category !== ResourceCategory.Skill
     ) {
       throw new BadRequestException();
     } else {
@@ -34,13 +45,15 @@ export class ResourcesController {
   }
 
   @Get('/:category/:filter')
+  @ApiBadRequestResponse({ description: 'invalid category' })
+  @ApiOkResponse()
   findResourcesByFilter(
     @Param('category') category: string,
     @Param('filter') filter: string,
   ) {
-    if (category === 'reward') {
+    if (category === ResourceCategory.Reward) {
       return this.resourcesService.findRewardByContent(filter);
-    } else if (category === 'skill') {
+    } else if (category === ResourceCategory.Skill) {
       return this.resourcesService.findSkillByClass(filter);
     } else {
       throw new BadRequestException();
@@ -49,43 +62,76 @@ export class ResourcesController {
 
   @UseGuards(AuthGuard('access'))
   @Post('/class')
-  createClass(@Body() classDto: ClassDto) {
-    return this.resourcesService.createResource('class', classDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  createClass(@Body() createClassDto: CreateClassDto) {
+    return this.resourcesService.createResource(
+      ResourceCategory.Class,
+      createClassDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
   @Put('/class')
-  replaceClass(@Body() classDto: ClassDto) {
-    return this.resourcesService.replaceClass(classDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  replaceClass(@Body() createClassDto: CreateClassDto) {
+    return this.resourcesService.replaceClass(createClassDto);
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/engrave')
-  createEngrave(@Body() engraveDto: EngraveDto) {
-    return this.resourcesService.createResource('engrave', engraveDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  createEngrave(@Body() createEngraveDto: CreateEngraveDto) {
+    return this.resourcesService.createResource(
+      ResourceCategory.Engrave,
+      createEngraveDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/reward')
-  createReward(@Body() rewardDto: RewardDto) {
-    return this.resourcesService.createResource('reward', rewardDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  createReward(@Body() createRewardDto: CreateRewardDto) {
+    return this.resourcesService.createResource(
+      ResourceCategory.Reward,
+      createRewardDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
   @Put('/reward')
-  replaceReward(@Body() rewardDto: RewardDto) {
-    return this.resourcesService.replaceReward(rewardDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  replaceReward(@Body() createRewardDto: CreateRewardDto) {
+    return this.resourcesService.replaceReward(createRewardDto);
   }
 
   @UseGuards(AuthGuard('access'))
   @Post('/skill')
-  createSkill(@Body() skillDto: SkillDto) {
-    return this.resourcesService.createResource('skill', skillDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  createSkill(@Body() createSkillDto: CreateSkillDto) {
+    return this.resourcesService.createResource(
+      ResourceCategory.Skill,
+      createSkillDto,
+    );
   }
 
   @UseGuards(AuthGuard('access'))
   @Put('/skill')
-  replaceSkill(@Body() skillDto: SkillDto) {
-    return this.resourcesService.replaceSkill(skillDto);
+  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
+  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiCreatedResponse()
+  replaceSkill(@Body() createSkillDto: CreateSkillDto) {
+    return this.resourcesService.replaceSkill(createSkillDto);
   }
 }

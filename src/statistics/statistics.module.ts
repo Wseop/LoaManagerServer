@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { StatsChaos, StatsChaosSchema } from './schemas/statsChaos.schema';
+import { StatsChaos, StatsChaosSchema } from './schemas/stats-chaos.schema';
 import {
   StatsGuardian,
   StatsGuardianSchema,
-} from './schemas/statsGuardian.schema';
+} from './schemas/stats-guardian.schema';
 import {
   StatsSetting,
   StatsSettingSchema,
-} from './schemas/statsSetting.schema';
-import { StatsSkill, StatsSkillSchema } from './schemas/statsSkill.schema';
+} from './schemas/stats-setting.schema';
+import { StatsSkill, StatsSkillSchema } from './schemas/stats-skill.schema';
 import { StatisticsController } from './statistics.controller';
 import { StatisticsService } from './statistics.service';
 

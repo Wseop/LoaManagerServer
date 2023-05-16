@@ -1,4 +1,59 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+
+export class Tripod {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  tripodName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  tripodCode: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  iconIndex: number;
+}
+
+export class SkillElement {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  skillName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  skillCode: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  iconPath: string;
+
+  @ApiProperty({ default: false })
+  @IsNotEmpty()
+  @IsBoolean()
+  isCounter: boolean;
+
+  @ApiProperty({ type: [Tripod] })
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => Tripod)
+  tripods: Tripod[];
+}
 
 @Schema()
 export class Skill {
@@ -6,21 +61,7 @@ export class Skill {
   className: string;
 
   @Prop()
-  skills: [
-    {
-      skillName: string;
-      skillCode: number;
-      iconPath: string;
-      isCounter: boolean;
-      tripods: [
-        {
-          tripodName: string;
-          tripodCode: number;
-          iconIndex: number;
-        },
-      ];
-    },
-  ];
+  skills: SkillElement[];
 }
 
 export const SkillSchema = SchemaFactory.createForClass(Skill);
