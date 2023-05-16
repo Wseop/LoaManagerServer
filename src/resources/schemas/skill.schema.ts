@@ -1,4 +1,33 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class Tripod {
+  @ApiProperty()
+  tripodName: string;
+
+  @ApiProperty()
+  tripodCode: number;
+
+  @ApiProperty()
+  iconIndex: number;
+}
+
+export class SkillElement {
+  @ApiProperty()
+  skillName: string;
+
+  @ApiProperty()
+  skillCode: number;
+
+  @ApiProperty()
+  iconPath: string;
+
+  @ApiProperty({ default: false })
+  isCounter: boolean;
+
+  @ApiProperty({ type: [Tripod] })
+  tripods: Tripod[];
+}
 
 @Schema()
 export class Skill {
@@ -6,21 +35,7 @@ export class Skill {
   className: string;
 
   @Prop()
-  skills: [
-    {
-      skillName: string;
-      skillCode: number;
-      iconPath: string;
-      isCounter: boolean;
-      tripods: [
-        {
-          tripodName: string;
-          tripodCode: number;
-          iconIndex: number;
-        },
-      ];
-    },
-  ];
+  skills: SkillElement[];
 }
 
 export const SkillSchema = SchemaFactory.createForClass(Skill);
