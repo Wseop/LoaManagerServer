@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-  ArrayNotEmpty,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -49,7 +48,6 @@ export class SkillElement {
   isCounter: boolean;
 
   @ApiProperty({ type: [Tripod] })
-  @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => Tripod)
   tripods: Tripod[];
