@@ -9,12 +9,10 @@ export class StatsSkillElement {
   skillName: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString({ each: true })
   tripodNames: string[];
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   runeName: string;
 }
