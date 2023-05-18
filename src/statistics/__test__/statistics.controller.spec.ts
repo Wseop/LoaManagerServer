@@ -48,20 +48,6 @@ const mockStatsSkill: StatsSkill = {
 };
 
 class MockStatisticsService {
-  findStatsByLevel = jest.fn((category, filter) => {
-    if (category === 'chaos') {
-      return mockStatsChaos;
-    } else if (category === 'guardian') {
-      return mockStatsGuardian;
-    }
-  });
-  findStatsByClass = jest.fn((category, filter) => {
-    if (category === 'setting') {
-      return mockStatsSetting;
-    } else if (category === 'skill') {
-      return mockStatsSkill;
-    }
-  });
   createStats = jest.fn((category, dto) => dto);
 }
 
@@ -85,57 +71,8 @@ describe('StatisticsController', () => {
     statisticsService = module.get<StatisticsService>(StatisticsService);
   });
 
-  describe('findStats()', () => {
-    it('should return a mockChaos', () => {
-      const result = statisticsController.findStats('chaos', 'filter');
-
-      expect(result).toStrictEqual(mockStatsChaos);
-      expect(jest.spyOn(statisticsService, 'findStatsByLevel')).toBeCalledTimes(
-        1,
-      );
-    });
-    it('should return a mockGuardian', () => {
-      const result = statisticsController.findStats('guardian', 'filter');
-
-      expect(result).toStrictEqual(mockStatsGuardian);
-      expect(jest.spyOn(statisticsService, 'findStatsByLevel')).toBeCalledTimes(
-        1,
-      );
-    });
-    it('should return a mockSetting', () => {
-      const result = statisticsController.findStats('setting', 'filter');
-
-      expect(result).toStrictEqual(mockStatsSetting);
-      expect(jest.spyOn(statisticsService, 'findStatsByClass')).toBeCalledTimes(
-        1,
-      );
-    });
-    it('should return a mockSkill', () => {
-      const result = statisticsController.findStats('skill', 'filter');
-
-      expect(result).toStrictEqual(mockStatsSkill);
-      expect(jest.spyOn(statisticsService, 'findStatsByClass')).toBeCalledTimes(
-        1,
-      );
-    });
-    it('should throw BadRequestException', () => {
-      try {
-        statisticsController.findStats('invalid category', 'filter');
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-      } finally {
-        expect(
-          jest.spyOn(statisticsService, 'findStatsByLevel'),
-        ).toBeCalledTimes(0);
-        expect(
-          jest.spyOn(statisticsService, 'findStatsByClass'),
-        ).toBeCalledTimes(0);
-      }
-    });
-  });
-
-  describe('createChaosStats()', () => {
-    it('should return a mockChaos', () => {
+  describe('POST', () => {
+    it('should return chaos', () => {
       const result = statisticsController.createChaosStats(mockStatsChaos);
 
       expect(result).toStrictEqual(mockStatsChaos);
@@ -144,7 +81,7 @@ describe('StatisticsController', () => {
   });
 
   describe('createGuardianStats()', () => {
-    it('should return a mockGuardian', () => {
+    it('should return guardian', () => {
       const result =
         statisticsController.createGuardianStats(mockStatsGuardian);
 
@@ -154,7 +91,7 @@ describe('StatisticsController', () => {
   });
 
   describe('createSettingStats()', () => {
-    it('should return a mockSetting', () => {
+    it('should return setting', () => {
       const result = statisticsController.createSettingStats(mockStatsSetting);
 
       expect(result).toStrictEqual(mockStatsSetting);
@@ -163,7 +100,7 @@ describe('StatisticsController', () => {
   });
 
   describe('createSkillStats()', () => {
-    it('should return a mockSkill', () => {
+    it('should return skill', () => {
       const result = statisticsController.createSkillStats(mockStatsSkill);
 
       expect(result).toStrictEqual(mockStatsSkill);
