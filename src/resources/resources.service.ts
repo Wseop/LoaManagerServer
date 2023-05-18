@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Class } from './schemas/class.schema';
@@ -20,15 +20,18 @@ export class ResourcesService {
     @InjectModel(Skill.name) private readonly skillModel: Model<Skill>,
   ) {}
 
-  async findResources(category: string) {
-    if (category === ResourceCategory.Class) {
-      return await this.classModel.find();
-    } else if (category === ResourceCategory.Engrave) {
-      return await this.engraveModel.find();
-    } else if (category === ResourceCategory.Reward) {
-      return await this.rewardModel.find();
-    } else if (category === ResourceCategory.Skill) {
-      return await this.skillModel.find();
+  async findResources(category: ResourceCategory) {
+    switch (category) {
+      case ResourceCategory.Class:
+        return await this.classModel.find();
+      case ResourceCategory.Engrave:
+        return await this.engraveModel.find();
+      case ResourceCategory.Reward:
+        return await this.rewardModel.find();
+      case ResourceCategory.Skill:
+        return await this.skillModel.find();
+      default:
+        return null;
     }
   }
 
@@ -40,58 +43,86 @@ export class ResourcesService {
     return await this.skillModel.findOne({ className });
   }
 
-  async createResource(category: string, createResourceDto) {
+  async createResource(
+    category: ResourceCategory,
+    createResourceDto:
+      | CreateClassDto
+      | CreateEngraveDto
+      | CreateRewardDto
+      | CreateSkillDto,
+  ) {
+    switch (category) {
+      case ResourceCategory.Class:
+        return await this.classModel.create(createResourceDto);
+      case ResourceCategory.Engrave:
+        return await this.engraveModel.create(createResourceDto);
+      case ResourceCategory.Reward:
+        return await this.rewardModel.create(createResourceDto);
+      case ResourceCategory.Skill:
+        return await this.skillModel.create(createResourceDto);
+      default:
+        return null;
+    }
+  }
+
+  async replaceResource(
+    category: ResourceCategory,
+    replaceResourceDto:
+      | CreateClassDto
+      | CreateEngraveDto
+      | CreateRewardDto
+      | CreateSkillDto,
+  ) {
+    let replaceResult;
+
+    // replace
     if (category === ResourceCategory.Class) {
-      return await this.classModel.create(createResourceDto);
+      replaceResult = await this.classModel.replaceOne(
+        { parent: (replaceResourceDto as CreateClassDto).parent },
+        replaceResourceDto,
+      );
     } else if (category === ResourceCategory.Engrave) {
-      return await this.engraveModel.create(createResourceDto);
+      replaceResult = await this.engraveModel.replaceOne(
+        { engraveName: (replaceResourceDto as CreateEngraveDto).engraveName },
+        replaceResourceDto,
+      );
     } else if (category === ResourceCategory.Reward) {
-      return await this.rewardModel.create(createResourceDto);
+      replaceResult = await this.rewardModel.replaceOne(
+        { content: (replaceResourceDto as CreateRewardDto).content },
+        replaceResourceDto,
+      );
     } else if (category === ResourceCategory.Skill) {
-      return await this.skillModel.create(createResourceDto);
-    }
-  }
-
-  async replaceClass(createClassDto: CreateClassDto) {
-    const result = await this.classModel.replaceOne(
-      { parent: createClassDto.parent },
-      createClassDto,
-    );
-
-    if (result.matchedCount !== 0) {
-      return await this.classModel.findOne({ parent: createClassDto.parent });
+      replaceResult = await this.skillModel.replaceOne(
+        { className: (replaceResourceDto as CreateSkillDto).className },
+        replaceResourceDto,
+      );
     } else {
-      throw new BadRequestException();
+      return null;
     }
-  }
 
-  async replaceReward(createRewardDto: CreateRewardDto) {
-    const result = await this.rewardModel.replaceOne(
-      { content: createRewardDto.content },
-      createRewardDto,
-    );
-
-    if (result.matchedCount !== 0) {
-      return await this.rewardModel.findOne({
-        content: createRewardDto.content,
-      });
+    // replace 결과 체크 및 결과 반환
+    if (replaceResult.matchedCount === 0) {
+      return null;
     } else {
-      throw new BadRequestException();
-    }
-  }
-
-  async replaceSkill(createSkillDto: CreateSkillDto) {
-    const result = await this.skillModel.replaceOne(
-      { className: createSkillDto.className },
-      createSkillDto,
-    );
-
-    if (result.matchedCount !== 0) {
-      return await this.skillModel.findOne({
-        className: createSkillDto.className,
-      });
-    } else {
-      throw new BadRequestException();
+      if (category === ResourceCategory.Class) {
+        return await this.classModel.findOne({
+          parent: (replaceResourceDto as CreateClassDto).parent,
+        });
+      } else if (category === ResourceCategory.Engrave) {
+        return await this.engraveModel.findOne({
+          engraveName: (replaceResourceDto as CreateEngraveDto).engraveName,
+        });
+      } else if (category === ResourceCategory.Reward) {
+        return await this.rewardModel.findOne({
+          content: (replaceResourceDto as CreateRewardDto).content,
+        });
+      } else if (category === ResourceCategory.Skill) {
+        return await this.skillModel.findOne({
+          className: (replaceResourceDto as CreateSkillDto).className,
+        });
+      } else {
+        return null;
+      }
     }
   }
 }

@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateStatsChaosDto } from './dto/create-stats-chaos.dto';
@@ -16,7 +8,6 @@ import { CreateStatsSkillDto } from './dto/create-stats-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
-  ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -26,28 +17,6 @@ import { StatsCategory } from './enums/statistics-category.enum';
 @Controller('stats')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
-
-  @Get('/:category/:filter')
-  @ApiBadRequestResponse({ description: 'invalid category' })
-  @ApiOkResponse()
-  findStats(
-    @Param('category') category: string,
-    @Param('filter') filter: string,
-  ) {
-    if (
-      category === StatsCategory.Chaos ||
-      category === StatsCategory.Guardian
-    ) {
-      return this.statisticsService.findStatsByLevel(category, filter);
-    } else if (
-      category === StatsCategory.Setting ||
-      category === StatsCategory.Skill
-    ) {
-      return this.statisticsService.findStatsByClass(category, filter);
-    } else {
-      throw new BadRequestException();
-    }
-  }
 
   @UseGuards(AuthGuard('access'))
   @Post('/chaos')
