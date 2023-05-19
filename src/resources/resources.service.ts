@@ -1,46 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Class } from './schemas/class.schema';
-import { Engrave } from './schemas/engrave.schema';
-import { Reward } from './schemas/reward.schema';
-import { Skill } from './schemas/skill.schema';
-import { CreateClassDto } from './dto/create-class.dto';
-import { CreateEngraveDto } from './dto/create-engrave.dto';
-import { CreateRewardDto } from './dto/create-reward.dto';
-import { CreateSkillDto } from './dto/create-skill.dto';
+import { ClassService } from './class/class.service';
+import { EngraveService } from './engrave/engrave.service';
+import { RewardService } from './reward/reward.service';
+import { SkillService } from './skill/skill.service';
 import { ResourceCategory } from './enums/resource-category.enum';
+import { CreateClassDto } from './class/dto/create-class.dto';
+import { CreateEngraveDto } from './engrave/dto/create-engrave.dto';
+import { CreateRewardDto } from './reward/dto/create-reward.dto';
+import { CreateSkillDto } from './skill/dto/create-skill.dto';
 
 @Injectable()
 export class ResourcesService {
   constructor(
-    @InjectModel(Class.name) private readonly classModel: Model<Class>,
-    @InjectModel(Engrave.name) private readonly engraveModel: Model<Engrave>,
-    @InjectModel(Reward.name) private readonly rewardModel: Model<Reward>,
-    @InjectModel(Skill.name) private readonly skillModel: Model<Skill>,
+    private readonly classService: ClassService,
+    private readonly engraveService: EngraveService,
+    private readonly rewardService: RewardService,
+    private readonly skillService: SkillService,
   ) {}
 
   async findResources(category: ResourceCategory) {
     switch (category) {
       case ResourceCategory.Class:
-        return await this.classModel.find();
+        return await this.classService.findClasses();
       case ResourceCategory.Engrave:
-        return await this.engraveModel.find();
+        return await this.engraveService.findEngraves();
       case ResourceCategory.Reward:
-        return await this.rewardModel.find();
+        return await this.rewardService.findRewards();
       case ResourceCategory.Skill:
-        return await this.skillModel.find();
+        return await this.skillService.findSkills();
       default:
         return null;
     }
   }
 
   async findRewardByContent(content: string) {
-    return await this.rewardModel.findOne({ content });
+    return await this.rewardService.findRewardByContent(content);
   }
 
-  async findSkillByClass(className: string) {
-    return await this.skillModel.findOne({ className });
+  async findSkillByClassName(className: string) {
+    return await this.skillService.findSkillByClassName(className);
   }
 
   async createResource(
@@ -53,13 +51,21 @@ export class ResourcesService {
   ) {
     switch (category) {
       case ResourceCategory.Class:
-        return await this.classModel.create(createResourceDto);
+        return await this.classService.createClass(
+          createResourceDto as CreateClassDto,
+        );
       case ResourceCategory.Engrave:
-        return await this.engraveModel.create(createResourceDto);
+        return await this.engraveService.createEngrave(
+          createResourceDto as CreateEngraveDto,
+        );
       case ResourceCategory.Reward:
-        return await this.rewardModel.create(createResourceDto);
+        return await this.rewardService.createReward(
+          createResourceDto as CreateRewardDto,
+        );
       case ResourceCategory.Skill:
-        return await this.skillModel.create(createResourceDto);
+        return await this.skillService.createSkill(
+          createResourceDto as CreateSkillDto,
+        );
       default:
         return null;
     }
@@ -73,56 +79,25 @@ export class ResourcesService {
       | CreateRewardDto
       | CreateSkillDto,
   ) {
-    let replaceResult;
-
-    // replace
-    if (category === ResourceCategory.Class) {
-      replaceResult = await this.classModel.replaceOne(
-        { parent: (replaceResourceDto as CreateClassDto).parent },
-        replaceResourceDto,
-      );
-    } else if (category === ResourceCategory.Engrave) {
-      replaceResult = await this.engraveModel.replaceOne(
-        { engraveName: (replaceResourceDto as CreateEngraveDto).engraveName },
-        replaceResourceDto,
-      );
-    } else if (category === ResourceCategory.Reward) {
-      replaceResult = await this.rewardModel.replaceOne(
-        { content: (replaceResourceDto as CreateRewardDto).content },
-        replaceResourceDto,
-      );
-    } else if (category === ResourceCategory.Skill) {
-      replaceResult = await this.skillModel.replaceOne(
-        { className: (replaceResourceDto as CreateSkillDto).className },
-        replaceResourceDto,
-      );
-    } else {
-      return null;
-    }
-
-    // replace 결과 체크 및 결과 반환
-    if (replaceResult.matchedCount === 0) {
-      return null;
-    } else {
-      if (category === ResourceCategory.Class) {
-        return await this.classModel.findOne({
-          parent: (replaceResourceDto as CreateClassDto).parent,
-        });
-      } else if (category === ResourceCategory.Engrave) {
-        return await this.engraveModel.findOne({
-          engraveName: (replaceResourceDto as CreateEngraveDto).engraveName,
-        });
-      } else if (category === ResourceCategory.Reward) {
-        return await this.rewardModel.findOne({
-          content: (replaceResourceDto as CreateRewardDto).content,
-        });
-      } else if (category === ResourceCategory.Skill) {
-        return await this.skillModel.findOne({
-          className: (replaceResourceDto as CreateSkillDto).className,
-        });
-      } else {
+    switch (category) {
+      case ResourceCategory.Class:
+        return await this.classService.replaceClass(
+          replaceResourceDto as CreateClassDto,
+        );
+      case ResourceCategory.Engrave:
+        return await this.engraveService.replaceEngrave(
+          replaceResourceDto as CreateEngraveDto,
+        );
+      case ResourceCategory.Reward:
+        return await this.rewardService.replaceReward(
+          replaceResourceDto as CreateRewardDto,
+        );
+      case ResourceCategory.Skill:
+        return await this.skillService.replaceSkill(
+          replaceResourceDto as CreateSkillDto,
+        );
+      default:
         return null;
-      }
     }
   }
 }

@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { ResourcesService } from './resources.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateClassDto } from './dto/create-class.dto';
-import { CreateEngraveDto } from './dto/create-engrave.dto';
-import { CreateRewardDto } from './dto/create-reward.dto';
-import { CreateSkillDto } from './dto/create-skill.dto';
+import { CreateClassDto } from './class/dto/create-class.dto';
+import { CreateEngraveDto } from './engrave/dto/create-engrave.dto';
+import { CreateRewardDto } from './reward/dto/create-reward.dto';
+import { CreateSkillDto } from './skill/dto/create-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -60,7 +60,7 @@ export class ResourcesController {
   @Get('/skill/:className')
   @ApiOkResponse()
   findSkillByClassName(@Param('className') className: string) {
-    return this.resourcesService.findSkillByClass(className);
+    return this.resourcesService.findSkillByClassName(className);
   }
 
   @UseGuards(AuthGuard('access'))
