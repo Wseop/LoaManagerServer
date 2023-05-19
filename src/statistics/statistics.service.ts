@@ -1,67 +1,68 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { StatsChaos } from './schemas/stats-chaos.schema';
-import { StatsGuardian } from './schemas/stats-guardian.schema';
-import { StatsSetting } from './schemas/stats-setting.schema';
-import { StatsSkill } from './schemas/stats-skill.schema';
 import { StatsCategory } from './enums/statistics-category.enum';
-import { CreateStatsChaosDto } from './dto/create-stats-chaos.dto';
-import { CreateStatsGuardianDto } from './dto/create-stats-guardian.dto';
-import { CreateStatsSettingDto } from './dto/create-stats-setting.dto';
-import { CreateStatsSkillDto } from './dto/create-stats-skill.dto';
-import { TotalStatsChaos } from './interfaces/total-stats-chaos.interface';
-import { TotalStatsGuardian } from './interfaces/total-stats-guardian.interface';
+import { CreateStatsChaosDto } from './chaos/dto/create-stats-chaos.dto';
+import { CreateStatsGuardianDto } from './guardian/dto/create-stats-guardian.dto';
+import { CreateStatsSettingDto } from './setting/dto/create-stats-setting.dto';
+import { CreateStatsSkillDto } from './skill/dto/create-stats-skill.dto';
+import { TotalStatsChaos } from './chaos/interfaces/total-stats-chaos.interface';
+import { TotalStatsGuardian } from './guardian/interfaces/total-stats-guardian.interface';
+import { StatsChaosService } from './chaos/stats-chaos.service';
+import { StatsGuardianService } from './guardian/stats-guardian.service';
+import { StatsSettingService } from './setting/stats-setting.service';
+import { StatsSkillService } from './skill/stats-skill.service';
 
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectModel(StatsChaos.name)
-    private readonly statsChaosModel: Model<StatsChaos>,
-    @InjectModel(StatsGuardian.name)
-    private readonly statsGuardianModel: Model<StatsGuardian>,
-    @InjectModel(StatsSetting.name)
-    private readonly statsSettingModel: Model<StatsSetting>,
-    @InjectModel(StatsSkill.name)
-    private readonly statsSkillModel: Model<StatsSkill>,
+    private readonly statsChaosService: StatsChaosService,
+    private readonly statsGuardianService: StatsGuardianService,
+    private readonly statsSettingService: StatsSettingService,
+    private readonly statsSkillService: StatsSkillService,
   ) {}
 
-  async findTotalStatsByLevel(category: StatsCategory, level: string) {
+  async getTotalStats(category: StatsCategory, level: string) {
     let totalStats: TotalStatsChaos | TotalStatsGuardian;
+    let statsDatas;
 
-    // TotalStats 초기화
+    // totalStats 초기화 및 stats 데이터 로드
     if (category === StatsCategory.Chaos) {
       totalStats = {
         count: 0,
         level: level,
-        items: [
-          'silling',
-          'shard',
-          'destruction',
-          'protection',
-          'leapStone',
-          'gem',
-        ],
-        itemCounts: Array.from({ length: 6 }, () => 0),
+        itemCounts: {
+          silling: 0,
+          shard: 0,
+          destruction: 0,
+          protection: 0,
+          leapStone: 0,
+          gem: 0,
+        },
       };
+      statsDatas = await this.statsChaosService.findStatsChaosByLevel(level);
     } else if (category === StatsCategory.Guardian) {
       totalStats = {
         count: 0,
         level: level,
-        items: ['destruction', 'protection', 'leapStone'],
-        itemCounts: Array.from({ length: 3 }, () => 0),
+        itemCounts: {
+          destruction: 0,
+          protection: 0,
+          leapStone: 0,
+        },
       };
+      statsDatas = await this.statsGuardianService.findStatsGuardianByLevel(
+        level,
+      );
     } else {
       return null;
     }
 
-    // Stats 데이터 합산
-    const statsDatas = await this.findStatsByLevel(category, level);
+    const items = Object.keys(totalStats.itemCounts);
 
+    // stats 데이터 합산
     if (statsDatas.length > 0) {
       for (const statsData of statsDatas) {
-        for (let i = 0; i < totalStats.items.length; i++) {
-          totalStats.itemCounts[i] += statsData[totalStats.items[i]];
+        for (const item of items) {
+          totalStats.itemCounts[item] += statsData[item];
         }
       }
 
@@ -71,46 +72,9 @@ export class StatisticsService {
     return totalStats;
   }
 
-  async findStats(category: StatsCategory) {
-    switch (category) {
-      case StatsCategory.Chaos:
-        return await this.statsChaosModel.find();
-      case StatsCategory.Guardian:
-        return await this.statsGuardianModel.find();
-      case StatsCategory.Setting:
-        return await this.statsSettingModel.find();
-      case StatsCategory.Skill:
-        return await this.statsSkillModel.find();
-      default:
-        return null;
-    }
-  }
-
-  async findStatsByLevel(category: StatsCategory, level: string) {
-    switch (category) {
-      case StatsCategory.Chaos:
-        return await this.statsChaosModel.find({ level });
-      case StatsCategory.Guardian:
-        return await this.statsGuardianModel.find({ level });
-      default:
-        return null;
-    }
-  }
-
-  async findStatsByClass(category: StatsCategory, className: string) {
-    switch (category) {
-      case StatsCategory.Setting:
-        return await this.statsSettingModel.find({ className });
-      case StatsCategory.Skill:
-        return await this.statsSkillModel.find({ className });
-      default:
-        return null;
-    }
-  }
-
   async createStats(
     category: StatsCategory,
-    newStatsDto:
+    createStatsDto:
       | CreateStatsChaosDto
       | CreateStatsGuardianDto
       | CreateStatsSettingDto
@@ -118,22 +82,20 @@ export class StatisticsService {
   ) {
     switch (category) {
       case StatsCategory.Chaos:
-        return await this.statsChaosModel.create(newStatsDto);
+        return await this.statsChaosService.createStatsChaos(
+          createStatsDto as CreateStatsChaosDto,
+        );
       case StatsCategory.Guardian:
-        return await this.statsGuardianModel.create(newStatsDto);
+        return await this.statsGuardianService.createStatsGuardian(
+          createStatsDto as CreateStatsGuardianDto,
+        );
       case StatsCategory.Setting:
-        return await this.statsSettingModel.findOneAndUpdate(
-          {
-            characterName: (newStatsDto as CreateStatsSettingDto).characterName,
-          },
-          newStatsDto,
-          { upsert: true, new: true },
+        return await this.statsSettingService.createStatsSetting(
+          createStatsDto as CreateStatsSettingDto,
         );
       case StatsCategory.Skill:
-        return await this.statsSkillModel.findOneAndUpdate(
-          { characterName: (newStatsDto as CreateStatsSkillDto).characterName },
-          newStatsDto,
-          { upsert: true, new: true },
+        return await this.statsSkillService.createStatsSkill(
+          createStatsDto as CreateStatsSkillDto,
         );
       default:
         return null;
