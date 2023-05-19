@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateStatsChaosDto } from './dto/create-stats-chaos.dto';
@@ -13,10 +13,32 @@ import {
 } from '@nestjs/swagger';
 import { StatsCategory } from './enums/statistics-category.enum';
 
-@ApiTags('stats')
+@ApiTags('statistics')
 @Controller('stats')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
+
+  @Get('/chaos/:level')
+  getTotalStatsChaosByLevel(@Param('level') level: string) {
+    return this.statisticsService.findTotalStatsByLevel(
+      StatsCategory.Chaos,
+      level,
+    );
+  }
+
+  @Get('/guardian/:level')
+  getTotalStatsGuardianByLevel(@Param('level') level: string) {
+    return this.statisticsService.findTotalStatsByLevel(
+      StatsCategory.Guardian,
+      level,
+    );
+  }
+
+  @Get('/setting/:className')
+  getTotalStatsSettingByClassName(@Param('className') className: string) {}
+
+  @Get('/skill/:className')
+  getTotalStatsSkillByClassName(@Param('className') className: string) {}
 
   @UseGuards(AuthGuard('access'))
   @Post('/chaos')
