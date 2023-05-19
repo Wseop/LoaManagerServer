@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateStatsChaosDto } from './dto/create-stats-chaos.dto';
-import { CreateStatsGuardianDto } from './dto/create-stats-guardian.dto';
-import { CreateStatsSettingDto } from './dto/create-stats-setting.dto';
-import { CreateStatsSkillDto } from './dto/create-stats-skill.dto';
+import { CreateStatsChaosDto } from './chaos/dto/create-stats-chaos.dto';
+import { CreateStatsGuardianDto } from './guardian/dto/create-stats-guardian.dto';
+import { CreateStatsSettingDto } from './setting/dto/create-stats-setting.dto';
+import { CreateStatsSkillDto } from './skill/dto/create-stats-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -19,19 +19,13 @@ export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
   @Get('/chaos/:level')
-  getTotalStatsChaosByLevel(@Param('level') level: string) {
-    return this.statisticsService.findTotalStatsByLevel(
-      StatsCategory.Chaos,
-      level,
-    );
+  getTotalStatsChaos(@Param('level') level: string) {
+    return this.statisticsService.getTotalStats(StatsCategory.Chaos, level);
   }
 
   @Get('/guardian/:level')
-  getTotalStatsGuardianByLevel(@Param('level') level: string) {
-    return this.statisticsService.findTotalStatsByLevel(
-      StatsCategory.Guardian,
-      level,
-    );
+  getTotalStatsGuardian(@Param('level') level: string) {
+    return this.statisticsService.getTotalStats(StatsCategory.Guardian, level);
   }
 
   @Get('/setting/:className')

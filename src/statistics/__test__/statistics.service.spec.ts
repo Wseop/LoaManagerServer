@@ -1,12 +1,14 @@
-import { Model } from 'mongoose';
-import { StatsChaos } from '../schemas/stats-chaos.schema';
-import { StatsGuardian } from '../schemas/stats-guardian.schema';
-import { StatsSetting } from '../schemas/stats-setting.schema';
-import { StatsSkill } from '../schemas/stats-skill.schema';
+import { StatsChaos } from '../chaos/schemas/stats-chaos.schema';
+import { StatsGuardian } from '../guardian/schemas/stats-guardian.schema';
+import { StatsSetting } from '../setting/schemas/stats-setting.schema';
+import { StatsSkill } from '../skill/schemas/stats-skill.schema';
 import { StatisticsService } from '../statistics.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
 import { StatsCategory } from '../enums/statistics-category.enum';
+import { StatsChaosService } from '../chaos/stats-chaos.service';
+import { StatsGuardianService } from '../guardian/stats-guardian.service';
+import { StatsSettingService } from '../setting/stats-setting.service';
+import { StatsSkillService } from '../skill/stats-skill.service';
 
 const mockStatsChaos: StatsChaos = {
   level: 'level',
@@ -26,14 +28,18 @@ const mockStatsGuardian: StatsGuardian = {
   leapStone: 0,
 };
 const mockStatsSetting: StatsSetting = {
-  characterName: 'characterName',
-  className: 'className',
+  characterName: 'string',
+  className: 'string',
   itemLevel: 0,
-  ability: 'ability',
-  elixir: 'elixir',
-  engrave: 'engrave',
-  engraveLevel: 'engraveLevel',
-  itemSet: 'itemSet',
+  ability: 'string',
+  elixir: 'string',
+  engraves: [
+    {
+      code: 0,
+      level: 0,
+    },
+  ],
+  itemSet: 'string',
 };
 const mockStatsSkill: StatsSkill = {
   characterName: 'characterName',
@@ -48,167 +54,106 @@ const mockStatsSkill: StatsSkill = {
   ],
 };
 
-class MockStatsChaosModel {
-  find = jest.fn().mockReturnValue(mockStatsChaos);
-  create = jest.fn().mockReturnValue(mockStatsChaos);
+class MockStatsChaosService {
+  findStatsChaosByLevel = jest.fn().mockResolvedValue([mockStatsChaos]);
+  createStatsChaos = jest.fn().mockResolvedValue(mockStatsChaos);
 }
-
-class MockStatsGuardianModel {
-  find = jest.fn().mockReturnValue(mockStatsGuardian);
-  create = jest.fn().mockReturnValue(mockStatsGuardian);
+class MockStatsGuardianService {
+  findStatsGuardianByLevel = jest.fn().mockResolvedValue([mockStatsGuardian]);
+  createStatsGuardian = jest.fn().mockResolvedValue(mockStatsGuardian);
 }
-
-class MockStatsSettingModel {
-  find = jest.fn().mockReturnValue(mockStatsSetting);
-  findOneAndUpdate = jest.fn().mockReturnValue(mockStatsSetting);
+class MockStatsSettingService {
+  createStatsSetting = jest.fn().mockResolvedValue(mockStatsSetting);
 }
-
-class MockStatsSkillModel {
-  find = jest.fn().mockReturnValue(mockStatsSkill);
-  findOneAndUpdate = jest.fn().mockReturnValue(mockStatsSkill);
+class MockStatsSkillService {
+  createStatsSkill = jest.fn().mockResolvedValue(mockStatsSkill);
 }
 
 describe('StatisticsService', () => {
   let statisticsService: StatisticsService;
-  let statsChaosModel: Model<StatsChaos>;
-  let statsGuardianModel: Model<StatsGuardian>;
-  let statsSettingModel: Model<StatsSetting>;
-  let statsSkillModel: Model<StatsSkill>;
+  let statsChaosService: StatsChaosService;
+  let statsGuardianService: StatsGuardianService;
+  let statsSettingService: StatsSettingService;
+  let statsSkillService: StatsSkillService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StatisticsService,
         {
-          provide: getModelToken(StatsChaos.name),
-          useClass: MockStatsChaosModel,
+          provide: StatsChaosService,
+          useClass: MockStatsChaosService,
         },
         {
-          provide: getModelToken(StatsGuardian.name),
-          useClass: MockStatsGuardianModel,
+          provide: StatsGuardianService,
+          useClass: MockStatsGuardianService,
         },
         {
-          provide: getModelToken(StatsSetting.name),
-          useClass: MockStatsSettingModel,
+          provide: StatsSettingService,
+          useClass: MockStatsSettingService,
         },
         {
-          provide: getModelToken(StatsSkill.name),
-          useClass: MockStatsSkillModel,
+          provide: StatsSkillService,
+          useClass: MockStatsSkillService,
         },
       ],
     }).compile();
 
     statisticsService = module.get<StatisticsService>(StatisticsService);
-    statsChaosModel = module.get<Model<StatsChaos>>(
-      getModelToken(StatsChaos.name),
-    );
-    statsGuardianModel = module.get<Model<StatsGuardian>>(
-      getModelToken(StatsGuardian.name),
-    );
-    statsSettingModel = module.get<Model<StatsSetting>>(
-      getModelToken(StatsSetting.name),
-    );
-    statsSkillModel = module.get<Model<StatsSkill>>(
-      getModelToken(StatsSkill.name),
-    );
+    statsChaosService = module.get<StatsChaosService>(StatsChaosService);
+    statsGuardianService =
+      module.get<StatsGuardianService>(StatsGuardianService);
+    statsSettingService = module.get<StatsSettingService>(StatsSettingService);
+    statsSkillService = module.get<StatsSkillService>(StatsSkillService);
   });
 
-  describe('findStats', () => {
-    it('should return chaos', async () => {
-      const result = await statisticsService.findStats(StatsCategory.Chaos);
-
-      expect(result).toStrictEqual(mockStatsChaos);
-      expect(jest.spyOn(statsChaosModel, 'find')).toBeCalledTimes(1);
-    });
-
-    it('should return guardian', async () => {
-      const result = await statisticsService.findStats(StatsCategory.Guardian);
-
-      expect(result).toStrictEqual(mockStatsGuardian);
-      expect(jest.spyOn(statsGuardianModel, 'find')).toBeCalledTimes(1);
-    });
-
-    it('should return setting', async () => {
-      const result = await statisticsService.findStats(StatsCategory.Setting);
-
-      expect(result).toStrictEqual(mockStatsSetting);
-      expect(jest.spyOn(statsSettingModel, 'find')).toBeCalledTimes(1);
-    });
-
-    it('should return skill', async () => {
-      const result = await statisticsService.findStats(StatsCategory.Skill);
-
-      expect(result).toStrictEqual(mockStatsSkill);
-      expect(jest.spyOn(statsSkillModel, 'find')).toBeCalledTimes(1);
-    });
-
-    it('should return null', async () => {
-      const result = await statisticsService.findStats(
-        'invalid category' as StatsCategory,
-      );
-
-      expect(result).toStrictEqual(null);
-    });
-  });
-
-  describe('findStatsByLevel', () => {
-    it('should return chaos', async () => {
-      const result = await statisticsService.findStatsByLevel(
+  describe('getTotalStats', () => {
+    it('should return total-chaos', async () => {
+      const result = await statisticsService.getTotalStats(
         StatsCategory.Chaos,
-        '',
+        'level',
       );
-
-      expect(result).toStrictEqual(mockStatsChaos);
-      expect(jest.spyOn(statsChaosModel, 'find')).toBeCalledTimes(1);
+      expect(result).toStrictEqual({
+        count: 1,
+        level: 'level',
+        itemCounts: {
+          silling: 0,
+          shard: 0,
+          destruction: 0,
+          protection: 0,
+          leapStone: 0,
+          gem: 0,
+        },
+      });
+      expect(
+        jest.spyOn(statsChaosService, 'findStatsChaosByLevel'),
+      ).toBeCalledTimes(1);
     });
 
-    it('should return guardian', async () => {
-      const result = await statisticsService.findStatsByLevel(
+    it('should return total-guardian', async () => {
+      const result = await statisticsService.getTotalStats(
         StatsCategory.Guardian,
-        '',
+        'level',
       );
-
-      expect(result).toStrictEqual(mockStatsGuardian);
-      expect(jest.spyOn(statsGuardianModel, 'find')).toBeCalledTimes(1);
+      expect(result).toStrictEqual({
+        count: 1,
+        level: 'level',
+        itemCounts: {
+          destruction: 0,
+          protection: 0,
+          leapStone: 0,
+        },
+      });
+      expect(
+        jest.spyOn(statsGuardianService, 'findStatsGuardianByLevel'),
+      ).toBeCalledTimes(1);
     });
 
     it('should return null', async () => {
-      const result = await statisticsService.findStatsByLevel(
-        StatsCategory.Setting,
-        '',
+      const result = await statisticsService.getTotalStats(
+        'invalid category' as StatsCategory,
+        'level',
       );
-
-      expect(result).toBe(null);
-    });
-  });
-
-  describe('findStatsByClass', () => {
-    it('should return setting', async () => {
-      const result = await statisticsService.findStatsByClass(
-        StatsCategory.Setting,
-        '',
-      );
-
-      expect(result).toStrictEqual(mockStatsSetting);
-      expect(jest.spyOn(statsSettingModel, 'find')).toBeCalledTimes(1);
-    });
-
-    it('should return skill', async () => {
-      const result = await statisticsService.findStatsByClass(
-        StatsCategory.Skill,
-        '',
-      );
-
-      expect(result).toStrictEqual(mockStatsSkill);
-      expect(jest.spyOn(statsSkillModel, 'find')).toBeCalledTimes(1);
-    });
-
-    it('should return null', async () => {
-      const result = await statisticsService.findStatsByClass(
-        StatsCategory.Chaos,
-        '',
-      );
-
       expect(result).toBe(null);
     });
   });
@@ -219,9 +164,10 @@ describe('StatisticsService', () => {
         StatsCategory.Chaos,
         mockStatsChaos,
       );
-
       expect(result).toStrictEqual(mockStatsChaos);
-      expect(jest.spyOn(statsChaosModel, 'create')).toBeCalledTimes(1);
+      expect(jest.spyOn(statsChaosService, 'createStatsChaos')).toBeCalledTimes(
+        1,
+      );
     });
 
     it('should return guardian', async () => {
@@ -229,9 +175,10 @@ describe('StatisticsService', () => {
         StatsCategory.Guardian,
         mockStatsGuardian,
       );
-
       expect(result).toStrictEqual(mockStatsGuardian);
-      expect(jest.spyOn(statsGuardianModel, 'create')).toBeCalledTimes(1);
+      expect(
+        jest.spyOn(statsGuardianService, 'createStatsGuardian'),
+      ).toBeCalledTimes(1);
     });
 
     it('should return setting', async () => {
@@ -239,11 +186,10 @@ describe('StatisticsService', () => {
         StatsCategory.Setting,
         mockStatsSetting,
       );
-
       expect(result).toStrictEqual(mockStatsSetting);
-      expect(jest.spyOn(statsSettingModel, 'findOneAndUpdate')).toBeCalledTimes(
-        1,
-      );
+      expect(
+        jest.spyOn(statsSettingService, 'createStatsSetting'),
+      ).toBeCalledTimes(1);
     });
 
     it('should return skill', async () => {
@@ -251,9 +197,8 @@ describe('StatisticsService', () => {
         StatsCategory.Skill,
         mockStatsSkill,
       );
-
       expect(result).toStrictEqual(mockStatsSkill);
-      expect(jest.spyOn(statsSkillModel, 'findOneAndUpdate')).toBeCalledTimes(
+      expect(jest.spyOn(statsSkillService, 'createStatsSkill')).toBeCalledTimes(
         1,
       );
     });
@@ -263,7 +208,6 @@ describe('StatisticsService', () => {
         'invalid category' as StatsCategory,
         mockStatsSetting,
       );
-
       expect(result).toBe(null);
     });
   });

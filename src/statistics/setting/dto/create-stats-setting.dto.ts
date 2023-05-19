@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+import { Engrave } from '../schemas/stats-setting.schema';
+import { Type } from 'class-transformer';
 
 export class CreateStatsSettingDto {
   @ApiProperty()
@@ -27,15 +36,11 @@ export class CreateStatsSettingDto {
   @IsString()
   elixir: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  engrave: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  engraveLevel: string;
+  @ApiProperty({ type: [Engrave] })
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => Engrave)
+  engraves: Engrave[];
 
   @ApiProperty()
   @IsNotEmpty()
