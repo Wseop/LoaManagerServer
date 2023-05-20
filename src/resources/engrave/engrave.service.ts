@@ -14,6 +14,10 @@ export class EngraveService {
     return await this.engraveModel.find();
   }
 
+  async findEngravesByClassName(className: string) {
+    return await this.engraveModel.find({ className });
+  }
+
   async createEngrave(createEngraveDto: CreateEngraveDto) {
     return await this.engraveModel.create(createEngraveDto);
   }

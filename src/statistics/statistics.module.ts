@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { StatisticsController } from './statistics.controller';
 import { StatisticsService } from './statistics.service';
-import { StatsChaosModule } from './chaos/stats-chaos.module';
-import { StatsGuardianModule } from './guardian/stats-guardian.module';
-import { StatsSettingModule } from './setting/stats-setting.module';
-import { StatsSkillModule } from './skill/stats-skill.module';
+import { ChaosRewardsModule } from './chaos-rewards/chaos-rewards.module';
+import { GuardianRewardsModule } from './guardian-rewards/guardian-rewards.module';
+import { ArmorySettingsModule } from './armory-settings/armory-settings.module';
+import { SkillSettingsModule } from './skill-settings/skill-settings.module';
 
 @Module({
   imports: [
-    StatsChaosModule,
-    StatsGuardianModule,
-    StatsSettingModule,
-    StatsSkillModule,
+    ChaosRewardsModule,
+    GuardianRewardsModule,
+    ArmorySettingsModule,
+    SkillSettingsModule,
   ],
   controllers: [StatisticsController],
   providers: [StatisticsService],

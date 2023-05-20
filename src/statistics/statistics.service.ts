@@ -1,104 +1,88 @@
 import { Injectable } from '@nestjs/common';
-import { StatsCategory } from './enums/statistics-category.enum';
-import { CreateStatsChaosDto } from './chaos/dto/create-stats-chaos.dto';
-import { CreateStatsGuardianDto } from './guardian/dto/create-stats-guardian.dto';
-import { CreateStatsSettingDto } from './setting/dto/create-stats-setting.dto';
-import { CreateStatsSkillDto } from './skill/dto/create-stats-skill.dto';
-import { TotalStatsChaos } from './chaos/interfaces/total-stats-chaos.interface';
-import { TotalStatsGuardian } from './guardian/interfaces/total-stats-guardian.interface';
-import { StatsChaosService } from './chaos/stats-chaos.service';
-import { StatsGuardianService } from './guardian/stats-guardian.service';
-import { StatsSettingService } from './setting/stats-setting.service';
-import { StatsSkillService } from './skill/stats-skill.service';
+import { ChaosRewardsService } from './chaos-rewards/chaos-rewards.service';
+import { GuardianRewardsService } from './guardian-rewards/guardian-rewards.service';
+import { ArmorySettingsService } from './armory-settings/armory-settings.service';
+import { SkillSettingsService } from './skill-settings/skill-settings.service';
+import { GuardianReward } from './guardian-rewards/schemas/guardian-reward.schema';
+import { ChaosReward } from './chaos-rewards/schemas/chaos-reward.schema';
+import { StatsChaosReward } from './interfaces/stats-chaos-reward.interface';
+import { StatsGuardianReward } from './interfaces/stats-guardian-reward.interface';
+import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
+import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
 
 @Injectable()
 export class StatisticsService {
   constructor(
-    private readonly statsChaosService: StatsChaosService,
-    private readonly statsGuardianService: StatsGuardianService,
-    private readonly statsSettingService: StatsSettingService,
-    private readonly statsSkillService: StatsSkillService,
+    private readonly chaosRewardsService: ChaosRewardsService,
+    private readonly guardianRewardsService: GuardianRewardsService,
+    private readonly armorySettingsService: ArmorySettingsService,
+    private readonly skillSettingsService: SkillSettingsService,
   ) {}
 
-  async getTotalStats(category: StatsCategory, level: string) {
-    let totalStats: TotalStatsChaos | TotalStatsGuardian;
-    let statsDatas;
+  async getStatsChaosReward(level: string) {
+    const chaosRewards: ChaosReward[] =
+      await this.chaosRewardsService.findChaosRewardByLevel(level);
+    const statsChaosReward: StatsChaosReward = {
+      count: 0,
+      level: level,
+      itemCounts: {
+        silling: 0,
+        shard: 0,
+        destructionStone: 0,
+        protectionStone: 0,
+        leapStone: 0,
+        gem: 0,
+      },
+    };
+    const items = Object.keys(statsChaosReward.itemCounts);
 
-    // totalStats 초기화 및 stats 데이터 로드
-    if (category === StatsCategory.Chaos) {
-      totalStats = {
-        count: 0,
-        level: level,
-        itemCounts: {
-          silling: 0,
-          shard: 0,
-          destruction: 0,
-          protection: 0,
-          leapStone: 0,
-          gem: 0,
-        },
-      };
-      statsDatas = await this.statsChaosService.findStatsChaosByLevel(level);
-    } else if (category === StatsCategory.Guardian) {
-      totalStats = {
-        count: 0,
-        level: level,
-        itemCounts: {
-          destruction: 0,
-          protection: 0,
-          leapStone: 0,
-        },
-      };
-      statsDatas = await this.statsGuardianService.findStatsGuardianByLevel(
-        level,
-      );
-    } else {
-      return null;
-    }
+    // rewards 합산
+    for (const chaosReward of chaosRewards) {
+      statsChaosReward.count += chaosReward.count;
 
-    const items = Object.keys(totalStats.itemCounts);
-
-    // stats 데이터 합산
-    if (statsDatas.length > 0) {
-      for (const statsData of statsDatas) {
-        for (const item of items) {
-          totalStats.itemCounts[item] += statsData[item];
-        }
+      for (const item of items) {
+        statsChaosReward.itemCounts[item] += chaosReward[item];
       }
-
-      totalStats.count = statsDatas.length;
     }
 
-    return totalStats;
+    return statsChaosReward;
   }
 
-  async createStats(
-    category: StatsCategory,
-    createStatsDto:
-      | CreateStatsChaosDto
-      | CreateStatsGuardianDto
-      | CreateStatsSettingDto
-      | CreateStatsSkillDto,
-  ) {
-    switch (category) {
-      case StatsCategory.Chaos:
-        return await this.statsChaosService.createStatsChaos(
-          createStatsDto as CreateStatsChaosDto,
-        );
-      case StatsCategory.Guardian:
-        return await this.statsGuardianService.createStatsGuardian(
-          createStatsDto as CreateStatsGuardianDto,
-        );
-      case StatsCategory.Setting:
-        return await this.statsSettingService.createStatsSetting(
-          createStatsDto as CreateStatsSettingDto,
-        );
-      case StatsCategory.Skill:
-        return await this.statsSkillService.createStatsSkill(
-          createStatsDto as CreateStatsSkillDto,
-        );
-      default:
-        return null;
+  async createChaosReward(createChaosRewardDto: CreateChaosRewardDto) {
+    return await this.chaosRewardsService.createChaosReward(
+      createChaosRewardDto,
+    );
+  }
+
+  async getStatsGuardianReward(level: string) {
+    const guardianRewards: GuardianReward[] =
+      await this.guardianRewardsService.findGuardianRewardByLevel(level);
+    const statsGuardianReward: StatsGuardianReward = {
+      count: 0,
+      level: level,
+      itemCounts: {
+        destructionStone: 0,
+        protectionStone: 0,
+        leapStone: 0,
+      },
+    };
+    const items = Object.keys(statsGuardianReward.itemCounts);
+
+    // rewards 합산
+    for (const guardianReward of guardianRewards) {
+      statsGuardianReward.count += guardianReward.count;
+
+      for (const item of items) {
+        statsGuardianReward.itemCounts[item] += guardianReward[item];
+      }
     }
+
+    return statsGuardianReward;
+  }
+
+  async createGuardianReward(createGuardianRewardDto: CreateGuardianRewardDto) {
+    return await this.guardianRewardsService.createGuardianReward(
+      createGuardianRewardDto,
+    );
   }
 }

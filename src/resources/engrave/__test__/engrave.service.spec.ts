@@ -12,7 +12,7 @@ const mockEngrave: Engrave = {
 };
 
 class MockEngraveModel {
-  find = jest.fn().mockResolvedValue(mockEngrave);
+  find = jest.fn().mockResolvedValue([mockEngrave]);
   findOne = jest.fn().mockResolvedValue(mockEngrave);
   create = jest.fn().mockResolvedValue(mockEngrave);
   replaceOne = jest.fn();
@@ -38,9 +38,17 @@ describe('EngraveService', () => {
   });
 
   describe('findEngraves', () => {
-    it('should return engrave', async () => {
+    it('should return engraves', async () => {
       const result = await engraveService.findEngraves();
-      expect(result).toStrictEqual(mockEngrave);
+      expect(result).toStrictEqual([mockEngrave]);
+      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findEngravesByClassName', () => {
+    it('should return engraves', async () => {
+      const result = await engraveService.findEngravesByClassName('className');
+      expect(result).toStrictEqual([mockEngrave]);
       expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
     });
   });
