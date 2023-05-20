@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { StatsSetting } from './schemas/stats-setting.schema';
+import { Engrave, StatsSetting } from './schemas/stats-setting.schema';
 import { Model } from 'mongoose';
 import { CreateStatsSettingDto } from './dto/create-stats-setting.dto';
 
@@ -20,6 +20,17 @@ export class StatsSettingService {
   }
 
   async createStatsSetting(createStatsSettingDto: CreateStatsSettingDto) {
+    // engraves 정렬
+    // 1. level 기준 내림차순
+    // 2. code 기준 오름차순
+    createStatsSettingDto.engraves.sort((a: Engrave, b: Engrave) => {
+      if (a.level === b.level) {
+        return a.code - b.code;
+      } else {
+        return b.level - a.level;
+      }
+    });
+
     return await this.statsSettingModel.findOneAndUpdate(
       {
         characterName: createStatsSettingDto.characterName,
