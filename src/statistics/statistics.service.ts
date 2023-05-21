@@ -93,6 +93,13 @@ export class StatisticsService {
     );
   }
 
+  addCount(object: any, key: string) {
+    if (object[key] === undefined) {
+      object[key] = 0;
+    }
+    object[key]++;
+  }
+
   async getStatsArmorySetting(className: string) {
     // 직업 각인 목록 초기화
     const classEngraveCodes = await this.engraveService.findClassEngraveCodes(
@@ -130,63 +137,40 @@ export class StatisticsService {
         statsArmorySetting[classEngraveCode]['count']++;
 
         // ability
-        statsArmorySetting[classEngraveCode]['abilities'][
-          armorySetting.ability
-        ] === undefined
-          ? (statsArmorySetting[classEngraveCode]['abilities'][
-              armorySetting.ability
-            ] = 1)
-          : statsArmorySetting[classEngraveCode]['abilities'][
-              armorySetting.ability
-            ]++;
+        this.addCount(
+          statsArmorySetting[classEngraveCode]['abilities'],
+          armorySetting.ability,
+        );
 
-        // engrave (normal)
+        // engrave (non-class)
         armorySetting.engraves.forEach((engrave) => {
-          statsArmorySetting[classEngraveCode]['engraves'][engrave.level - 1][
-            engrave.code
-          ] === undefined
-            ? (statsArmorySetting[classEngraveCode]['engraves'][
-                engrave.level - 1
-              ][engrave.code] = 1)
-            : statsArmorySetting[classEngraveCode]['engraves'][
-                engrave.level - 1
-              ][engrave.code]++;
+          this.addCount(
+            statsArmorySetting[classEngraveCode]['engraves'][engrave.level - 1],
+            engrave.code.toString(),
+          );
         });
 
         // engrave (class)
         armorySetting.classEngraves.forEach((classEngrave) => {
-          statsArmorySetting[classEngraveCode]['engraves'][
-            classEngrave.level - 1
-          ][classEngrave.code] === undefined
-            ? (statsArmorySetting[classEngraveCode]['engraves'][
-                classEngrave.level - 1
-              ][classEngrave.code] = 1)
-            : statsArmorySetting[classEngraveCode]['engraves'][
-                classEngrave.level - 1
-              ][classEngrave.code]++;
+          this.addCount(
+            statsArmorySetting[classEngraveCode]['engraves'][
+              classEngrave.level - 1
+            ],
+            classEngrave.code.toString(),
+          );
         });
 
         // itemSet
-        statsArmorySetting[classEngraveCode]['itemSets'][
-          armorySetting.itemSet
-        ] === undefined
-          ? (statsArmorySetting[classEngraveCode]['itemSets'][
-              armorySetting.itemSet
-            ] = 1)
-          : statsArmorySetting[classEngraveCode]['itemSets'][
-              armorySetting.itemSet
-            ]++;
+        this.addCount(
+          statsArmorySetting[classEngraveCode]['itemSets'],
+          armorySetting.itemSet,
+        );
 
         // elixir
-        statsArmorySetting[classEngraveCode]['elixirs'][
-          armorySetting.elixir
-        ] === undefined
-          ? (statsArmorySetting[classEngraveCode]['elixirs'][
-              armorySetting.elixir
-            ] = 1)
-          : statsArmorySetting[classEngraveCode]['elixirs'][
-              armorySetting.elixir
-            ]++;
+        this.addCount(
+          statsArmorySetting[classEngraveCode]['elixirs'],
+          armorySetting.elixir,
+        );
       }
     });
 
@@ -245,41 +229,28 @@ export class StatisticsService {
               ]++;
 
           // skillLevel
-          statsSkillSetting[classEngraveName][skillUsage.skillName]['levels'][
-            skillUsage.skillLevel
-          ] === undefined
-            ? (statsSkillSetting[classEngraveName][skillUsage.skillName][
-                'levels'
-              ][skillUsage.skillLevel] = 1)
-            : statsSkillSetting[classEngraveName][skillUsage.skillName][
-                'levels'
-              ][skillUsage.skillLevel]++;
+          this.addCount(
+            statsSkillSetting[classEngraveName][skillUsage.skillName]['levels'],
+            skillUsage.skillLevel.toString(),
+          );
 
           // tripod
           skillUsage.tripodNames.forEach((tripodName) => {
-            statsSkillSetting[classEngraveName][skillUsage.skillName][
-              'tripods'
-            ][tripodName] === undefined
-              ? (statsSkillSetting[classEngraveName][skillUsage.skillName][
-                  'tripods'
-                ][tripodName] = 1)
-              : statsSkillSetting[classEngraveName][skillUsage.skillName][
-                  'tripods'
-                ][tripodName]++;
+            this.addCount(
+              statsSkillSetting[classEngraveName][skillUsage.skillName][
+                'tripods'
+              ],
+              tripodName,
+            );
           });
 
           // rune
           const runeName =
             skillUsage.runeName === '' ? '미착용' : skillUsage.runeName;
-          statsSkillSetting[classEngraveName][skillUsage.skillName]['runes'][
-            runeName
-          ] === undefined
-            ? (statsSkillSetting[classEngraveName][skillUsage.skillName][
-                'runes'
-              ][runeName] = 1)
-            : statsSkillSetting[classEngraveName][skillUsage.skillName][
-                'runes'
-              ][runeName]++;
+          this.addCount(
+            statsSkillSetting[classEngraveName][skillUsage.skillName]['runes'],
+            runeName,
+          );
         });
       }
     });
