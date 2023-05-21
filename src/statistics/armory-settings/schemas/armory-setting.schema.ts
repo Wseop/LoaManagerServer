@@ -32,6 +32,9 @@ export class ArmorySetting {
   engraves: ArmoryEngrave[];
 
   @Prop()
+  classEngraves: ArmoryEngrave[];
+
+  @Prop()
   itemSet: string;
 
   @Prop()

@@ -5,6 +5,7 @@ import { ChaosRewardsModule } from './chaos-rewards/chaos-rewards.module';
 import { GuardianRewardsModule } from './guardian-rewards/guardian-rewards.module';
 import { ArmorySettingsModule } from './armory-settings/armory-settings.module';
 import { SkillSettingsModule } from './skill-settings/skill-settings.module';
+import { EngraveModule } from 'src/resources/engrave/engrave.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { SkillSettingsModule } from './skill-settings/skill-settings.module';
     GuardianRewardsModule,
     ArmorySettingsModule,
     SkillSettingsModule,
+    EngraveModule,
   ],
   controllers: [StatisticsController],
   providers: [StatisticsService],

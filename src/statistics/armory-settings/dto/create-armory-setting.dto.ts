@@ -38,6 +38,12 @@ export class CreateArmorySettingDto {
   @Type(() => ArmoryEngrave)
   engraves: ArmoryEngrave[];
 
+  @ApiProperty({ type: [ArmoryEngrave] })
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => ArmoryEngrave)
+  classEngraves: ArmoryEngrave[];
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

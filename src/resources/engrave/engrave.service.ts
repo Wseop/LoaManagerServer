@@ -14,8 +14,28 @@ export class EngraveService {
     return await this.engraveModel.find();
   }
 
-  async findEngravesByClassName(className: string) {
+  async findClassEngraves(className: string) {
     return await this.engraveModel.find({ className });
+  }
+
+  async findClassEngraveNames(className: string) {
+    const classEngraveNames = [];
+
+    (await this.engraveModel.find({ className })).forEach((classEngrave) => {
+      classEngraveNames.push(classEngrave.engraveName);
+    });
+
+    return classEngraveNames;
+  }
+
+  async findClassEngraveCodes(className: string) {
+    const classEngraveCodes = [];
+
+    (await this.engraveModel.find({ className })).forEach((classEngrave) => {
+      classEngraveCodes.push(classEngrave.code);
+    });
+
+    return classEngraveCodes;
   }
 
   async createEngrave(createEngraveDto: CreateEngraveDto) {
