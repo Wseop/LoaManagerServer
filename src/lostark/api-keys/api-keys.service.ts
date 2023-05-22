@@ -15,10 +15,6 @@ export class ApiKeysService {
     this.apiKeyIndex = 0;
   }
 
-  async findAllApiKeys() {
-    return await this.apiKeyModel.find();
-  }
-
   async createApiKey(createApiKeyDto: CreateApiKeyDto) {
     const newApiKey: ApiKey = {
       index: await this.apiKeyModel.countDocuments(),
