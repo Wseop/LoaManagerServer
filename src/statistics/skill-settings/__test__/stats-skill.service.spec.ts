@@ -55,7 +55,7 @@ describe('SkillSettingService', () => {
 
   describe('findSkillSettingByClassName', () => {
     it('should return skillSettings', async () => {
-      const result = await skillSettingService.findSkillSettingByClassName(
+      const result = await skillSettingService.findSkillSettingsByClassName(
         'className',
       );
       expect(result).toStrictEqual([mockSkillSetting]);

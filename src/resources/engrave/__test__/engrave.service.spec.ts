@@ -45,10 +45,26 @@ describe('EngraveService', () => {
     });
   });
 
-  describe('findEngravesByClassName', () => {
+  describe('findClassEngraves', () => {
     it('should return engraves', async () => {
-      const result = await engraveService.findEngravesByClassName('className');
+      const result = await engraveService.findClassEngraves('className');
       expect(result).toStrictEqual([mockEngrave]);
+      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findClassEngraveNames', () => {
+    it('should return [string]', async () => {
+      const result = await engraveService.findClassEngraveNames('className');
+      expect(result).toStrictEqual(['string']);
+      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findClassEngraveCodes', () => {
+    it('should return [0]', async () => {
+      const result = await engraveService.findClassEngraveCodes('className');
+      expect(result).toStrictEqual([0]);
       expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
     });
   });

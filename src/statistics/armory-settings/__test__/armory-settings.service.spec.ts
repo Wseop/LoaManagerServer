@@ -4,24 +4,49 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ArmorySetting } from '../schemas/armory-setting.schema';
 import { ArmorySettingsService } from '../armory-settings.service';
 
-const mockArmorySetting: ArmorySetting = {
-  characterName: 'string',
-  className: 'string',
-  itemLevel: 0,
-  ability: 'string',
-  elixir: 'string',
-  engraves: [
-    {
-      code: 0,
-      level: 0,
-    },
-  ],
-  itemSet: 'string',
-};
-
 class MockArmorySettingModel {
-  find = jest.fn().mockResolvedValue([mockArmorySetting]);
-  findOneAndUpdate = jest.fn().mockResolvedValue(mockArmorySetting);
+  find = jest.fn().mockResolvedValue([
+    {
+      characterName: 'characterName',
+      className: 'className',
+      itemLevel: 0,
+      ability: 'ability',
+      engraves: [{ code: 0, level: 0 }],
+      classEngraves: [{ code: 0, level: 0 }],
+      itemSet: 'itemSet',
+      elixir: 'elixir',
+    },
+    {
+      characterName: 'characterName',
+      className: 'className',
+      itemLevel: 0,
+      ability: 'ability',
+      engraves: [{ code: 0, level: 0 }],
+      classEngraves: [{ code: 0, level: 0 }],
+      itemSet: 'itemSet',
+      elixir: 'elixir',
+    },
+    {
+      characterName: 'characterName',
+      className: 'className',
+      itemLevel: 0,
+      ability: 'ability',
+      engraves: [{ code: 0, level: 0 }],
+      classEngraves: [{ code: 0, level: 0 }],
+      itemSet: 'itemSet',
+      elixir: 'elixir',
+    },
+  ]);
+  findOneAndUpdate = jest.fn().mockResolvedValue({
+    characterName: 'characterName',
+    className: 'className',
+    itemLevel: 0,
+    ability: 'ability',
+    engraves: [{ code: 0, level: 0 }],
+    classEngraves: [{ code: 0, level: 0 }],
+    itemSet: 'itemSet',
+    elixir: 'elixir',
+  });
 }
 
 describe('ArmorySettingService', () => {
@@ -50,27 +75,105 @@ describe('ArmorySettingService', () => {
   describe('findArmorySettinges', () => {
     it('should return armorySettings', async () => {
       const result = await armorySettingService.findArmorySettings();
-      expect(result).toStrictEqual([mockArmorySetting]);
+      expect(result).toStrictEqual([
+        {
+          characterName: 'characterName',
+          className: 'className',
+          itemLevel: 0,
+          ability: 'ability',
+          engraves: [{ code: 0, level: 0 }],
+          classEngraves: [{ code: 0, level: 0 }],
+          itemSet: 'itemSet',
+          elixir: 'elixir',
+        },
+        {
+          characterName: 'characterName',
+          className: 'className',
+          itemLevel: 0,
+          ability: 'ability',
+          engraves: [{ code: 0, level: 0 }],
+          classEngraves: [{ code: 0, level: 0 }],
+          itemSet: 'itemSet',
+          elixir: 'elixir',
+        },
+        {
+          characterName: 'characterName',
+          className: 'className',
+          itemLevel: 0,
+          ability: 'ability',
+          engraves: [{ code: 0, level: 0 }],
+          classEngraves: [{ code: 0, level: 0 }],
+          itemSet: 'itemSet',
+          elixir: 'elixir',
+        },
+      ]);
       expect(jest.spyOn(armorySettingModel, 'find')).toBeCalledTimes(1);
     });
   });
 
   describe('findArmorySettingByClassName', () => {
     it('should return armorySettings', async () => {
-      const result = await armorySettingService.findArmorySettingByClassName(
+      const result = await armorySettingService.findArmorySettingsByClassName(
         'className',
       );
-      expect(result).toStrictEqual([mockArmorySetting]);
+      expect(result).toStrictEqual([
+        {
+          characterName: 'characterName',
+          className: 'className',
+          itemLevel: 0,
+          ability: 'ability',
+          engraves: [{ code: 0, level: 0 }],
+          classEngraves: [{ code: 0, level: 0 }],
+          itemSet: 'itemSet',
+          elixir: 'elixir',
+        },
+        {
+          characterName: 'characterName',
+          className: 'className',
+          itemLevel: 0,
+          ability: 'ability',
+          engraves: [{ code: 0, level: 0 }],
+          classEngraves: [{ code: 0, level: 0 }],
+          itemSet: 'itemSet',
+          elixir: 'elixir',
+        },
+        {
+          characterName: 'characterName',
+          className: 'className',
+          itemLevel: 0,
+          ability: 'ability',
+          engraves: [{ code: 0, level: 0 }],
+          classEngraves: [{ code: 0, level: 0 }],
+          itemSet: 'itemSet',
+          elixir: 'elixir',
+        },
+      ]);
       expect(jest.spyOn(armorySettingModel, 'find')).toBeCalledTimes(1);
     });
   });
 
   describe('createArmorySetting', () => {
     it('should return armorySetting', async () => {
-      const result = await armorySettingService.createArmorySetting(
-        mockArmorySetting,
-      );
-      expect(result).toStrictEqual(mockArmorySetting);
+      const result = await armorySettingService.createArmorySetting({
+        characterName: 'characterName',
+        className: 'className',
+        itemLevel: 0,
+        ability: 'ability',
+        engraves: [{ code: 0, level: 0 }],
+        classEngraves: [{ code: 0, level: 0 }],
+        itemSet: 'itemSet',
+        elixir: 'elixir',
+      });
+      expect(result).toStrictEqual({
+        characterName: 'characterName',
+        className: 'className',
+        itemLevel: 0,
+        ability: 'ability',
+        engraves: [{ code: 0, level: 0 }],
+        classEngraves: [{ code: 0, level: 0 }],
+        itemSet: 'itemSet',
+        elixir: 'elixir',
+      });
       expect(
         jest.spyOn(armorySettingModel, 'findOneAndUpdate'),
       ).toBeCalledTimes(1);

@@ -50,7 +50,7 @@ describe('GuardianRewardService', () => {
 
   describe('findGuardianRewardByLevel', () => {
     it('should return guardianReward', async () => {
-      const result = await guardianRewardService.findGuardianRewardByLevel(
+      const result = await guardianRewardService.findGuardianRewardsByLevel(
         'level',
       );
       expect(result).toStrictEqual(mockGuardianReward);

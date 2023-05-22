@@ -43,7 +43,7 @@ describe('ChaosRewardService', () => {
 
   describe('findChaosRewardes', () => {
     it('should return chaosReward', async () => {
-      const result = await chaosRewardService.findChaosRewardes();
+      const result = await chaosRewardService.findChaosRewards();
       expect(result).toStrictEqual(mockChaosReward);
       expect(jest.spyOn(chaosRewardModel, 'find')).toBeCalledTimes(1);
     });
@@ -51,7 +51,7 @@ describe('ChaosRewardService', () => {
 
   describe('findChaosRewardByLevel', () => {
     it('should return chaosReward', async () => {
-      const result = await chaosRewardService.findChaosRewardByLevel('level');
+      const result = await chaosRewardService.findChaosRewardsByLevel('level');
       expect(result).toStrictEqual(mockChaosReward);
       expect(jest.spyOn(chaosRewardModel, 'find')).toBeCalledTimes(1);
     });
