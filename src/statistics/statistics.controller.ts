@@ -44,7 +44,7 @@ export class StatisticsController {
   @ApiUnauthorizedResponse()
   @ApiBadRequestResponse()
   @ApiCreatedResponse()
-  createChaosGuardian(
+  createGuardianReward(
     @Body() createGuardianRewardDto: CreateGuardianRewardDto,
   ) {
     return this.statisticsService.createGuardianReward(createGuardianRewardDto);

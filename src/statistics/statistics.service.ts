@@ -12,7 +12,7 @@ import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-
 import { CreateArmorySettingDto } from './armory-settings/dto/create-armory-setting.dto';
 import { CreateSkillSettingDto } from './skill-settings/dto/create-skill-setting.dto';
 import { StatsArmorySetting } from './interfaces/stats-armory-setting.interface';
-import { EngraveService } from 'src/resources/engrave/engrave.service';
+import { EngraveService } from '../resources/engrave/engrave.service';
 import { StatsSkillSetting } from './interfaces/stats-skill-setting.interface';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class StatisticsService {
 
   async getStatsChaosReward(level: string) {
     const chaosRewards: ChaosReward[] =
-      await this.chaosRewardsService.findChaosRewardByLevel(level);
+      await this.chaosRewardsService.findChaosRewardsByLevel(level);
     const statsChaosReward: StatsChaosReward = {
       count: 0,
       level: level,
@@ -63,7 +63,7 @@ export class StatisticsService {
 
   async getStatsGuardianReward(level: string) {
     const guardianRewards: GuardianReward[] =
-      await this.guardianRewardsService.findGuardianRewardByLevel(level);
+      await this.guardianRewardsService.findGuardianRewardsByLevel(level);
     const statsGuardianReward: StatsGuardianReward = {
       count: 0,
       level: level,
@@ -124,7 +124,7 @@ export class StatisticsService {
 
     // armorySetting 데이터 합산
     (
-      await this.armorySettingsService.findArmorySettingByClassName(className)
+      await this.armorySettingsService.findArmorySettingsByClassName(className)
     ).forEach((armorySetting) => {
       const classEngraveCode =
         armorySetting.classEngraves.length === 1
@@ -203,7 +203,7 @@ export class StatisticsService {
 
     // skillSetting 데이터 합산
     (
-      await this.skillSettingsService.findSkillSettingByClassName(className)
+      await this.skillSettingsService.findSkillSettingsByClassName(className)
     ).forEach((skillSetting) => {
       const classEngraveName =
         skillSetting.classEngraves.length === 1

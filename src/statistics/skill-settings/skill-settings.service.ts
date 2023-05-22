@@ -15,7 +15,7 @@ export class SkillSettingsService {
     return await this.statsSkillModel.find();
   }
 
-  async findSkillSettingByClassName(className: string) {
+  async findSkillSettingsByClassName(className: string) {
     return await this.statsSkillModel.find({ className });
   }
 

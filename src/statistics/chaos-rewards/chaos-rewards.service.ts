@@ -11,11 +11,11 @@ export class ChaosRewardsService {
     private readonly statsChaosModel: Model<ChaosReward>,
   ) {}
 
-  async findChaosRewardes() {
+  async findChaosRewards() {
     return await this.statsChaosModel.find();
   }
 
-  async findChaosRewardByLevel(level: string) {
+  async findChaosRewardsByLevel(level: string) {
     return await this.statsChaosModel.find({ level });
   }
 

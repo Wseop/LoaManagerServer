@@ -15,7 +15,7 @@ export class GuardianRewardsService {
     return await this.guardianRewardModel.find();
   }
 
-  async findGuardianRewardByLevel(level: string) {
+  async findGuardianRewardsByLevel(level: string) {
     return await this.guardianRewardModel.find({ level });
   }
 

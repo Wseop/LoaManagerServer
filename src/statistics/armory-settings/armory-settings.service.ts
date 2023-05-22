@@ -15,7 +15,7 @@ export class ArmorySettingsService {
     return await this.armorySettingModel.find();
   }
 
-  async findArmorySettingByClassName(className: string) {
+  async findArmorySettingsByClassName(className: string) {
     return await this.armorySettingModel.find({ className });
   }
 
