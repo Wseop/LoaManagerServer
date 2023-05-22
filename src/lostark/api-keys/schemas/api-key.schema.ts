@@ -3,6 +3,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema()
 export class ApiKey {
   @Prop()
+  index: number;
+
+  @Prop()
   apiKey: string;
 }
 
