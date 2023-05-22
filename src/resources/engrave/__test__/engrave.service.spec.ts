@@ -12,7 +12,7 @@ const mockEngrave: Engrave = {
 };
 
 class MockEngraveModel {
-  find = jest.fn().mockResolvedValue(mockEngrave);
+  find = jest.fn().mockResolvedValue([mockEngrave]);
   findOne = jest.fn().mockResolvedValue(mockEngrave);
   create = jest.fn().mockResolvedValue(mockEngrave);
   replaceOne = jest.fn();
@@ -38,9 +38,33 @@ describe('EngraveService', () => {
   });
 
   describe('findEngraves', () => {
-    it('should return engrave', async () => {
+    it('should return engraves', async () => {
       const result = await engraveService.findEngraves();
-      expect(result).toStrictEqual(mockEngrave);
+      expect(result).toStrictEqual([mockEngrave]);
+      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findClassEngraves', () => {
+    it('should return engraves', async () => {
+      const result = await engraveService.findClassEngraves('className');
+      expect(result).toStrictEqual([mockEngrave]);
+      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findClassEngraveNames', () => {
+    it('should return [string]', async () => {
+      const result = await engraveService.findClassEngraveNames('className');
+      expect(result).toStrictEqual(['string']);
+      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findClassEngraveCodes', () => {
+    it('should return [0]', async () => {
+      const result = await engraveService.findClassEngraveCodes('className');
+      expect(result).toStrictEqual([0]);
       expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
     });
   });

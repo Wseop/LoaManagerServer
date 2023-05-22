@@ -1,80 +1,80 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
-import { AuthGuard } from '@nestjs/passport';
-import { CreateStatsChaosDto } from './chaos/dto/create-stats-chaos.dto';
-import { CreateStatsGuardianDto } from './guardian/dto/create-stats-guardian.dto';
-import { CreateStatsSettingDto } from './setting/dto/create-stats-setting.dto';
-import { CreateStatsSkillDto } from './skill/dto/create-stats-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { StatsCategory } from './enums/statistics-category.enum';
+import { AuthGuard } from '@nestjs/passport';
+import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
+import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
+import { CreateArmorySettingDto } from './armory-settings/dto/create-armory-setting.dto';
+import { CreateSkillSettingDto } from './skill-settings/dto/create-skill-setting.dto';
 
 @ApiTags('statistics')
-@Controller('stats')
+@Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Get('/chaos/:level')
-  getTotalStatsChaos(@Param('level') level: string) {
-    return this.statisticsService.getTotalStats(StatsCategory.Chaos, level);
+  @Get('/rewards/chaos/:level')
+  @ApiOkResponse()
+  getStatsChaosReward(@Param('level') level: string) {
+    return this.statisticsService.getStatsChaosReward(level);
   }
 
-  @Get('/guardian/:level')
-  getTotalStatsGuardian(@Param('level') level: string) {
-    return this.statisticsService.getTotalStats(StatsCategory.Guardian, level);
-  }
-
-  @Get('/setting/:className')
-  getTotalStatsSettingByClassName(@Param('className') className: string) {}
-
-  @Get('/skill/:className')
-  getTotalStatsSkillByClassName(@Param('className') className: string) {}
-
+  @Post('/rewards/chaos')
   @UseGuards(AuthGuard('access'))
-  @Post('/chaos')
-  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
-  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
   @ApiCreatedResponse()
-  createChaosStats(@Body() createStatsChaosDto: CreateStatsChaosDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Chaos,
-      createStatsChaosDto,
-    );
+  createChaosReward(@Body() createChaosRewardDto: CreateChaosRewardDto) {
+    return this.statisticsService.createChaosReward(createChaosRewardDto);
   }
 
+  @Get('/rewards/guardian/:level')
+  @ApiOkResponse()
+  getStatsGuardianReward(@Param('level') level: string) {
+    return this.statisticsService.getStatsGuardianReward(level);
+  }
+
+  @Post('/rewards/guardian')
   @UseGuards(AuthGuard('access'))
-  @Post('/guardian')
-  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
-  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
   @ApiCreatedResponse()
-  createGuardianStats(@Body() createStatsGuardianDto: CreateStatsGuardianDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Guardian,
-      createStatsGuardianDto,
-    );
+  createGuardianReward(
+    @Body() createGuardianRewardDto: CreateGuardianRewardDto,
+  ) {
+    return this.statisticsService.createGuardianReward(createGuardianRewardDto);
   }
 
-  @Post('/setting')
-  @ApiBadRequestResponse({ description: 'invalid body' })
-  @ApiCreatedResponse()
-  createSettingStats(@Body() createStatsSettingDto: CreateStatsSettingDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Setting,
-      createStatsSettingDto,
-    );
+  @Get('/settings/armory/:className')
+  getStatsArmorySetting(@Param('className') className: string) {
+    return this.statisticsService.getStatsArmorySetting(className);
   }
 
-  @Post('/skill')
-  @ApiBadRequestResponse({ description: 'invalid body' })
+  @Post('/settings/armory')
+  @UseGuards(AuthGuard('access'))
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
   @ApiCreatedResponse()
-  createSkillStats(@Body() createStatsSkillDto: CreateStatsSkillDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Skill,
-      createStatsSkillDto,
-    );
+  createArmorySetting(@Body() createArmorySettingDto: CreateArmorySettingDto) {
+    return this.statisticsService.createArmorySetting(createArmorySettingDto);
+  }
+
+  @Get('/settings/skill/:className')
+  getStatsSkillSetting(@Param('className') className: string) {
+    return this.statisticsService.getStatsSkillSetting(className);
+  }
+
+  @Post('/settings/skill')
+  @UseGuards(AuthGuard('access'))
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
+  @ApiCreatedResponse()
+  createSkillSetting(@Body() createSkillSettingDto: CreateSkillSettingDto) {
+    return this.statisticsService.createSkillSetting(createSkillSettingDto);
   }
 }
