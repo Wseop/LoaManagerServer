@@ -6,7 +6,7 @@ export class ArmoryEngrave {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  code: number;
+  name: string;
 
   @ApiProperty()
   @IsNotEmpty()

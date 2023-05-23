@@ -33,8 +33,10 @@ export class ApiKeysService {
   }
 
   async getApiKey() {
-    return await this.apiKeyModel.findOne({
-      index: await this.getNextKeyIndex(),
-    });
+    return (
+      await this.apiKeyModel.findOne({
+        index: await this.getNextKeyIndex(),
+      })
+    ).apiKey;
   }
 }

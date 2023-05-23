@@ -8,7 +8,7 @@ export interface StatsArmorySetting {
           [ability: string]: number;
         };
         engraves: {
-          [engraveCode: string]: number;
+          [engraveName: string]: number;
         }[];
         itemSets: {
           [itemSet: string]: number;
