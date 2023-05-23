@@ -65,10 +65,7 @@ describe('ApiKeysService', () => {
   describe('getApiKey', () => {
     it('should return ApiKey', async () => {
       const result = await apiKeysService.getApiKey();
-      expect(result).toStrictEqual({
-        index: 0,
-        apiKey: 'key',
-      });
+      expect(result).toBe('key');
       expect(jest.spyOn(apiKeyModel, 'findOne')).toBeCalledTimes(1);
     });
   });

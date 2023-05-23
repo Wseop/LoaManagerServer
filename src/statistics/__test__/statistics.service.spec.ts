@@ -89,8 +89,8 @@ class MockArmorySettingsService {
       className: 'className',
       itemLevel: 0,
       ability: 'ability',
-      engraves: [{ code: 0, level: 1 }],
-      classEngraves: [{ code: 1, level: 1 }],
+      engraves: [{ name: 'engraveName1', level: 1 }],
+      classEngraves: [{ name: 'classEngraveName1', level: 1 }],
       itemSet: 'itemSet',
       elixir: 'elixir',
     },
@@ -99,8 +99,8 @@ class MockArmorySettingsService {
       className: 'className',
       itemLevel: 0,
       ability: 'ability',
-      engraves: [{ code: 0, level: 1 }],
-      classEngraves: [{ code: 1, level: 1 }],
+      engraves: [{ name: 'engraveName1', level: 1 }],
+      classEngraves: [{ name: 'classEngraveName1', level: 1 }],
       itemSet: 'itemSet',
       elixir: 'elixir',
     },
@@ -109,8 +109,8 @@ class MockArmorySettingsService {
       className: 'className',
       itemLevel: 0,
       ability: 'ability',
-      engraves: [{ code: 0, level: 1 }],
-      classEngraves: [{ code: 1, level: 1 }],
+      engraves: [{ name: 'engraveName1', level: 1 }],
+      classEngraves: [{ name: 'classEngraveName1', level: 1 }],
       itemSet: 'itemSet',
       elixir: 'elixir',
     },
@@ -120,8 +120,8 @@ class MockArmorySettingsService {
     className: 'className',
     itemLevel: 0,
     ability: 'ability',
-    engraves: [{ code: 0, level: 0 }],
-    classEngraves: [{ code: 0, level: 0 }],
+    engraves: [{ name: 'engraveName1', level: 0 }],
+    classEngraves: [{ name: 'classEngraveName1', level: 0 }],
     itemSet: 'itemSet',
     elixir: 'elixir',
   });
@@ -131,7 +131,7 @@ class MockSkillSettingsService {
     {
       characterName: 'characterName',
       className: 'className',
-      classEngraves: ['engrave1'],
+      classEngraves: ['classEngraveName1'],
       skillUsages: [
         {
           skillName: 'skillName',
@@ -144,7 +144,7 @@ class MockSkillSettingsService {
     {
       characterName: 'characterName',
       className: 'className',
-      classEngraves: ['engrave1'],
+      classEngraves: ['classEngraveName1'],
       skillUsages: [
         {
           skillName: 'skillName',
@@ -157,7 +157,7 @@ class MockSkillSettingsService {
     {
       characterName: 'characterName',
       className: 'className',
-      classEngraves: ['engrave1'],
+      classEngraves: ['classEngraveName1'],
       skillUsages: [
         {
           skillName: 'skillName',
@@ -171,7 +171,7 @@ class MockSkillSettingsService {
   createSkillSetting = jest.fn().mockResolvedValue({
     characterName: 'characterName',
     className: 'className',
-    classEngraves: ['engrave1', 'engrave2'],
+    classEngraves: ['classEngraveName1', 'classEngraveName2'],
     skillUsages: [
       {
         skillName: 'skillName',
@@ -183,16 +183,9 @@ class MockSkillSettingsService {
   });
 }
 class MockEngraveService {
-  findClassEngraveCodes = jest.fn((className) => {
-    if (className === 'className') {
-      return [1, 2];
-    } else {
-      return [];
-    }
-  });
   findClassEngraveNames = jest.fn((className) => {
     if (className === 'className') {
-      return ['engrave1', 'engrave2'];
+      return ['classEngraveName1', 'classEngraveName2'];
     } else {
       return [];
     }
@@ -340,15 +333,15 @@ describe('StatisticsService', () => {
     it('should return StatsArmorySetting', async () => {
       const result = await statisticsService.getStatsArmorySetting('className');
       expect(result).toStrictEqual({
-        '1': {
+        classEngraveName1: {
           count: 3,
           abilities: {
             ability: 3,
           },
           engraves: [
             {
-              '0': 3,
-              '1': 3,
+              classEngraveName1: 3,
+              engraveName1: 3,
             },
             {},
             {},
@@ -360,7 +353,7 @@ describe('StatisticsService', () => {
             elixir: 3,
           },
         },
-        '2': {
+        classEngraveName2: {
           count: 0,
           abilities: {},
           engraves: [{}, {}, {}],
@@ -377,7 +370,7 @@ describe('StatisticsService', () => {
         },
       });
       expect(
-        jest.spyOn(engraveService, 'findClassEngraveCodes'),
+        jest.spyOn(engraveService, 'findClassEngraveNames'),
       ).toBeCalledTimes(1);
       expect(
         jest.spyOn(armorySettingsService, 'findArmorySettingsByClassName'),
@@ -397,8 +390,8 @@ describe('StatisticsService', () => {
         className: 'className',
         itemLevel: 0,
         ability: 'ability',
-        engraves: [{ code: 0, level: 0 }],
-        classEngraves: [{ code: 0, level: 0 }],
+        engraves: [{ name: 'engraveName1', level: 0 }],
+        classEngraves: [{ name: 'classEngraveName1', level: 0 }],
         itemSet: 'itemSet',
         elixir: 'elixir',
       });
@@ -407,8 +400,8 @@ describe('StatisticsService', () => {
         className: 'className',
         itemLevel: 0,
         ability: 'ability',
-        engraves: [{ code: 0, level: 0 }],
-        classEngraves: [{ code: 0, level: 0 }],
+        engraves: [{ name: 'engraveName1', level: 0 }],
+        classEngraves: [{ name: 'classEngraveName1', level: 0 }],
         itemSet: 'itemSet',
         elixir: 'elixir',
       });
@@ -423,7 +416,7 @@ describe('StatisticsService', () => {
       const result = await statisticsService.getStatsSkillSetting('className');
       expect(result).toStrictEqual({
         count: 3,
-        engrave1: {
+        classEngraveName1: {
           count: 3,
           skillName: {
             count: 3,
@@ -439,7 +432,7 @@ describe('StatisticsService', () => {
             },
           },
         },
-        engrave2: {
+        classEngraveName2: {
           count: 0,
         },
         pair: {
@@ -465,7 +458,7 @@ describe('StatisticsService', () => {
       const result = await statisticsService.createSkillSetting({
         characterName: 'characterName',
         className: 'className',
-        classEngraves: ['engrave1', 'engrave2'],
+        classEngraves: ['classEngraveName1', 'classEngraveName2'],
         skillUsages: [
           {
             skillName: 'skillName',
@@ -478,7 +471,7 @@ describe('StatisticsService', () => {
       expect(result).toStrictEqual({
         characterName: 'characterName',
         className: 'className',
-        classEngraves: ['engrave1', 'engrave2'],
+        classEngraves: ['classEngraveName1', 'classEngraveName2'],
         skillUsages: [
           {
             skillName: 'skillName',
