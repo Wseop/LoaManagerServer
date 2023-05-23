@@ -504,16 +504,49 @@ export class CharactersService {
       itemSet: '',
       elixir: '',
     };
+    const classEngraveNames = await this.engraveService.findClassEngraveNames(
+      characterInfo.profile.className,
+    );
 
+    // ability
+    this.convertToArmoryAbility(characterInfo.profile.stats).forEach(
+      (ability) => {
+        createArmorySettingDto.ability += ability.name;
+      },
+    );
+
+    // engraves, classEngraves
+    characterInfo.engraves.forEach((engrave) => {
+      if (classEngraveNames.includes(engrave.name)) {
+        createArmorySettingDto.classEngraves.push(engrave);
+      } else {
+        createArmorySettingDto.engraves.push(engrave);
+      }
+    });
+
+    // itemSet
+    createArmorySettingDto.itemSet = this.convertToArmoryItemSet(
+      characterInfo.equipments,
+    );
+
+    // elixir
+    createArmorySettingDto.elixir = this.convertToArmoryElixir(
+      characterInfo.equipments,
+    );
+
+    return createArmorySettingDto;
+  }
+
+  convertToArmoryAbility(stats) {
     const abilities = [];
 
-    for (const stat in characterInfo.profile.stats) {
+    for (const stat in stats) {
       if (stat !== '최대 생명력' && stat != '공격력') {
         // 특성 수치가 200 이상인 경우만 추가
-        if (characterInfo.profile.stats[stat] >= 200) {
+        if (stats[stat] >= 200) {
           const ability = {};
           ability['name'] = stat[0];
-          ability['value'] = characterInfo.profile.stats[stat];
+          ability['value'] = stats[stat];
           abilities.push(ability);
         }
       }
@@ -523,22 +556,10 @@ export class CharactersService {
       return b.value - a.value;
     });
 
-    abilities.forEach((ability) => {
-      createArmorySettingDto.ability += ability.name;
-    });
+    return abilities;
+  }
 
-    const classEngraveNames = await this.engraveService.findClassEngraveNames(
-      characterInfo.profile.className,
-    );
-
-    characterInfo.engraves.forEach((engrave) => {
-      if (classEngraveNames.includes(engrave.name)) {
-        createArmorySettingDto.classEngraves.push(engrave);
-      } else {
-        createArmorySettingDto.engraves.push(engrave);
-      }
-    });
-
+  convertToArmoryItemSet(equipments) {
     const itemSetNames = [
       '악몽',
       '사멸',
@@ -552,7 +573,7 @@ export class CharactersService {
     ];
     const itemSetCounts = Array.from({ length: itemSetNames.length }, () => 0);
 
-    for (const equipment in characterInfo.equipments) {
+    for (const equipment in equipments) {
       if (
         equipment === '무기' ||
         equipment === '투구' ||
@@ -562,22 +583,28 @@ export class CharactersService {
         equipment === '어깨'
       ) {
         itemSetCounts[
-          itemSetNames.indexOf(characterInfo.equipments[equipment].itemSet.name)
+          itemSetNames.indexOf(equipments[equipment].itemSet.name)
         ]++;
       }
     }
 
+    let result = '';
+
     itemSetCounts.forEach((count, i) => {
       if (count > 0) {
-        createArmorySettingDto.itemSet += `${count}${itemSetNames[i]}`;
+        result += `${count}${itemSetNames[i]}`;
       }
     });
 
+    return result;
+  }
+
+  convertToArmoryElixir(equipments) {
     let elixirLevelSum = 0;
     let elixirHead = '질서';
     let elixirHand = '혼돈';
 
-    for (const equipment in characterInfo.equipments) {
+    for (const equipment in equipments) {
       if (
         equipment === '투구' ||
         equipment === '상의' ||
@@ -585,7 +612,7 @@ export class CharactersService {
         equipment === '장갑' ||
         equipment === '어깨'
       ) {
-        const elixirs = characterInfo.equipments[equipment].elixirs;
+        const elixirs = equipments[equipment].elixirs;
 
         if (elixirs) {
           for (const elixir in elixirs) {
@@ -602,10 +629,10 @@ export class CharactersService {
     }
 
     if (elixirHead === elixirHand && elixirLevelSum >= 35) {
-      createArmorySettingDto.elixir = elixirHead;
+      return elixirHead;
+    } else {
+      return '';
     }
-
-    return createArmorySettingDto;
   }
 
   async convertToSkillSetting(characterInfo) {
@@ -616,6 +643,7 @@ export class CharactersService {
       skillUsages: [],
     };
 
+    // classEngraves
     const classEngraveNames = await this.engraveService.findClassEngraveNames(
       characterInfo.profile.className,
     );
@@ -626,6 +654,7 @@ export class CharactersService {
       }
     });
 
+    // skillUsages
     characterInfo.skills.forEach((skill) => {
       const skillUsage = {
         skillName: skill.skillName,
