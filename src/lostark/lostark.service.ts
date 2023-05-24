@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { ApiKeysService } from './api-keys/api-keys.service';
 import { CreateApiKeyDto } from './api-keys/dto/create-api-key.dto';
 import { CharactersService } from './characters/characters.service';
@@ -16,11 +22,22 @@ export class LostarkService {
   }
 
   async get(url: string) {
-    return await axios.get(url, {
-      headers: {
-        Authorization: `bearer ${await this.apiKeysService.getApiKey()}`,
-      },
-    });
+    try {
+      return await axios.get(url, {
+        headers: {
+          Authorization: `bearer ${await this.apiKeysService.getApiKey()}`,
+        },
+      });
+    } catch (error) {
+      if (error.response.status === HttpStatus.SERVICE_UNAVAILABLE) {
+        throw new ServiceUnavailableException(
+          null,
+          'Lostark server is under maintenance',
+        );
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   async getCharacterInfo(characterName: string) {
