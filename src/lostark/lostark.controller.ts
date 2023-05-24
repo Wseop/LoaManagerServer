@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { LostarkService } from './lostark.service';
 import { CreateApiKeyDto } from './api-keys/dto/create-api-key.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -10,6 +20,7 @@ import {
   ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuctionQueryDto } from './auctions/dto/auction-query.dto';
 
 @ApiTags('lostark')
 @Controller('lostark')
@@ -26,7 +37,7 @@ export class LostarkController {
 
   @Get('/characters/:characterName')
   @ApiOkResponse()
-  @ApiTooManyRequestsResponse()
+  @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
   })
@@ -36,11 +47,22 @@ export class LostarkController {
 
   @Get('/characters/:characterName/siblings')
   @ApiOkResponse()
-  @ApiTooManyRequestsResponse()
+  @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
   })
   getSiblings(@Param('characterName') characterName: string) {
     return this.lostarkService.getSiblings(characterName);
+  }
+
+  @Get('/auctions/items')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiOkResponse()
+  @ApiTooManyRequestsResponse({ description: 'API request limit' })
+  @ApiServiceUnavailableResponse({
+    description: 'Lostark api server is under maintenance',
+  })
+  searchAuctionItems(@Query() query: AuctionQueryDto) {
+    return this.lostarkService.searchAuctionItems(query);
   }
 }
