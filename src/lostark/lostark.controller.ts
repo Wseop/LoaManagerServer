@@ -5,6 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiServiceUnavailableResponse,
   ApiTags,
   ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
@@ -26,6 +27,9 @@ export class LostarkController {
   @Get('/characters/:characterName')
   @ApiOkResponse()
   @ApiTooManyRequestsResponse()
+  @ApiServiceUnavailableResponse({
+    description: 'Lostark api server is under maintenance',
+  })
   getCharacterInfo(@Param('characterName') characterName: string) {
     return this.lostarkService.getCharacterInfo(characterName);
   }
@@ -33,6 +37,9 @@ export class LostarkController {
   @Get('/characters/:characterName/siblings')
   @ApiOkResponse()
   @ApiTooManyRequestsResponse()
+  @ApiServiceUnavailableResponse({
+    description: 'Lostark api server is under maintenance',
+  })
   getSiblings(@Param('characterName') characterName: string) {
     return this.lostarkService.getSiblings(characterName);
   }

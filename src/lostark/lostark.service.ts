@@ -32,7 +32,7 @@ export class LostarkService {
       if (error.response.status === HttpStatus.SERVICE_UNAVAILABLE) {
         throw new ServiceUnavailableException(
           null,
-          'Lostark server is under maintenance',
+          'Lostark api server is under maintenance',
         );
       } else {
         throw new InternalServerErrorException();
