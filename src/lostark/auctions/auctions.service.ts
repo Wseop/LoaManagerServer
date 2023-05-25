@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { AuctionQueryDto } from './dto/auction-query.dto';
+import { AuctionSearchResultDto } from './dto/auction-search-result.dto';
+import { AuctionItemDto } from './dto/auction-item.dto';
+import { AuctionSearchOptionDto } from './dto/auction-search-option.dto';
 
 @Injectable()
 export class AuctionsService {
   constructor() {}
 
   buildSearchOption(query: AuctionQueryDto) {
-    const searchOption = {
+    const searchOption: AuctionSearchOptionDto = {
       Sort: 'BUY_PRICE',
       SortCondition: 'ASC',
       ItemTier: 3,
@@ -52,14 +55,14 @@ export class AuctionsService {
     return searchOption;
   }
 
-  parseSearchResult(searchResult) {
-    const auctionItem = {
+  parseSearchResult(searchResult: AuctionSearchResultDto) {
+    const auctionItem: AuctionItemDto = {
       buyPrice: searchResult.AuctionInfo.BuyPrice,
       startPrice: searchResult.AuctionInfo.StartPrice,
       currentBidPrice: searchResult.AuctionInfo.BidPrice,
       nextBidPrice: searchResult.AuctionInfo.BidStartPrice,
-      name: searchResult.Name,
-      grade: searchResult.Grade,
+      itemName: searchResult.Name,
+      itemGrade: searchResult.Grade,
       iconPath: searchResult.Icon,
       quality: searchResult.GradeQuality,
       itemOptions: [],
@@ -67,7 +70,7 @@ export class AuctionsService {
 
     searchResult.Options.forEach((option) => {
       auctionItem.itemOptions.push({
-        name: option.OptionName,
+        optionName: option.OptionName,
         tripod: option.OptionNameTripod,
         value: option.Value,
       });

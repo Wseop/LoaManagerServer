@@ -14,6 +14,10 @@ import { AuctionsService } from './auctions/auctions.service';
 import { AuctionQueryDto } from './auctions/dto/auction-query.dto';
 import { MarketsService } from './markets/markets.service';
 import { MarketQueryDto } from './markets/dto/market-query.dto';
+import { AuctionItemDto } from './auctions/dto/auction-item.dto';
+import { MarketItemDto } from './markets/dto/market-item.dto';
+import { AuctionSearchOptionDto } from './auctions/dto/auction-search-option.dto';
+import { MarketSearchOptionDto } from './markets/dto/market-search-option.dto';
 
 @Injectable()
 export class LostarkService {
@@ -107,13 +111,14 @@ export class LostarkService {
 
   async searchAuctionItems(query: AuctionQueryDto) {
     const url = 'https://developer-lostark.game.onstove.com/auctions/items';
-    const searchOption = this.auctionsService.buildSearchOption(query);
-    const auctionItems = [];
+    const searchOption: AuctionSearchOptionDto =
+      this.auctionsService.buildSearchOption(query);
+    const auctionItems: AuctionItemDto[] = [];
 
     if (query.pageAll) {
       let pageNo = 1;
 
-      while (true) {
+      while (pageNo <= 10) {
         searchOption.PageNo = pageNo++;
 
         const result = await this.post(url, searchOption);
@@ -136,13 +141,14 @@ export class LostarkService {
 
   async searchMarketItems(query: MarketQueryDto) {
     const url = 'https://developer-lostark.game.onstove.com/markets/items';
-    const searchOption = this.marketsService.buildSearchOption(query);
-    const marketItems = [];
+    const searchOption: MarketSearchOptionDto =
+      this.marketsService.buildSearchOption(query);
+    const marketItems: MarketItemDto[] = [];
 
     if (query.pageAll) {
       let pageNo = 1;
 
-      while (true) {
+      while (pageNo <= 10) {
         searchOption.PageNo = pageNo++;
 
         const result = await this.post(url, searchOption);

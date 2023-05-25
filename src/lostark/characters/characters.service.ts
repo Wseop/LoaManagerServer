@@ -4,6 +4,18 @@ import { ArmorySettingsService } from '../../statistics/armory-settings/armory-s
 import { CreateArmorySettingDto } from '../../statistics/armory-settings/dto/create-armory-setting.dto';
 import { CreateSkillSettingDto } from '../../statistics/skill-settings/dto/create-skill-setting.dto';
 import { SkillSettingsService } from '../../statistics/skill-settings/skill-settings.service';
+import { SiblingDto } from './dto/sibling.dto';
+import {
+  CharacterCard,
+  CharacterCollectible,
+  CharacterEngrave,
+  CharacterEquipment,
+  CharacterGem,
+  CharacterInfoDto,
+  CharacterProfile,
+  CharacterSkill,
+} from './dto/characterInfo.dto';
+import { SkillUsage } from 'src/statistics/skill-settings/schemas/skill-setting.schema';
 
 @Injectable()
 export class CharactersService {
@@ -13,7 +25,7 @@ export class CharactersService {
     private readonly engraveService: EngraveService,
   ) {}
 
-  async parseSiblings(siblings) {
+  async parseSiblings(siblings: SiblingDto[]) {
     const result = [];
 
     await Promise.all(
@@ -60,7 +72,15 @@ export class CharactersService {
       this.parseCollectibles,
     ];
 
-    const result = {};
+    const result: CharacterInfoDto = {
+      profile: null,
+      equipments: null,
+      skills: null,
+      gems: null,
+      engraves: null,
+      cards: null,
+      collectibles: null,
+    };
 
     await Promise.all(
       parseKeys.map(async (parseKey, i) => {
@@ -80,7 +100,7 @@ export class CharactersService {
   }
 
   async parseProfile(_, profile) {
-    const characterProfile = {
+    const characterProfile: CharacterProfile = {
       expeditionLevel: profile.ExpeditionLevel,
       title: profile.Title,
       guildName: profile.GuildName,
@@ -108,7 +128,7 @@ export class CharactersService {
   }
 
   async parseEquipments(parent, equipments) {
-    const characterEquipments = {};
+    const characterEquipments: { [equipment: string]: CharacterEquipment } = {};
 
     if (equipments) {
       await Promise.all(
@@ -118,11 +138,11 @@ export class CharactersService {
             equipment.Type !== '부적' &&
             equipment.Type !== '문장'
           ) {
-            const characterEquipment = {
+            const characterEquipment: CharacterEquipment = {
               type: equipment.Type,
               name: equipment.Name,
               iconPath: equipment.Icon,
-              grade: equipment.Grade,
+              itemGrade: equipment.Grade,
             };
 
             await parent.parseEquipmentTooltip(
@@ -153,7 +173,7 @@ export class CharactersService {
 
     // 에스더 무기인 경우 장갑의 세트효과를 할당
     if (
-      characterEquipments['무기']?.grade === '에스더' &&
+      characterEquipments['무기']?.itemGrade === '에스더' &&
       characterEquipments['장갑']?.itemSet
     ) {
       characterEquipments['무기']['itemSet'] =
@@ -164,13 +184,13 @@ export class CharactersService {
   }
 
   async parseSkills(_, skills) {
-    const characterSkills = [];
+    const characterSkills: CharacterSkill[] = [];
 
     if (skills) {
       await Promise.all(
         skills.map((skill) => {
           if (skill.Level > 1 || skill.Rune) {
-            const characterSkill = {
+            const characterSkill: CharacterSkill = {
               skillName: skill.Name,
               skillLevel: skill.Level,
               tripods: [],
@@ -189,7 +209,7 @@ export class CharactersService {
             if (skill.Rune) {
               characterSkill.rune = {
                 runeName: skill.Rune.Name,
-                grade: skill.Rune.Grade,
+                itemGrade: skill.Rune.Grade,
                 iconPath: skill.Rune.Icon,
               };
             }
@@ -206,7 +226,7 @@ export class CharactersService {
   }
 
   async parseEngraves(_, engraves) {
-    const characterEngraves = [];
+    const characterEngraves: CharacterEngrave[] = [];
 
     if (engraves) {
       await Promise.all(
@@ -214,8 +234,8 @@ export class CharactersService {
           const engraveStr = engrave.Name;
 
           characterEngraves.push({
-            name: engraveStr.substring(0, engraveStr.indexOf('Lv.') - 1),
-            level: Number(engraveStr[engraveStr.length - 1]),
+            engraveName: engraveStr.substring(0, engraveStr.indexOf('Lv.') - 1),
+            engraveLevel: Number(engraveStr[engraveStr.length - 1]),
           });
         }),
       );
@@ -227,7 +247,7 @@ export class CharactersService {
   }
 
   async parseCards(_, cards) {
-    const characterCards = [];
+    const characterCards: CharacterCard[] = [];
 
     if (cards) {
       await Promise.all(
@@ -262,7 +282,7 @@ export class CharactersService {
   }
 
   async parseGems(_, gems) {
-    const characterGems = [];
+    const characterGems: CharacterGem[] = [];
 
     if (gems) {
       const skillNames = Array(gems.Effects.length);
@@ -280,9 +300,9 @@ export class CharactersService {
               gem.Name.indexOf('레벨') + String('레벨').length + 1,
               gem.Name.indexOf('의 보석'),
             ),
-            level: gem.Level,
+            gemLevel: gem.Level,
             iconPath: gem.Icon,
-            grade: gem.Grade,
+            itemGrade: gem.Grade,
             skillName: skillNames[gem.Slot],
           });
         }),
@@ -295,7 +315,7 @@ export class CharactersService {
   }
 
   async parseCollectibles(_, collectibles) {
-    const characterCollectibles = [];
+    const characterCollectibles: CharacterCollectible[] = [];
 
     if (collectibles) {
       await Promise.all(
@@ -314,7 +334,7 @@ export class CharactersService {
     return characterCollectibles;
   }
 
-  async parseEquipmentTooltip(tooltip, characterEquipment) {
+  async parseEquipmentTooltip(tooltip, characterEquipment: CharacterEquipment) {
     const elements = Object.keys(tooltip);
 
     await Promise.all(
@@ -335,14 +355,17 @@ export class CharactersService {
     );
   }
 
-  parseTooltipSingleTextBox(singleTextBox, characterEquipment) {
+  parseTooltipSingleTextBox(
+    singleTextBox,
+    characterEquipment: CharacterEquipment,
+  ) {
     // ella
     if (singleTextBox.includes('엘라 부여 완료')) {
       characterEquipment.isElla = true;
     }
   }
 
-  parseTooltipItemTitle(itemTitle, characterEquipment) {
+  parseTooltipItemTitle(itemTitle, characterEquipment: CharacterEquipment) {
     // quality
     if (itemTitle.qualityValue && itemTitle.qualityValue != -1) {
       characterEquipment.quality = itemTitle.qualityValue;
@@ -361,7 +384,7 @@ export class CharactersService {
     }
   }
 
-  parseTooltipItemPartBox(itemPartBox, characterEquipment) {
+  parseTooltipItemPartBox(itemPartBox, characterEquipment: CharacterEquipment) {
     // itemSet
     if (itemPartBox.Element_000?.includes('세트 효과 레벨')) {
       const setName = itemPartBox.Element_001.substring(0, 2);
@@ -371,8 +394,8 @@ export class CharactersService {
       const setLevel = itemPartBox.Element_001.substring(levelStart, levelEnd);
 
       characterEquipment.itemSet = {
-        name: setName,
-        level: setLevel,
+        setName: setName,
+        setLevel: setLevel,
       };
     }
 
@@ -438,7 +461,10 @@ export class CharactersService {
     }
   }
 
-  parseTooltipIndentStringGroup(indentStringGroup, characterEquipment) {
+  parseTooltipIndentStringGroup(
+    indentStringGroup,
+    characterEquipment: CharacterEquipment,
+  ) {
     // elixir
     if (indentStringGroup.Element_000?.topStr?.includes('엘릭서 효과')) {
       characterEquipment.elixirs = {};
@@ -493,7 +519,7 @@ export class CharactersService {
     }
   }
 
-  async convertToArmorySetting(characterInfo) {
+  async convertToArmorySetting(characterInfo: CharacterInfoDto) {
     const createArmorySettingDto: CreateArmorySettingDto = {
       characterName: characterInfo.profile.characterName,
       className: characterInfo.profile.className,
@@ -517,7 +543,7 @@ export class CharactersService {
 
     // engraves, classEngraves
     characterInfo.engraves.forEach((engrave) => {
-      if (classEngraveNames.includes(engrave.name)) {
+      if (classEngraveNames.includes(engrave.engraveName)) {
         createArmorySettingDto.classEngraves.push(engrave);
       } else {
         createArmorySettingDto.engraves.push(engrave);
@@ -537,7 +563,7 @@ export class CharactersService {
     return createArmorySettingDto;
   }
 
-  convertToArmoryAbility(stats) {
+  convertToArmoryAbility(stats: { [stat: string]: number }) {
     const abilities = [];
 
     for (const stat in stats) {
@@ -559,7 +585,9 @@ export class CharactersService {
     return abilities;
   }
 
-  convertToArmoryItemSet(equipments) {
+  convertToArmoryItemSet(equipments: {
+    [equipment: string]: CharacterEquipment;
+  }) {
     const itemSetNames = [
       '악몽',
       '사멸',
@@ -583,7 +611,7 @@ export class CharactersService {
         equipment === '어깨'
       ) {
         itemSetCounts[
-          itemSetNames.indexOf(equipments[equipment].itemSet.name)
+          itemSetNames.indexOf(equipments[equipment].itemSet.setName)
         ]++;
       }
     }
@@ -599,7 +627,9 @@ export class CharactersService {
     return result;
   }
 
-  convertToArmoryElixir(equipments) {
+  convertToArmoryElixir(equipments: {
+    [equipment: string]: CharacterEquipment;
+  }) {
     let elixirLevelSum = 0;
     let elixirHead = '질서';
     let elixirHand = '혼돈';
@@ -635,7 +665,7 @@ export class CharactersService {
     }
   }
 
-  async convertToSkillSetting(characterInfo) {
+  async convertToSkillSetting(characterInfo: CharacterInfoDto) {
     const createSkillSettingDto: CreateSkillSettingDto = {
       characterName: characterInfo.profile.characterName,
       className: characterInfo.profile.className,
@@ -649,18 +679,18 @@ export class CharactersService {
     );
 
     characterInfo.engraves.forEach((engrave) => {
-      if (classEngraveNames.includes(engrave.name)) {
-        createSkillSettingDto.classEngraves.push(engrave.name);
+      if (classEngraveNames.includes(engrave.engraveName)) {
+        createSkillSettingDto.classEngraves.push(engrave.engraveName);
       }
     });
 
     // skillUsages
     characterInfo.skills.forEach((skill) => {
-      const skillUsage = {
+      const skillUsage: SkillUsage = {
         skillName: skill.skillName,
         skillLevel: skill.skillLevel,
         tripodNames: [],
-        runeName: skill.rune.runeName,
+        runeName: skill.rune?.runeName,
       };
 
       skill.tripods.forEach((tripod) => {

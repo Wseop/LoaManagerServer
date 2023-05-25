@@ -71,11 +71,11 @@ const mockCreateArmorySettingDto: CreateArmorySettingDto = {
   ability: 'ability',
   engraves: [
     {
-      name: 'engraveName',
-      level: 0,
+      engraveName: 'engraveName',
+      engraveLevel: 0,
     },
   ],
-  classEngraves: [{ name: 'classEngraveName', level: 0 }],
+  classEngraves: [{ engraveName: 'classEngraveName', engraveLevel: 0 }],
   itemSet: 'itemSet',
   elixir: 'elixir',
 };

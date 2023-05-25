@@ -1,11 +1,11 @@
-export interface CharacterProfile {
+export class CharacterProfile {
   expeditionLevel: number;
   title: string;
   guildName: string;
   usingSkillPoint: number;
   totalSkillPoint: number;
   stats: {
-    [type: string]: number;
+    [stat: string]: number;
   };
   serverName: string;
   characterName: string;
@@ -14,28 +14,31 @@ export interface CharacterProfile {
   itemLevel: number;
 }
 
-export interface CharacterEquipment {
+export class CharacterEquipment {
   type: string;
   name: string;
   iconPath: string;
-  grade: string;
-  itemLevel?: number;
+  itemGrade: string;
   quality?: number;
-  itemSet?: { name: string; level: number };
-  isElla?: boolean;
-  abilities?: {
-    [ability: string]: number;
+  itemLevel?: number;
+  itemSet?: {
+    setName: string;
+    setLevel: number;
   };
-  braceletEffects?: string[];
   elixirs?: {
     [elixir: string]: number;
+  };
+  abilities?: {
+    [ability: string]: number;
   };
   engraves?: {
     [engrave: string]: number;
   };
+  braceletEffects?: string[];
+  isElla?: boolean;
 }
 
-export interface CharacterSkill {
+export class CharacterSkill {
   skillName: string;
   skillLevel: number;
   tripods: {
@@ -44,41 +47,43 @@ export interface CharacterSkill {
   }[];
   rune: {
     runeName: string;
-    grade: string;
+    itemGrade: string;
     iconPath: string;
   };
 }
 
-export interface CharacterEngrave {
-  name: string;
-  level: number;
+export class CharacterGem {
+  type: string;
+  gemLevel: number;
+  iconPath: string;
+  itemGrade: string;
+  skillName: string;
 }
 
-export interface CharacterCard {
+export class CharacterEngrave {
+  engraveName: string;
+  engraveLevel: number;
+}
+
+export class CharacterCard {
   cardSet: string;
   awaken: number;
 }
 
-export interface CharacterGem {
-  type: string;
-  level: number;
-  iconPath: string;
-  grade: string;
-  skillName: string;
-}
-
-export interface CharacterCollectible {
+export class CharacterCollectible {
   type: string;
   point: number;
   maxPoint: number;
 }
 
-export interface CharacterInfo {
+export class CharacterInfoDto {
   profile: CharacterProfile;
-  equipments: { [type: string]: CharacterEquipment };
+  equipments: {
+    [equipment: string]: CharacterEquipment;
+  };
   skills: CharacterSkill[];
+  gems: CharacterGem[];
   engraves: CharacterEngrave[];
   cards: CharacterCard[];
-  gems: CharacterGem[];
   collectibles: CharacterCollectible[];
 }

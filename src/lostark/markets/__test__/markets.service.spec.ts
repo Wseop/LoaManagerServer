@@ -39,11 +39,16 @@ describe('MarketsService', () => {
         Icon: 'icon',
         RecentPrice: 10,
         CurrentMinPrice: 5,
+        Id: 0,
+        BundleCount: 0,
+        TradeRemainCount: 0,
+        YDayAvgPrice: 11,
       });
       expect(result).toStrictEqual({
-        name: 'name',
-        grade: 'grade',
+        itemName: 'name',
+        itemGrade: 'grade',
         iconPath: 'icon',
+        avgPrice: 11,
         recentPrice: 10,
         minPrice: 5,
       });

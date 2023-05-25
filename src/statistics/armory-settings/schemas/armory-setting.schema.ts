@@ -6,12 +6,12 @@ export class ArmoryEngrave {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  name: string;
+  engraveName: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  level: number;
+  engraveLevel: number;
 }
 
 @Schema()

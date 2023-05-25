@@ -13,12 +13,12 @@ export class MarketQueryDto {
   @ApiProperty({ required: true, type: Number })
   @IsNumber()
   @Type(() => Number)
-  categoryCode: Number;
+  categoryCode: number;
 
   @ApiProperty({ required: false, type: String })
   @IsOptional()
   @IsString()
-  className?: String;
+  className?: string;
 
   @ApiProperty({ required: false, enum: ItemGrade })
   @IsOptional()

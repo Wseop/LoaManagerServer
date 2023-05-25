@@ -128,7 +128,7 @@ export class StatisticsService {
     ).forEach((armorySetting) => {
       const classEngraveName =
         armorySetting.classEngraves.length === 1
-          ? armorySetting.classEngraves[0].name
+          ? armorySetting.classEngraves[0].engraveName
           : 'pair';
 
       if (statsArmorySetting[classEngraveName] !== undefined) {
@@ -145,8 +145,10 @@ export class StatisticsService {
         // engrave (non-class)
         armorySetting.engraves.forEach((engrave) => {
           this.addCount(
-            statsArmorySetting[classEngraveName]['engraves'][engrave.level - 1],
-            engrave.name,
+            statsArmorySetting[classEngraveName]['engraves'][
+              engrave.engraveLevel - 1
+            ],
+            engrave.engraveName,
           );
         });
 
@@ -154,9 +156,9 @@ export class StatisticsService {
         armorySetting.classEngraves.forEach((classEngrave) => {
           this.addCount(
             statsArmorySetting[classEngraveName]['engraves'][
-              classEngrave.level - 1
+              classEngrave.engraveLevel - 1
             ],
-            classEngrave.name,
+            classEngrave.engraveName,
           );
         });
 
