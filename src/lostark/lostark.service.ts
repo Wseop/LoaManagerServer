@@ -106,12 +106,32 @@ export class LostarkService {
   }
 
   async searchAuctionItems(query: AuctionQueryDto) {
-    const result = await this.post(
-      'https://developer-lostark.game.onstove.com/auctions/items',
-      this.auctionsService.buildSearchOption(query),
-    );
+    const url = 'https://developer-lostark.game.onstove.com/auctions/items';
+    const searchOption = this.auctionsService.buildSearchOption(query);
+    const auctionItems = [];
 
-    return this.auctionsService.parseSearchResult(result.data.Items[0]);
+    if (query.pageAll) {
+      let pageNo = 1;
+
+      while (true) {
+        searchOption.PageNo = pageNo++;
+
+        const result = await this.post(url, searchOption);
+        if (result.data.Items === null) break;
+
+        result.data.Items.forEach((item) => {
+          auctionItems.push(this.auctionsService.parseSearchResult(item));
+        });
+      }
+    } else {
+      const result = await this.post(url, searchOption);
+
+      result.data.Items.forEach((item) => {
+        auctionItems.push(this.auctionsService.parseSearchResult(item));
+      });
+    }
+
+    return auctionItems;
   }
 
   async searchMarketItems(query: MarketQueryDto) {

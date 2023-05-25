@@ -12,13 +12,12 @@ export class AuctionsService {
       ItemTier: 3,
       PageNo: 1,
       CategoryCode: query.categoryCode,
+      ItemGradeQuality: query.quality,
+      ItemGrade: query.itemGrade,
+      ItemName: query.itemName,
       SkillOptions: [],
       EtcOptions: [],
     };
-
-    if (query.quality) {
-      searchOption['ItemGradeQuality'] = query.quality;
-    }
 
     if (query.skillCodes) {
       if (query.skillCodes.length === query.tripodCodes?.length) {
@@ -50,29 +49,24 @@ export class AuctionsService {
       });
     }
 
-    if (query.itemGrade) {
-      searchOption['ItemGrade'] = query.itemGrade;
-    }
-
-    if (query.itemName) {
-      searchOption['ItemName'] = query.itemName;
-    }
-
     return searchOption;
   }
 
   parseSearchResult(searchResult) {
     const auctionItem = {
       buyPrice: searchResult.AuctionInfo.BuyPrice,
+      startPrice: searchResult.AuctionInfo.StartPrice,
+      currentBidPrice: searchResult.AuctionInfo.BidPrice,
+      nextBidPrice: searchResult.AuctionInfo.BidStartPrice,
       name: searchResult.Name,
       grade: searchResult.Grade,
       iconPath: searchResult.Icon,
       quality: searchResult.GradeQuality,
-      options: [],
+      itemOptions: [],
     };
 
     searchResult.Options.forEach((option) => {
-      auctionItem.options.push({
+      auctionItem.itemOptions.push({
         name: option.OptionName,
         tripod: option.OptionNameTripod,
         value: option.Value,

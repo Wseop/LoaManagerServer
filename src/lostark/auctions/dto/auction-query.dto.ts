@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ItemGrade } from '../../enums/item-grade.enum';
 
 export class AuctionQueryDto {
@@ -48,4 +54,10 @@ export class AuctionQueryDto {
   @IsOptional()
   @IsString()
   itemName?: string;
+
+  @ApiProperty({ required: false, type: Boolean, default: false })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  pageAll?: boolean;
 }
