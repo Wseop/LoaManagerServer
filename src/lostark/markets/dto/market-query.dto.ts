@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ItemGrade } from 'src/lostark/enums/item-grade.enum';
+import { ItemGrade } from '../../enums/item-grade.enum';
 
 export class MarketQueryDto {
   @ApiProperty({ required: true, type: Number })

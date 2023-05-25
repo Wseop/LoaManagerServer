@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { EngraveService } from 'src/resources/engrave/engrave.service';
-import { ArmorySettingsService } from 'src/statistics/armory-settings/armory-settings.service';
-import { CreateArmorySettingDto } from 'src/statistics/armory-settings/dto/create-armory-setting.dto';
-import { CreateSkillSettingDto } from 'src/statistics/skill-settings/dto/create-skill-setting.dto';
-import { SkillSettingsService } from 'src/statistics/skill-settings/skill-settings.service';
+import { EngraveService } from '../../resources/engrave/engrave.service';
+import { ArmorySettingsService } from '../../statistics/armory-settings/armory-settings.service';
+import { CreateArmorySettingDto } from '../../statistics/armory-settings/dto/create-armory-setting.dto';
+import { CreateSkillSettingDto } from '../../statistics/skill-settings/dto/create-skill-setting.dto';
+import { SkillSettingsService } from '../../statistics/skill-settings/skill-settings.service';
 
 @Injectable()
 export class CharactersService {
