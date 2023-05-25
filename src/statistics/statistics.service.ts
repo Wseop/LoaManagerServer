@@ -102,18 +102,18 @@ export class StatisticsService {
 
   async getStatsArmorySetting(className: string) {
     // 직업 각인 목록 초기화
-    const classEngraveCodes = await this.engraveService.findClassEngraveCodes(
+    const classEngraveNames = await this.engraveService.findClassEngraveNames(
       className,
     );
-    if (classEngraveCodes.length === 0) return null;
-    else classEngraveCodes.push('pair');
+    if (classEngraveNames.length === 0) return null;
+    else classEngraveNames.push('pair');
 
     // StatsArmorySetting 초기화
     const statsArmorySetting: StatsArmorySetting = {
       count: 0,
     };
-    for (const classEngraveCode of classEngraveCodes) {
-      statsArmorySetting[classEngraveCode] = {
+    for (const classEngraveName of classEngraveNames) {
+      statsArmorySetting[classEngraveName] = {
         count: 0,
         abilities: {},
         engraves: [{}, {}, {}],
@@ -126,49 +126,49 @@ export class StatisticsService {
     (
       await this.armorySettingsService.findArmorySettingsByClassName(className)
     ).forEach((armorySetting) => {
-      const classEngraveCode =
+      const classEngraveName =
         armorySetting.classEngraves.length === 1
-          ? armorySetting.classEngraves[0].code
+          ? armorySetting.classEngraves[0].name
           : 'pair';
 
-      if (statsArmorySetting[classEngraveCode] !== undefined) {
+      if (statsArmorySetting[classEngraveName] !== undefined) {
         // count
         statsArmorySetting.count++;
-        statsArmorySetting[classEngraveCode]['count']++;
+        statsArmorySetting[classEngraveName]['count']++;
 
         // ability
         this.addCount(
-          statsArmorySetting[classEngraveCode]['abilities'],
+          statsArmorySetting[classEngraveName]['abilities'],
           armorySetting.ability,
         );
 
         // engrave (non-class)
         armorySetting.engraves.forEach((engrave) => {
           this.addCount(
-            statsArmorySetting[classEngraveCode]['engraves'][engrave.level - 1],
-            engrave.code.toString(),
+            statsArmorySetting[classEngraveName]['engraves'][engrave.level - 1],
+            engrave.name,
           );
         });
 
         // engrave (class)
         armorySetting.classEngraves.forEach((classEngrave) => {
           this.addCount(
-            statsArmorySetting[classEngraveCode]['engraves'][
+            statsArmorySetting[classEngraveName]['engraves'][
               classEngrave.level - 1
             ],
-            classEngrave.code.toString(),
+            classEngrave.name,
           );
         });
 
         // itemSet
         this.addCount(
-          statsArmorySetting[classEngraveCode]['itemSets'],
+          statsArmorySetting[classEngraveName]['itemSets'],
           armorySetting.itemSet,
         );
 
         // elixir
         this.addCount(
-          statsArmorySetting[classEngraveCode]['elixirs'],
+          statsArmorySetting[classEngraveName]['elixirs'],
           armorySetting.elixir,
         );
       }
