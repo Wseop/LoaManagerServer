@@ -4,9 +4,10 @@ import { LostarkController } from './lostark.controller';
 import { LostarkService } from './lostark.service';
 import { CharactersModule } from './characters/characters.module';
 import { AuctionsModule } from './auctions/auctions.module';
+import { MarketsModule } from './markets/markets.module';
 
 @Module({
-  imports: [ApiKeysModule, CharactersModule, AuctionsModule],
+  imports: [ApiKeysModule, CharactersModule, AuctionsModule, MarketsModule],
   controllers: [LostarkController],
   providers: [LostarkService],
 })

@@ -21,6 +21,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuctionQueryDto } from './auctions/dto/auction-query.dto';
+import { MarketQueryDto } from './markets/dto/market-query.dto';
 
 @ApiTags('lostark')
 @Controller('lostark')
@@ -64,5 +65,16 @@ export class LostarkController {
   })
   searchAuctionItems(@Query() query: AuctionQueryDto) {
     return this.lostarkService.searchAuctionItems(query);
+  }
+
+  @Get('/markets/items')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiOkResponse()
+  @ApiTooManyRequestsResponse({ description: 'API request limit' })
+  @ApiServiceUnavailableResponse({
+    description: 'Lostark api server is under maintenance',
+  })
+  searchMarketItems(@Query() query: MarketQueryDto) {
+    return this.lostarkService.searchMarketItems(query);
   }
 }

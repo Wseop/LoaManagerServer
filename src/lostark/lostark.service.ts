@@ -12,6 +12,8 @@ import { CharactersService } from './characters/characters.service';
 import axios from 'axios';
 import { AuctionsService } from './auctions/auctions.service';
 import { AuctionQueryDto } from './auctions/dto/auction-query.dto';
+import { MarketsService } from './markets/markets.service';
+import { MarketQueryDto } from './markets/dto/market-query.dto';
 
 @Injectable()
 export class LostarkService {
@@ -19,6 +21,7 @@ export class LostarkService {
     private readonly apiKeysService: ApiKeysService,
     private readonly charactersService: CharactersService,
     private readonly auctionsService: AuctionsService,
+    private readonly marketsService: MarketsService,
   ) {}
 
   async createApiKey(createApiKeyDto: CreateApiKeyDto) {
@@ -109,5 +112,34 @@ export class LostarkService {
     );
 
     return this.auctionsService.parseSearchResult(result.data.Items[0]);
+  }
+
+  async searchMarketItems(query: MarketQueryDto) {
+    const url = 'https://developer-lostark.game.onstove.com/markets/items';
+    const searchOption = this.marketsService.buildSearchOption(query);
+    const marketItems = [];
+
+    if (query.pageAll) {
+      let pageNo = 1;
+
+      while (true) {
+        searchOption.PageNo = pageNo++;
+
+        const result = await this.post(url, searchOption);
+        if (result.data.Items.length === 0) break;
+
+        result.data.Items.forEach((item) => {
+          marketItems.push(this.marketsService.parseSearchResult(item));
+        });
+      }
+    } else {
+      const result = await this.post(url, searchOption);
+
+      result.data.Items.forEach((item) => {
+        marketItems.push(this.marketsService.parseSearchResult(item));
+      });
+    }
+
+    return marketItems;
   }
 }
