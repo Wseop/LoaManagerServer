@@ -23,7 +23,16 @@ export class AuctionsService {
     };
 
     if (query.skillCodes) {
-      if (query.skillCodes.length === query.tripodCodes?.length) {
+      if (query.skillCodes.length === undefined) {
+        const skillCode = Number(query.skillCodes.toString());
+        const tripodCode = Number(query.tripodCodes.toString());
+
+        searchOption.SkillOptions.push({
+          FirstOption: skillCode,
+          SecondOption: tripodCode,
+          MinValue: 5,
+        });
+      } else if (query.skillCodes.length === query.tripodCodes?.length) {
         query.skillCodes.forEach((skillCode, i) => {
           searchOption.SkillOptions.push({
             FirstOption: skillCode,
@@ -35,21 +44,39 @@ export class AuctionsService {
     }
 
     if (query.abilityCodes) {
-      query.abilityCodes.forEach((abilityCode) => {
+      if (query.abilityCodes.length === undefined) {
+        const abilityCode = Number(query.abilityCodes.toString());
+
         searchOption.EtcOptions.push({
           FirstOption: 2,
           SecondOption: abilityCode,
         });
-      });
+      } else {
+        query.abilityCodes.forEach((abilityCode) => {
+          searchOption.EtcOptions.push({
+            FirstOption: 2,
+            SecondOption: abilityCode,
+          });
+        });
+      }
     }
 
     if (query.engraveCodes) {
-      query.engraveCodes.forEach((engraveCode) => {
+      if (query.engraveCodes.length === undefined) {
+        const engraveCode = Number(query.engraveCodes.toString());
+
         searchOption.EtcOptions.push({
           FirstOption: 3,
           SecondOption: engraveCode,
         });
-      });
+      } else {
+        query.engraveCodes.forEach((engraveCode) => {
+          searchOption.EtcOptions.push({
+            FirstOption: 3,
+            SecondOption: engraveCode,
+          });
+        });
+      }
     }
 
     return searchOption;
