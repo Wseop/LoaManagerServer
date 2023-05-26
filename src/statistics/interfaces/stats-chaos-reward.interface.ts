@@ -1,4 +1,4 @@
-export interface StatsChaosReward {
+export class StatsChaosReward {
   count: number;
   level: string;
   itemCounts: {

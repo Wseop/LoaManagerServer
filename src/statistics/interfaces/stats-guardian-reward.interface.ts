@@ -1,4 +1,4 @@
-export interface StatsGuardianReward {
+export class StatsGuardianReward {
   count: number;
   level: string;
   itemCounts: {

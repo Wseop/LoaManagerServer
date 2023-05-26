@@ -1,4 +1,4 @@
-export interface StatsArmorySetting {
+export class StatsArmorySetting {
   count: number;
   [classEngraveCode: string]:
     | number
