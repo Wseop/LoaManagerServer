@@ -1,11 +1,11 @@
-interface SearchDetailOption {
+class SearchDetailOption {
   FirstOption: number;
   SecondOption: number;
   MinValue?: number;
   MaxValue?: number;
 }
 
-export class AuctionSearchOptionDto {
+export class AuctionSearchOption {
   Sort: string;
   SortCondition: string;
   ItemTier: number;

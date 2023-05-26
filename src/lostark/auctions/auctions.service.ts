@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { AuctionQueryDto } from './dto/auction-query.dto';
-import { AuctionSearchResultDto } from './dto/auction-search-result.dto';
+import { AuctionSearchResult } from './interfaces/auction-search-result.interface';
 import { AuctionItemDto } from './dto/auction-item.dto';
-import { AuctionSearchOptionDto } from './dto/auction-search-option.dto';
+import { AuctionSearchOption } from './interfaces/auction-search-option.interface';
 
 @Injectable()
 export class AuctionsService {
   constructor() {}
 
   buildSearchOption(query: AuctionQueryDto) {
-    const searchOption: AuctionSearchOptionDto = {
+    const searchOption: AuctionSearchOption = {
       Sort: 'BUY_PRICE',
       SortCondition: 'ASC',
       ItemTier: 3,
@@ -55,7 +55,7 @@ export class AuctionsService {
     return searchOption;
   }
 
-  parseSearchResult(searchResult: AuctionSearchResultDto) {
+  parseSearchResult(searchResult: AuctionSearchResult) {
     const auctionItem: AuctionItemDto = {
       buyPrice: searchResult.AuctionInfo.BuyPrice,
       startPrice: searchResult.AuctionInfo.StartPrice,

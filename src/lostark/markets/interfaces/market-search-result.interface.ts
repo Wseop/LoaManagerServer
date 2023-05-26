@@ -1,4 +1,4 @@
-export class MarketSearchResultDto {
+export class MarketSearchResult {
   Id: number;
   Name: string;
   Grade: string;

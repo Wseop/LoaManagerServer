@@ -16,8 +16,8 @@ import { MarketsService } from './markets/markets.service';
 import { MarketQueryDto } from './markets/dto/market-query.dto';
 import { AuctionItemDto } from './auctions/dto/auction-item.dto';
 import { MarketItemDto } from './markets/dto/market-item.dto';
-import { AuctionSearchOptionDto } from './auctions/dto/auction-search-option.dto';
-import { MarketSearchOptionDto } from './markets/dto/market-search-option.dto';
+import { AuctionSearchOption } from './auctions/interfaces/auction-search-option.interface';
+import { MarketSearchOption } from './markets/interfaces/market-search-option.interface';
 
 @Injectable()
 export class LostarkService {
@@ -111,7 +111,7 @@ export class LostarkService {
 
   async searchAuctionItems(query: AuctionQueryDto) {
     const url = 'https://developer-lostark.game.onstove.com/auctions/items';
-    const searchOption: AuctionSearchOptionDto =
+    const searchOption: AuctionSearchOption =
       this.auctionsService.buildSearchOption(query);
     const auctionItems: AuctionItemDto[] = [];
 
@@ -141,7 +141,7 @@ export class LostarkService {
 
   async searchMarketItems(query: MarketQueryDto) {
     const url = 'https://developer-lostark.game.onstove.com/markets/items';
-    const searchOption: MarketSearchOptionDto =
+    const searchOption: MarketSearchOption =
       this.marketsService.buildSearchOption(query);
     const marketItems: MarketItemDto[] = [];
 

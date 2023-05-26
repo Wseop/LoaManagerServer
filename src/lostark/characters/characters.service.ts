@@ -43,25 +43,16 @@ export class CharactersService {
     return result;
   }
 
-  async parseCharacter(character) {
-    const parseKeys = [
-      'ArmoryProfile',
-      'ArmoryEquipment',
-      'ArmorySkills',
-      'ArmoryEngraving',
-      'ArmoryCard',
-      'ArmoryGem',
-      'Collectibles',
-    ];
-    const resultKeys = [
-      'profile',
-      'equipments',
-      'skills',
-      'engraves',
-      'cards',
-      'gems',
-      'collectibles',
-    ];
+  async parseCharacter(character: {
+    ArmoryProfile: {};
+    ArmoryEquipment: [];
+    ArmorySkills: [];
+    ArmoryEngraving: {};
+    ArmoryCard: {};
+    ArmoryGem: {};
+    Collectibles: [];
+  }) {
+    const parseKeys = Object.keys(character);
     const parsers = [
       this.parseProfile,
       this.parseEquipments,
@@ -76,11 +67,12 @@ export class CharactersService {
       profile: null,
       equipments: null,
       skills: null,
-      gems: null,
       engraves: null,
       cards: null,
+      gems: null,
       collectibles: null,
     };
+    const resultKeys = Object.keys(result);
 
     await Promise.all(
       parseKeys.map(async (parseKey, i) => {
@@ -99,7 +91,25 @@ export class CharactersService {
     return result;
   }
 
-  async parseProfile(_, profile) {
+  async parseProfile(
+    _,
+    profile: {
+      ExpeditionLevel: number;
+      Title: string;
+      GuildName: string;
+      UsingSkillPoint: number;
+      TotalSkillPoint: number;
+      Stats: {
+        Type: string;
+        Value: number;
+      }[];
+      ServerName: string;
+      CharacterName: string;
+      CharacterLevel: number;
+      CharacterClassName: string;
+      ItemAvgLevel: string;
+    },
+  ) {
     const characterProfile: CharacterProfile = {
       expeditionLevel: profile.ExpeditionLevel,
       title: profile.Title,
@@ -127,7 +137,16 @@ export class CharactersService {
     return characterProfile;
   }
 
-  async parseEquipments(parent, equipments) {
+  async parseEquipments(
+    parent: CharactersService,
+    equipments: {
+      Type: string;
+      Name: string;
+      Icon: string;
+      Grade: string;
+      Tooltip: string;
+    }[],
+  ) {
     const characterEquipments: { [equipment: string]: CharacterEquipment } = {};
 
     if (equipments) {
@@ -183,7 +202,24 @@ export class CharactersService {
     return characterEquipments;
   }
 
-  async parseSkills(_, skills) {
+  async parseSkills(
+    _,
+    skills: {
+      Name: string;
+      Icon: string;
+      Level: number;
+      Tripods: {
+        Name: string;
+        Level: number;
+        IsSelected: boolean;
+      }[];
+      Rune: {
+        Name: string;
+        Icon: string;
+        Grade: string;
+      };
+    }[],
+  ) {
     const characterSkills: CharacterSkill[] = [];
 
     if (skills) {
@@ -225,7 +261,14 @@ export class CharactersService {
     return characterSkills;
   }
 
-  async parseEngraves(_, engraves) {
+  async parseEngraves(
+    _,
+    engraves: {
+      Effects: {
+        Name: string;
+      }[];
+    },
+  ) {
     const characterEngraves: CharacterEngrave[] = [];
 
     if (engraves) {
@@ -246,7 +289,16 @@ export class CharactersService {
     return characterEngraves;
   }
 
-  async parseCards(_, cards) {
+  async parseCards(
+    _,
+    cards: {
+      Effects: {
+        Items: {
+          Name: string;
+        }[];
+      }[];
+    },
+  ) {
     const characterCards: CharacterCard[] = [];
 
     if (cards) {
@@ -281,7 +333,22 @@ export class CharactersService {
     return characterCards;
   }
 
-  async parseGems(_, gems) {
+  async parseGems(
+    _,
+    gems: {
+      Gems: {
+        Slot: number;
+        Name: string;
+        Icon: string;
+        Level: number;
+        Grade: string;
+      }[];
+      Effects: {
+        GemSlot: number;
+        Name: string;
+      }[];
+    },
+  ) {
     const characterGems: CharacterGem[] = [];
 
     if (gems) {
@@ -314,7 +381,14 @@ export class CharactersService {
     return characterGems;
   }
 
-  async parseCollectibles(_, collectibles) {
+  async parseCollectibles(
+    _,
+    collectibles: {
+      Type: string;
+      Point: number;
+      MaxPoint: number;
+    }[],
+  ) {
     const characterCollectibles: CharacterCollectible[] = [];
 
     if (collectibles) {

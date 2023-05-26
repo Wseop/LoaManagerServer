@@ -1,4 +1,4 @@
-interface ItemOption {
+class ItemOption {
   optionName: string;
   tripod: string;
   value: number;

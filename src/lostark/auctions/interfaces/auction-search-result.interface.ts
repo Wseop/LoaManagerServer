@@ -1,4 +1,4 @@
-interface AuctionInfo {
+class AuctionInfo {
   StartPrice: number;
   BuyPrice: number;
   BidPrice: number;
@@ -9,7 +9,7 @@ interface AuctionInfo {
   TradeAllowCount: number;
 }
 
-interface ItemOption {
+class ItemOption {
   Type: string;
   OptionName: string;
   OptionNameTripod: string;
@@ -18,7 +18,7 @@ interface ItemOption {
   ClassName: string;
 }
 
-export class AuctionSearchResultDto {
+export class AuctionSearchResult {
   Name: string;
   Grade: string;
   Tier: number;

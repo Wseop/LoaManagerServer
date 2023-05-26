@@ -1,4 +1,4 @@
-export class MarketSearchOptionDto {
+export class MarketSearchOption {
   Sort: string;
   SortCondition: string;
   PageNo: number;
