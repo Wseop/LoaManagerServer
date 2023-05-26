@@ -115,16 +115,6 @@ class MockArmorySettingsService {
       elixir: 'elixir',
     },
   ]);
-  createArmorySetting = jest.fn().mockResolvedValue({
-    characterName: 'characterName',
-    className: 'className',
-    itemLevel: 0,
-    ability: 'ability',
-    engraves: [{ engraveName: 'engraveName1', engraveLevel: 0 }],
-    classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 0 }],
-    itemSet: 'itemSet',
-    elixir: 'elixir',
-  });
 }
 class MockSkillSettingsService {
   findSkillSettingsByClassName = jest.fn().mockResolvedValue([
@@ -168,19 +158,6 @@ class MockSkillSettingsService {
       ],
     },
   ]);
-  createSkillSetting = jest.fn().mockResolvedValue({
-    characterName: 'characterName',
-    className: 'className',
-    classEngraves: ['classEngraveName1', 'classEngraveName2'],
-    skillUsages: [
-      {
-        skillName: 'skillName',
-        skillLevel: 0,
-        tripodNames: ['tripod1', 'tripod2'],
-        runeName: 'runeName',
-      },
-    ],
-  });
 }
 class MockEngraveService {
   findClassEngraveNames = jest.fn((className) => {
@@ -383,34 +360,6 @@ describe('StatisticsService', () => {
     });
   });
 
-  describe('createArmorySetting', () => {
-    it('should return CreateArmorysettingDto', async () => {
-      const result = await statisticsService.createArmorySetting({
-        characterName: 'characterName',
-        className: 'className',
-        itemLevel: 0,
-        ability: 'ability',
-        engraves: [{ engraveName: 'engraveName1', engraveLevel: 0 }],
-        classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 0 }],
-        itemSet: 'itemSet',
-        elixir: 'elixir',
-      });
-      expect(result).toStrictEqual({
-        characterName: 'characterName',
-        className: 'className',
-        itemLevel: 0,
-        ability: 'ability',
-        engraves: [{ engraveName: 'engraveName1', engraveLevel: 0 }],
-        classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 0 }],
-        itemSet: 'itemSet',
-        elixir: 'elixir',
-      });
-      expect(
-        jest.spyOn(armorySettingsService, 'createArmorySetting'),
-      ).toBeCalledTimes(1);
-    });
-  });
-
   describe('getStatsSkillSetting', () => {
     it('should return StatsSkillSetting', async () => {
       const result = await statisticsService.getStatsSkillSetting('className');
@@ -450,40 +399,6 @@ describe('StatisticsService', () => {
     it('should return null', async () => {
       const result = await statisticsService.getStatsSkillSetting('null');
       expect(result).toBe(null);
-    });
-  });
-
-  describe('createSkillSetting', () => {
-    it('should return CreateSkillSettingDto', async () => {
-      const result = await statisticsService.createSkillSetting({
-        characterName: 'characterName',
-        className: 'className',
-        classEngraves: ['classEngraveName1', 'classEngraveName2'],
-        skillUsages: [
-          {
-            skillName: 'skillName',
-            skillLevel: 0,
-            tripodNames: ['tripod1', 'tripod2'],
-            runeName: 'runeName',
-          },
-        ],
-      });
-      expect(result).toStrictEqual({
-        characterName: 'characterName',
-        className: 'className',
-        classEngraves: ['classEngraveName1', 'classEngraveName2'],
-        skillUsages: [
-          {
-            skillName: 'skillName',
-            skillLevel: 0,
-            tripodNames: ['tripod1', 'tripod2'],
-            runeName: 'runeName',
-          },
-        ],
-      });
-      expect(
-        jest.spyOn(skillSettingsService, 'createSkillSetting'),
-      ).toBeCalledTimes(1);
     });
   });
 });

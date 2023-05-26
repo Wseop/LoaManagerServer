@@ -10,8 +10,6 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
-import { CreateArmorySettingDto } from './armory-settings/dto/create-armory-setting.dto';
-import { CreateSkillSettingDto } from './skill-settings/dto/create-skill-setting.dto';
 
 @ApiTags('statistics')
 @Controller('statistics')
@@ -55,26 +53,8 @@ export class StatisticsController {
     return this.statisticsService.getStatsArmorySetting(className);
   }
 
-  @Post('/settings/armory')
-  @UseGuards(AuthGuard('access'))
-  @ApiUnauthorizedResponse()
-  @ApiBadRequestResponse()
-  @ApiCreatedResponse()
-  createArmorySetting(@Body() createArmorySettingDto: CreateArmorySettingDto) {
-    return this.statisticsService.createArmorySetting(createArmorySettingDto);
-  }
-
   @Get('/settings/skill/:className')
   getStatsSkillSetting(@Param('className') className: string) {
     return this.statisticsService.getStatsSkillSetting(className);
-  }
-
-  @Post('/settings/skill')
-  @UseGuards(AuthGuard('access'))
-  @ApiUnauthorizedResponse()
-  @ApiBadRequestResponse()
-  @ApiCreatedResponse()
-  createSkillSetting(@Body() createSkillSettingDto: CreateSkillSettingDto) {
-    return this.statisticsService.createSkillSetting(createSkillSettingDto);
   }
 }

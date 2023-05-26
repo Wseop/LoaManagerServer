@@ -9,8 +9,6 @@ import { StatsChaosReward } from './interfaces/stats-chaos-reward.interface';
 import { StatsGuardianReward } from './interfaces/stats-guardian-reward.interface';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
-import { CreateArmorySettingDto } from './armory-settings/dto/create-armory-setting.dto';
-import { CreateSkillSettingDto } from './skill-settings/dto/create-skill-setting.dto';
 import { StatsArmorySetting } from './interfaces/stats-armory-setting.interface';
 import { EngraveService } from '../resources/engrave/engrave.service';
 import { StatsSkillSetting } from './interfaces/stats-skill-setting.interface';
@@ -179,12 +177,6 @@ export class StatisticsService {
     return statsArmorySetting;
   }
 
-  async createArmorySetting(createArmorySettingDto: CreateArmorySettingDto) {
-    return await this.armorySettingsService.createArmorySetting(
-      createArmorySettingDto,
-    );
-  }
-
   async getStatsSkillSetting(className: string) {
     // 직업 각인 목록 초기화
     const classEngraveNames = await this.engraveService.findClassEngraveNames(
@@ -258,11 +250,5 @@ export class StatisticsService {
     });
 
     return statsSkillSetting;
-  }
-
-  async createSkillSetting(createSkillSettingDto: CreateSkillSettingDto) {
-    return await this.skillSettingsService.createSkillSetting(
-      createSkillSettingDto,
-    );
   }
 }
