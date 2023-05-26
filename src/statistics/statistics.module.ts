@@ -1,26 +1,19 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { StatsChaos, StatsChaosSchema } from './schemas/stats-chaos.schema';
-import {
-  StatsGuardian,
-  StatsGuardianSchema,
-} from './schemas/stats-guardian.schema';
-import {
-  StatsSetting,
-  StatsSettingSchema,
-} from './schemas/stats-setting.schema';
-import { StatsSkill, StatsSkillSchema } from './schemas/stats-skill.schema';
 import { StatisticsController } from './statistics.controller';
 import { StatisticsService } from './statistics.service';
+import { ChaosRewardsModule } from './chaos-rewards/chaos-rewards.module';
+import { GuardianRewardsModule } from './guardian-rewards/guardian-rewards.module';
+import { ArmorySettingsModule } from './armory-settings/armory-settings.module';
+import { SkillSettingsModule } from './skill-settings/skill-settings.module';
+import { EngraveModule } from 'src/resources/engrave/engrave.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: StatsChaos.name, schema: StatsChaosSchema },
-      { name: StatsGuardian.name, schema: StatsGuardianSchema },
-      { name: StatsSetting.name, schema: StatsSettingSchema },
-      { name: StatsSkill.name, schema: StatsSkillSchema },
-    ]),
+    ChaosRewardsModule,
+    GuardianRewardsModule,
+    ArmorySettingsModule,
+    SkillSettingsModule,
+    EngraveModule,
   ],
   controllers: [StatisticsController],
   providers: [StatisticsService],

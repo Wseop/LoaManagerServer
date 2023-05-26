@@ -1,21 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ResourcesController } from './resources.controller';
 import { ResourcesService } from './resources.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Class, ClassSchema } from './schemas/class.schema';
-import { Engrave, EngraveSchema } from './schemas/engrave.schema';
-import { Reward, RewardSchema } from './schemas/reward.schema';
-import { Skill, SkillSchema } from './schemas/skill.schema';
+import { ClassModule } from './class/class.module';
+import { EngraveModule } from './engrave/engrave.module';
+import { RewardModule } from './reward/reward.module';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Class.name, schema: ClassSchema },
-      { name: Engrave.name, schema: EngraveSchema },
-      { name: Reward.name, schema: RewardSchema },
-      { name: Skill.name, schema: SkillSchema },
-    ]),
-  ],
+  imports: [ClassModule, EngraveModule, RewardModule, SkillModule],
   controllers: [ResourcesController],
   providers: [ResourcesService],
 })

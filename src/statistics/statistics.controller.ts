@@ -1,18 +1,5 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
-import { AuthGuard } from '@nestjs/passport';
-import { CreateStatsChaosDto } from './dto/create-stats-chaos.dto';
-import { CreateStatsGuardianDto } from './dto/create-stats-guardian.dto';
-import { CreateStatsSettingDto } from './dto/create-stats-setting.dto';
-import { CreateStatsSkillDto } from './dto/create-stats-skill.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -20,76 +7,74 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { StatsCategory } from './enums/statistics-category.enum';
+import { AuthGuard } from '@nestjs/passport';
+import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
+import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
+import { CreateArmorySettingDto } from './armory-settings/dto/create-armory-setting.dto';
+import { CreateSkillSettingDto } from './skill-settings/dto/create-skill-setting.dto';
 
-@ApiTags('stats')
-@Controller('stats')
+@ApiTags('statistics')
+@Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Get('/:category/:filter')
-  @ApiBadRequestResponse({ description: 'invalid category' })
+  @Get('/rewards/chaos/:level')
   @ApiOkResponse()
-  findStats(
-    @Param('category') category: string,
-    @Param('filter') filter: string,
+  getStatsChaosReward(@Param('level') level: string) {
+    return this.statisticsService.getStatsChaosReward(level);
+  }
+
+  @Post('/rewards/chaos')
+  @UseGuards(AuthGuard('access'))
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
+  @ApiCreatedResponse()
+  createChaosReward(@Body() createChaosRewardDto: CreateChaosRewardDto) {
+    return this.statisticsService.createChaosReward(createChaosRewardDto);
+  }
+
+  @Get('/rewards/guardian/:level')
+  @ApiOkResponse()
+  getStatsGuardianReward(@Param('level') level: string) {
+    return this.statisticsService.getStatsGuardianReward(level);
+  }
+
+  @Post('/rewards/guardian')
+  @UseGuards(AuthGuard('access'))
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
+  @ApiCreatedResponse()
+  createGuardianReward(
+    @Body() createGuardianRewardDto: CreateGuardianRewardDto,
   ) {
-    if (
-      category === StatsCategory.Chaos ||
-      category === StatsCategory.Guardian
-    ) {
-      return this.statisticsService.findStatsByLevel(category, filter);
-    } else if (
-      category === StatsCategory.Setting ||
-      category === StatsCategory.Skill
-    ) {
-      return this.statisticsService.findStatsByClass(category, filter);
-    } else {
-      throw new BadRequestException();
-    }
+    return this.statisticsService.createGuardianReward(createGuardianRewardDto);
   }
 
+  @Get('/settings/armory/:className')
+  getStatsArmorySetting(@Param('className') className: string) {
+    return this.statisticsService.getStatsArmorySetting(className);
+  }
+
+  @Post('/settings/armory')
   @UseGuards(AuthGuard('access'))
-  @Post('/chaos')
-  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
-  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
   @ApiCreatedResponse()
-  createChaosStats(@Body() createStatsChaosDto: CreateStatsChaosDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Chaos,
-      createStatsChaosDto,
-    );
+  createArmorySetting(@Body() createArmorySettingDto: CreateArmorySettingDto) {
+    return this.statisticsService.createArmorySetting(createArmorySettingDto);
   }
 
+  @Get('/settings/skill/:className')
+  getStatsSkillSetting(@Param('className') className: string) {
+    return this.statisticsService.getStatsSkillSetting(className);
+  }
+
+  @Post('/settings/skill')
   @UseGuards(AuthGuard('access'))
-  @Post('/guardian')
-  @ApiUnauthorizedResponse({ description: 'valid jwt required' })
-  @ApiBadRequestResponse({ description: 'invalid body' })
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
   @ApiCreatedResponse()
-  createGuardianStats(@Body() createStatsGuardianDto: CreateStatsGuardianDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Guardian,
-      createStatsGuardianDto,
-    );
-  }
-
-  @Post('/setting')
-  @ApiBadRequestResponse({ description: 'invalid body' })
-  @ApiCreatedResponse()
-  createSettingStats(@Body() createStatsSettingDto: CreateStatsSettingDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Setting,
-      createStatsSettingDto,
-    );
-  }
-
-  @Post('/skill')
-  @ApiBadRequestResponse({ description: 'invalid body' })
-  @ApiCreatedResponse()
-  createSkillStats(@Body() createStatsSkillDto: CreateStatsSkillDto) {
-    return this.statisticsService.createStats(
-      StatsCategory.Skill,
-      createStatsSkillDto,
-    );
+  createSkillSetting(@Body() createSkillSettingDto: CreateSkillSettingDto) {
+    return this.statisticsService.createSkillSetting(createSkillSettingDto);
   }
 }

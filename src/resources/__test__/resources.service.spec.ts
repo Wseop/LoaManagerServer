@@ -1,52 +1,51 @@
-import { Model, Query, UpdateWriteOpResult } from 'mongoose';
-import { ResourcesService } from '../resources.service';
-import { Class } from '../schemas/class.schema';
-import { Engrave } from '../schemas/engrave.schema';
-import { Reward } from '../schemas/reward.schema';
-import { Skill } from '../schemas/skill.schema';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import { BadRequestException } from '@nestjs/common';
+import { ClassService } from '../class/class.service';
+import { EngraveService } from '../engrave/engrave.service';
+import { ResourcesService } from '../resources.service';
+import { RewardService } from '../reward/reward.service';
+import { SkillService } from '../skill/skill.service';
+import { Class } from '../class/schemas/class.schema';
+import { Engrave } from '../engrave/schemas/engrave.schema';
+import { Reward } from '../reward/schemas/reward.schema';
+import { Skill } from '../skill/schemas/skill.schema';
+import { ResourceCategory } from '../enums/resource-category.enum';
 
 const mockClass: Class = {
-  parent: 'parent',
-  child: ['child'],
+  parent: 'string',
+  child: ['string'],
 };
-
 const mockEngrave: Engrave = {
   code: 0,
-  engraveName: 'engraveName',
-  className: 'className',
-  isPenalty: false,
+  engraveName: 'string',
+  className: 'string',
+  isPenalty: true,
 };
-
 const mockReward: Reward = {
-  content: 'content',
+  content: 'string',
   rewards: [
     {
-      level: 'level',
+      level: 'string',
       cost: 0,
       items: [
         {
-          item: 'item',
+          item: 'string',
           count: 0,
         },
       ],
     },
   ],
 };
-
 const mockSkill: Skill = {
-  className: 'className',
+  className: 'string',
   skills: [
     {
-      skillName: 'skillName',
+      skillName: 'string',
       skillCode: 0,
-      iconPath: 'iconPath',
+      iconPath: 'string',
       isCounter: false,
       tripods: [
         {
-          tripodName: 'tripodName',
+          tripodName: 'string',
           tripodCode: 0,
           iconIndex: 0,
         },
@@ -55,261 +54,216 @@ const mockSkill: Skill = {
   ],
 };
 
-class MockClassModel {
-  find = jest.fn().mockReturnValue(mockClass);
-  create = jest.fn().mockReturnValue(mockClass);
-  findOne = jest.fn().mockReturnValue(mockClass);
-  replaceOne = jest.fn();
+class MockClassService {
+  findClasses = jest.fn().mockResolvedValue(mockClass);
+  createClass = jest.fn().mockResolvedValue(mockClass);
+  replaceClass = jest.fn().mockResolvedValue(mockClass);
+}
+class MockEngraveService {
+  findEngraves = jest.fn().mockResolvedValue(mockEngrave);
+  createEngrave = jest.fn().mockResolvedValue(mockEngrave);
+  replaceEngrave = jest.fn().mockResolvedValue(mockEngrave);
+}
+class MockRewardService {
+  findRewards = jest.fn().mockResolvedValue(mockReward);
+  findRewardByContent = jest.fn().mockResolvedValue(mockReward);
+  createReward = jest.fn().mockResolvedValue(mockReward);
+  replaceReward = jest.fn().mockResolvedValue(mockReward);
+}
+class MockSkillService {
+  findSkills = jest.fn().mockResolvedValue(mockSkill);
+  findSkillByClassName = jest.fn().mockResolvedValue(mockSkill);
+  createSkill = jest.fn().mockResolvedValue(mockSkill);
+  replaceSkill = jest.fn().mockResolvedValue(mockSkill);
 }
 
-class MockEngraveModel {
-  find = jest.fn().mockReturnValue(mockEngrave);
-  create = jest.fn().mockReturnValue(mockEngrave);
-}
-
-class MockRewardModel {
-  find = jest.fn().mockReturnValue(mockReward);
-  findOne = jest.fn().mockReturnValue(mockReward);
-  create = jest.fn().mockReturnValue(mockReward);
-  replaceOne = jest.fn();
-}
-
-class MockSkillModel {
-  find = jest.fn().mockReturnValue(mockSkill);
-  findOne = jest.fn().mockReturnValue(mockSkill);
-  create = jest.fn().mockReturnValue(mockSkill);
-  replaceOne = jest.fn();
-}
-
-describe('ResourcesService', () => {
+describe('Resources Service', () => {
   let resourcesService: ResourcesService;
-  let classModel: Model<Class>;
-  let engraveModel: Model<Engrave>;
-  let rewardModel: Model<Reward>;
-  let skillModel: Model<Skill>;
+  let classService: ClassService;
+  let engraveService: EngraveService;
+  let rewardService: RewardService;
+  let skillService: SkillService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ResourcesService,
         {
-          provide: getModelToken(Class.name),
-          useClass: MockClassModel,
+          provide: ClassService,
+          useClass: MockClassService,
         },
         {
-          provide: getModelToken(Engrave.name),
-          useClass: MockEngraveModel,
+          provide: EngraveService,
+          useClass: MockEngraveService,
         },
         {
-          provide: getModelToken(Reward.name),
-          useClass: MockRewardModel,
+          provide: RewardService,
+          useClass: MockRewardService,
         },
         {
-          provide: getModelToken(Skill.name),
-          useClass: MockSkillModel,
+          provide: SkillService,
+          useClass: MockSkillService,
         },
       ],
     }).compile();
 
     resourcesService = module.get<ResourcesService>(ResourcesService);
-    classModel = module.get<Model<Class>>(getModelToken(Class.name));
-    engraveModel = module.get<Model<Engrave>>(getModelToken(Engrave.name));
-    rewardModel = module.get<Model<Reward>>(getModelToken(Reward.name));
-    skillModel = module.get<Model<Skill>>(getModelToken(Skill.name));
+    classService = module.get<ClassService>(ClassService);
+    engraveService = module.get<EngraveService>(EngraveService);
+    rewardService = module.get<RewardService>(RewardService);
+    skillService = module.get<SkillService>(SkillService);
   });
 
-  describe('findResources()', () => {
-    it('should return mockClass', async () => {
-      const result = await resourcesService.findResources('class');
-
+  describe('findResource', () => {
+    it('should return class', async () => {
+      const result = await resourcesService.findResources(
+        ResourceCategory.Class,
+      );
       expect(result).toStrictEqual(mockClass);
-      expect(jest.spyOn(classModel, 'find')).toBeCalledTimes(1);
+      expect(jest.spyOn(classService, 'findClasses')).toBeCalledTimes(1);
     });
 
-    it('should return mockEngrave', async () => {
-      const result = await resourcesService.findResources('engrave');
-
+    it('should return engrave', async () => {
+      const result = await resourcesService.findResources(
+        ResourceCategory.Engrave,
+      );
       expect(result).toStrictEqual(mockEngrave);
-      expect(jest.spyOn(engraveModel, 'find')).toBeCalledTimes(1);
+      expect(jest.spyOn(engraveService, 'findEngraves')).toBeCalledTimes(1);
     });
 
-    it('should return mockReward', async () => {
-      const result = await resourcesService.findResources('reward');
-
+    it('should return reward', async () => {
+      const result = await resourcesService.findResources(
+        ResourceCategory.Reward,
+      );
       expect(result).toStrictEqual(mockReward);
-      expect(jest.spyOn(rewardModel, 'find')).toBeCalledTimes(1);
+      expect(jest.spyOn(rewardService, 'findRewards')).toBeCalledTimes(1);
     });
 
-    it('should return mockSkill', async () => {
-      const result = await resourcesService.findResources('skill');
-
+    it('should return skill', async () => {
+      const result = await resourcesService.findResources(
+        ResourceCategory.Skill,
+      );
       expect(result).toStrictEqual(mockSkill);
-      expect(jest.spyOn(skillModel, 'find')).toBeCalledTimes(1);
+      expect(jest.spyOn(skillService, 'findSkills')).toBeCalledTimes(1);
+    });
+
+    it('should return null', async () => {
+      const result = await resourcesService.findResources(
+        'invalid category' as ResourceCategory,
+      );
+      expect(result).toBe(null);
     });
   });
 
-  describe('findRewardByContent()', () => {
-    it('should return mockReward', async () => {
+  describe('findRewardByContent', () => {
+    it('should return reward', async () => {
       const result = await resourcesService.findRewardByContent('');
-
       expect(result).toStrictEqual(mockReward);
-      expect(jest.spyOn(rewardModel, 'findOne')).toBeCalledTimes(1);
+      expect(jest.spyOn(rewardService, 'findRewardByContent')).toBeCalledTimes(
+        1,
+      );
     });
   });
 
-  describe('findSkillByClass', () => {
-    it('should return mockSkill', async () => {
-      const result = await resourcesService.findSkillByClass('');
-
+  describe('findSkillByClassName', () => {
+    it('should return skill', async () => {
+      const result = await resourcesService.findSkillByClassName('');
       expect(result).toStrictEqual(mockSkill);
-      expect(jest.spyOn(skillModel, 'findOne')).toBeCalledTimes(1);
+      expect(jest.spyOn(skillService, 'findSkillByClassName')).toBeCalledTimes(
+        1,
+      );
     });
   });
 
-  describe('createResource()', () => {
-    it('should return mockClass', async () => {
-      const result = await resourcesService.createResource('class', mockClass);
-
+  describe('createResource', () => {
+    it('should return class', async () => {
+      const result = await resourcesService.createResource(
+        ResourceCategory.Class,
+        mockClass,
+      );
       expect(result).toStrictEqual(mockClass);
-      expect(jest.spyOn(classModel, 'create')).toBeCalledTimes(1);
+      expect(jest.spyOn(classService, 'createClass')).toBeCalledTimes(1);
     });
 
-    it('should return mockEngrave', async () => {
+    it('should return engrave', async () => {
       const result = await resourcesService.createResource(
-        'engrave',
+        ResourceCategory.Engrave,
         mockEngrave,
       );
-
       expect(result).toStrictEqual(mockEngrave);
-      expect(jest.spyOn(engraveModel, 'create')).toBeCalledTimes(1);
+      expect(jest.spyOn(engraveService, 'createEngrave')).toBeCalledTimes(1);
     });
 
-    it('should return mockReward', async () => {
+    it('should return reward', async () => {
       const result = await resourcesService.createResource(
-        'reward',
+        ResourceCategory.Reward,
         mockReward,
       );
-
       expect(result).toStrictEqual(mockReward);
-      expect(jest.spyOn(rewardModel, 'create')).toBeCalledTimes(1);
+      expect(jest.spyOn(rewardService, 'createReward')).toBeCalledTimes(1);
     });
 
-    it('should return mockSkill', async () => {
-      const result = await resourcesService.createResource('skill', mockSkill);
-
+    it('should return skill', async () => {
+      const result = await resourcesService.createResource(
+        ResourceCategory.Skill,
+        mockSkill,
+      );
       expect(result).toStrictEqual(mockSkill);
-      expect(jest.spyOn(skillModel, 'create')).toBeCalledTimes(1);
+      expect(jest.spyOn(skillService, 'createSkill')).toBeCalledTimes(1);
+    });
+
+    it('should return null', async () => {
+      const result = await resourcesService.createResource(
+        'invalid category' as ResourceCategory,
+        mockClass,
+      );
+      expect(result).toBe(null);
     });
   });
 
-  describe('replaceClass()', () => {
-    it('should return mockClass', async () => {
-      jest.spyOn(classModel, 'replaceOne').mockResolvedValue({
-        acknowledged: false,
-        matchedCount: 1,
-        modifiedCount: 0,
-        upsertedCount: 0,
-        upsertedId: null,
-      });
-
-      const result = await resourcesService.replaceClass(mockClass);
-
+  describe('replaceResource', () => {
+    it('should return class', async () => {
+      const result = await resourcesService.replaceResource(
+        ResourceCategory.Class,
+        mockClass,
+      );
       expect(result).toStrictEqual(mockClass);
-      expect(jest.spyOn(classModel, 'replaceOne')).toBeCalledTimes(1);
-      expect(jest.spyOn(classModel, 'findOne')).toBeCalledTimes(1);
+      expect(jest.spyOn(classService, 'replaceClass')).toBeCalledTimes(1);
     });
 
-    it('should throw BadRequestException', async () => {
-      jest.spyOn(classModel, 'replaceOne').mockResolvedValue({
-        acknowledged: false,
-        matchedCount: 0,
-        modifiedCount: 0,
-        upsertedCount: 0,
-        upsertedId: null,
-      });
-
-      try {
-        await resourcesService.replaceClass(mockClass);
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-      } finally {
-        expect(jest.spyOn(classModel, 'replaceOne')).toBeCalledTimes(1);
-        expect(jest.spyOn(classModel, 'findOne')).toBeCalledTimes(0);
-      }
+    it('should return engrave', async () => {
+      const result = await resourcesService.replaceResource(
+        ResourceCategory.Engrave,
+        mockEngrave,
+      );
+      expect(result).toStrictEqual(mockEngrave);
+      expect(jest.spyOn(engraveService, 'replaceEngrave')).toBeCalledTimes(1);
     });
-  });
 
-  describe('replaceReward()', () => {
-    it('should return mockReward', async () => {
-      jest.spyOn(rewardModel, 'replaceOne').mockResolvedValue({
-        acknowledged: false,
-        matchedCount: 1,
-        modifiedCount: 0,
-        upsertedCount: 0,
-        upsertedId: null,
-      });
-
-      const result = await resourcesService.replaceReward(mockReward);
-
+    it('should return reward', async () => {
+      const result = await resourcesService.replaceResource(
+        ResourceCategory.Reward,
+        mockReward,
+      );
       expect(result).toStrictEqual(mockReward);
-      expect(jest.spyOn(rewardModel, 'replaceOne')).toBeCalledTimes(1);
-      expect(jest.spyOn(rewardModel, 'findOne')).toBeCalledTimes(1);
+      expect(jest.spyOn(rewardService, 'replaceReward')).toBeCalledTimes(1);
     });
 
-    it('should throw BadRequestException', async () => {
-      jest.spyOn(rewardModel, 'replaceOne').mockResolvedValue({
-        acknowledged: false,
-        matchedCount: 0,
-        modifiedCount: 0,
-        upsertedCount: 0,
-        upsertedId: null,
-      });
-
-      try {
-        await resourcesService.replaceReward(mockReward);
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-      } finally {
-        expect(jest.spyOn(rewardModel, 'replaceOne')).toBeCalledTimes(1);
-        expect(jest.spyOn(rewardModel, 'findOne')).toBeCalledTimes(0);
-      }
-    });
-  });
-
-  describe('replaceSkill()', () => {
-    it('should return mockSkill', async () => {
-      jest.spyOn(skillModel, 'replaceOne').mockResolvedValue({
-        acknowledged: false,
-        matchedCount: 1,
-        modifiedCount: 0,
-        upsertedCount: 0,
-        upsertedId: null,
-      });
-
-      const result = await resourcesService.replaceSkill(mockSkill);
-
+    it('should return skill', async () => {
+      const result = await resourcesService.replaceResource(
+        ResourceCategory.Skill,
+        mockSkill,
+      );
       expect(result).toStrictEqual(mockSkill);
-      expect(jest.spyOn(skillModel, 'replaceOne')).toBeCalledTimes(1);
-      expect(jest.spyOn(skillModel, 'findOne')).toBeCalledTimes(1);
+      expect(jest.spyOn(skillService, 'replaceSkill')).toBeCalledTimes(1);
     });
 
-    it('should throw BadRequestException', async () => {
-      jest.spyOn(skillModel, 'replaceOne').mockResolvedValue({
-        acknowledged: false,
-        matchedCount: 0,
-        modifiedCount: 0,
-        upsertedCount: 0,
-        upsertedId: null,
-      });
-
-      try {
-        await resourcesService.replaceSkill(mockSkill);
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
-      } finally {
-        expect(jest.spyOn(skillModel, 'replaceOne')).toBeCalledTimes(1);
-        expect(jest.spyOn(skillModel, 'findOne')).toBeCalledTimes(0);
-      }
+    it('should return null', async () => {
+      const result = await resourcesService.replaceResource(
+        'invalid category' as ResourceCategory,
+        mockClass,
+      );
+      expect(result).toBe(null);
     });
   });
 });

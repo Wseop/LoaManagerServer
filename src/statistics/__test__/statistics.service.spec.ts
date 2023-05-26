@@ -1,193 +1,489 @@
-import { Model } from 'mongoose';
-import { StatsChaos } from '../schemas/stats-chaos.schema';
-import { StatsGuardian } from '../schemas/stats-guardian.schema';
-import { StatsSetting } from '../schemas/stats-setting.schema';
-import { StatsSkill } from '../schemas/stats-skill.schema';
+import { EngraveService } from '../../resources/engrave/engrave.service';
+import { ArmorySettingsService } from '../armory-settings/armory-settings.service';
+import { ChaosRewardsService } from '../chaos-rewards/chaos-rewards.service';
+import { GuardianRewardsService } from '../guardian-rewards/guardian-rewards.service';
+import { SkillSettingsService } from '../skill-settings/skill-settings.service';
 import { StatisticsService } from '../statistics.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
 
-const mockStatsChaos: StatsChaos = {
-  level: 'level',
-  count: 0,
-  silling: 0,
-  shard: 0,
-  destruction: 0,
-  protection: 0,
-  leapStone: 0,
-  gem: 0,
-};
-const mockStatsGuardian: StatsGuardian = {
-  level: 'level',
-  count: 0,
-  destruction: 0,
-  protection: 0,
-  leapStone: 0,
-};
-const mockStatsSetting: StatsSetting = {
-  characterName: 'characterName',
-  className: 'className',
-  itemLevel: 0,
-  ability: 'ability',
-  elixir: 'elixir',
-  engrave: 'engrave',
-  engraveLevel: 'engraveLevel',
-  itemSet: 'itemSet',
-};
-const mockStatsSkill: StatsSkill = {
-  characterName: 'characterName',
-  className: 'className',
-  classEngraves: ['engrave', 'engrave'],
-  skills: [
+class MockChaosRewardsService {
+  findChaosRewardsByLevel = jest.fn().mockResolvedValue([
     {
-      skillName: 'skillName',
-      tripodNames: ['tripodName'],
-      runeName: 'runeName',
+      level: 'level',
+      count: 1,
+      silling: 1,
+      shard: 1,
+      destructionStone: 1,
+      protectionStone: 1,
+      leapStone: 1,
+      gem: 1,
     },
-  ],
-};
-
-class MockStatsChaosModel {
-  find = jest.fn().mockReturnValue(mockStatsChaos);
-  create = jest.fn().mockReturnValue(mockStatsChaos);
+    {
+      level: 'level',
+      count: 1,
+      silling: 1,
+      shard: 1,
+      destructionStone: 1,
+      protectionStone: 1,
+      leapStone: 1,
+      gem: 1,
+    },
+    {
+      level: 'level',
+      count: 1,
+      silling: 1,
+      shard: 1,
+      destructionStone: 1,
+      protectionStone: 1,
+      leapStone: 1,
+      gem: 1,
+    },
+  ]);
+  createChaosReward = jest.fn().mockResolvedValue({
+    level: 'level',
+    count: 1,
+    silling: 1,
+    shard: 1,
+    destructionStone: 1,
+    protectionStone: 1,
+    leapStone: 1,
+    gem: 1,
+  });
 }
-
-class MockStatsGuardianModel {
-  find = jest.fn().mockReturnValue(mockStatsGuardian);
-  create = jest.fn().mockReturnValue(mockStatsGuardian);
+class MockGuardianRewardsService {
+  findGuardianRewardsByLevel = jest.fn().mockResolvedValue([
+    {
+      level: 'level',
+      count: 1,
+      destructionStone: 1,
+      protectionStone: 1,
+      leapStone: 1,
+    },
+    {
+      level: 'level',
+      count: 1,
+      destructionStone: 1,
+      protectionStone: 1,
+      leapStone: 1,
+    },
+    {
+      level: 'level',
+      count: 1,
+      destructionStone: 1,
+      protectionStone: 1,
+      leapStone: 1,
+    },
+  ]);
+  createGuardianReward = jest.fn().mockResolvedValue({
+    level: 'level',
+    count: 1,
+    destructionStone: 1,
+    protectionStone: 1,
+    leapStone: 1,
+  });
 }
-
-class MockStatsSettingModel {
-  find = jest.fn().mockReturnValue(mockStatsSetting);
-  findOneAndUpdate = jest.fn().mockReturnValue(mockStatsSetting);
+class MockArmorySettingsService {
+  findArmorySettingsByClassName = jest.fn().mockResolvedValue([
+    {
+      characterName: 'characterName',
+      className: 'className',
+      itemLevel: 0,
+      ability: 'ability',
+      engraves: [{ engraveName: 'engraveName1', engraveLevel: 1 }],
+      classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 1 }],
+      itemSet: 'itemSet',
+      elixir: 'elixir',
+    },
+    {
+      characterName: 'characterName',
+      className: 'className',
+      itemLevel: 0,
+      ability: 'ability',
+      engraves: [{ engraveName: 'engraveName1', engraveLevel: 1 }],
+      classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 1 }],
+      itemSet: 'itemSet',
+      elixir: 'elixir',
+    },
+    {
+      characterName: 'characterName',
+      className: 'className',
+      itemLevel: 0,
+      ability: 'ability',
+      engraves: [{ engraveName: 'engraveName1', engraveLevel: 1 }],
+      classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 1 }],
+      itemSet: 'itemSet',
+      elixir: 'elixir',
+    },
+  ]);
+  createArmorySetting = jest.fn().mockResolvedValue({
+    characterName: 'characterName',
+    className: 'className',
+    itemLevel: 0,
+    ability: 'ability',
+    engraves: [{ engraveName: 'engraveName1', engraveLevel: 0 }],
+    classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 0 }],
+    itemSet: 'itemSet',
+    elixir: 'elixir',
+  });
 }
-
-class MockStatsSkillModel {
-  find = jest.fn().mockReturnValue(mockStatsSkill);
-  findOneAndUpdate = jest.fn().mockReturnValue(mockStatsSkill);
+class MockSkillSettingsService {
+  findSkillSettingsByClassName = jest.fn().mockResolvedValue([
+    {
+      characterName: 'characterName',
+      className: 'className',
+      classEngraves: ['classEngraveName1'],
+      skillUsages: [
+        {
+          skillName: 'skillName',
+          skillLevel: 0,
+          tripodNames: ['tripod1', 'tripod2'],
+          runeName: 'runeName',
+        },
+      ],
+    },
+    {
+      characterName: 'characterName',
+      className: 'className',
+      classEngraves: ['classEngraveName1'],
+      skillUsages: [
+        {
+          skillName: 'skillName',
+          skillLevel: 0,
+          tripodNames: ['tripod1', 'tripod2'],
+          runeName: 'runeName',
+        },
+      ],
+    },
+    {
+      characterName: 'characterName',
+      className: 'className',
+      classEngraves: ['classEngraveName1'],
+      skillUsages: [
+        {
+          skillName: 'skillName',
+          skillLevel: 0,
+          tripodNames: ['tripod1', 'tripod2'],
+          runeName: 'runeName',
+        },
+      ],
+    },
+  ]);
+  createSkillSetting = jest.fn().mockResolvedValue({
+    characterName: 'characterName',
+    className: 'className',
+    classEngraves: ['classEngraveName1', 'classEngraveName2'],
+    skillUsages: [
+      {
+        skillName: 'skillName',
+        skillLevel: 0,
+        tripodNames: ['tripod1', 'tripod2'],
+        runeName: 'runeName',
+      },
+    ],
+  });
+}
+class MockEngraveService {
+  findClassEngraveNames = jest.fn((className) => {
+    if (className === 'className') {
+      return ['classEngraveName1', 'classEngraveName2'];
+    } else {
+      return [];
+    }
+  });
 }
 
 describe('StatisticsService', () => {
   let statisticsService: StatisticsService;
-  let statsChaosModel: Model<StatsChaos>;
-  let statsGuardianModel: Model<StatsGuardian>;
-  let statsSettingModel: Model<StatsSetting>;
-  let statsSkillModel: Model<StatsSkill>;
+  let chaosRewardsService: ChaosRewardsService;
+  let guardianRewardsService: GuardianRewardsService;
+  let armorySettingsService: ArmorySettingsService;
+  let skillSettingsService: SkillSettingsService;
+  let engraveService: EngraveService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StatisticsService,
         {
-          provide: getModelToken(StatsChaos.name),
-          useClass: MockStatsChaosModel,
+          provide: ChaosRewardsService,
+          useClass: MockChaosRewardsService,
         },
         {
-          provide: getModelToken(StatsGuardian.name),
-          useClass: MockStatsGuardianModel,
+          provide: GuardianRewardsService,
+          useClass: MockGuardianRewardsService,
         },
         {
-          provide: getModelToken(StatsSetting.name),
-          useClass: MockStatsSettingModel,
+          provide: ArmorySettingsService,
+          useClass: MockArmorySettingsService,
         },
         {
-          provide: getModelToken(StatsSkill.name),
-          useClass: MockStatsSkillModel,
+          provide: SkillSettingsService,
+          useClass: MockSkillSettingsService,
+        },
+        {
+          provide: EngraveService,
+          useClass: MockEngraveService,
         },
       ],
     }).compile();
 
     statisticsService = module.get<StatisticsService>(StatisticsService);
-    statsChaosModel = module.get<Model<StatsChaos>>(
-      getModelToken(StatsChaos.name),
+    chaosRewardsService = module.get<ChaosRewardsService>(ChaosRewardsService);
+    guardianRewardsService = module.get<GuardianRewardsService>(
+      GuardianRewardsService,
     );
-    statsGuardianModel = module.get<Model<StatsGuardian>>(
-      getModelToken(StatsGuardian.name),
+    armorySettingsService = module.get<ArmorySettingsService>(
+      ArmorySettingsService,
     );
-    statsSettingModel = module.get<Model<StatsSetting>>(
-      getModelToken(StatsSetting.name),
-    );
-    statsSkillModel = module.get<Model<StatsSkill>>(
-      getModelToken(StatsSkill.name),
-    );
+    skillSettingsService =
+      module.get<SkillSettingsService>(SkillSettingsService);
+    engraveService = module.get<EngraveService>(EngraveService);
   });
 
-  describe('findStatsByLevel()', () => {
-    it('should return a mockStatsChaos', async () => {
-      const result = await statisticsService.findStatsByLevel('chaos', 'level');
-
-      expect(result).toStrictEqual(mockStatsChaos);
-      expect(jest.spyOn(statsChaosModel, 'find')).toBeCalledTimes(1);
-    });
-    it('should return a mockStatsGuardian', async () => {
-      const result = await statisticsService.findStatsByLevel(
-        'guardian',
-        'level',
-      );
-
-      expect(result).toStrictEqual(mockStatsGuardian);
-      expect(jest.spyOn(statsGuardianModel, 'find')).toBeCalledTimes(1);
-    });
-  });
-
-  describe('findStatsByClass()', () => {
-    it('should return a mockStatsSetting', async () => {
-      const result = await statisticsService.findStatsByClass(
-        'setting',
-        'class',
-      );
-
-      expect(result).toStrictEqual(mockStatsSetting);
-      expect(jest.spyOn(statsSettingModel, 'find')).toBeCalledTimes(1);
-    });
-    it('should return a mockStatsSkill', async () => {
-      const result = await statisticsService.findStatsByClass('skill', 'class');
-
-      expect(result).toStrictEqual(mockStatsSkill);
-      expect(jest.spyOn(statsSkillModel, 'find')).toBeCalledTimes(1);
+  describe('getStatsChaosReward', () => {
+    it('should return StatsChaosReward', async () => {
+      const result = await statisticsService.getStatsChaosReward('level');
+      expect(result).toStrictEqual({
+        count: 3,
+        level: 'level',
+        itemCounts: {
+          silling: 3,
+          shard: 3,
+          destructionStone: 3,
+          protectionStone: 3,
+          leapStone: 3,
+          gem: 3,
+        },
+      });
+      expect(
+        jest.spyOn(chaosRewardsService, 'findChaosRewardsByLevel'),
+      ).toBeCalledTimes(1);
     });
   });
 
-  describe('createStats()', () => {
-    it('should return a mockStatsChaos', async () => {
-      const result = await statisticsService.createStats(
-        'chaos',
-        mockStatsChaos,
-      );
-
-      expect(result).toStrictEqual(mockStatsChaos);
-      expect(jest.spyOn(statsChaosModel, 'create')).toBeCalledTimes(1);
+  describe('createChaosReward', () => {
+    it('should return CreateChaosRewardDto', async () => {
+      const result = await statisticsService.createChaosReward({
+        level: 'level',
+        count: 1,
+        silling: 1,
+        shard: 1,
+        destructionStone: 1,
+        protectionStone: 1,
+        leapStone: 1,
+        gem: 1,
+      });
+      expect(result).toStrictEqual({
+        level: 'level',
+        count: 1,
+        silling: 1,
+        shard: 1,
+        destructionStone: 1,
+        protectionStone: 1,
+        leapStone: 1,
+        gem: 1,
+      });
+      expect(
+        jest.spyOn(chaosRewardsService, 'createChaosReward'),
+      ).toBeCalledTimes(1);
     });
-    it('should return a mockStatsGuardian', async () => {
-      const result = await statisticsService.createStats(
-        'guardian',
-        mockStatsGuardian,
-      );
+  });
 
-      expect(result).toStrictEqual(mockStatsGuardian);
-      expect(jest.spyOn(statsGuardianModel, 'create')).toBeCalledTimes(1);
+  describe('getStatsGuardianReward', () => {
+    it('should return StatsGuardianReward', async () => {
+      const result = await statisticsService.getStatsGuardianReward('level');
+      expect(result).toStrictEqual({
+        count: 3,
+        level: 'level',
+        itemCounts: {
+          destructionStone: 3,
+          protectionStone: 3,
+          leapStone: 3,
+        },
+      });
+      expect(
+        jest.spyOn(guardianRewardsService, 'findGuardianRewardsByLevel'),
+      ).toBeCalledTimes(1);
     });
-    it('should return a mockStatsSetting', async () => {
-      const result = await statisticsService.createStats(
-        'setting',
-        mockStatsSetting,
-      );
+  });
 
-      expect(result).toStrictEqual(mockStatsSetting);
-      expect(jest.spyOn(statsSettingModel, 'findOneAndUpdate')).toBeCalledTimes(
-        1,
-      );
+  describe('createGuardianReward', () => {
+    it('should return CreateGuardianRewardDto', async () => {
+      const result = await statisticsService.createGuardianReward({
+        level: 'level',
+        count: 1,
+        destructionStone: 1,
+        protectionStone: 1,
+        leapStone: 1,
+      });
+      expect(result).toStrictEqual({
+        level: 'level',
+        count: 1,
+        destructionStone: 1,
+        protectionStone: 1,
+        leapStone: 1,
+      });
+      expect(
+        jest.spyOn(guardianRewardsService, 'createGuardianReward'),
+      ).toBeCalledTimes(1);
     });
-    it('should return a mockStatsSkill', async () => {
-      const result = await statisticsService.createStats(
-        'skill',
-        mockStatsSkill,
-      );
+  });
 
-      expect(result).toStrictEqual(mockStatsSkill);
-      expect(jest.spyOn(statsSkillModel, 'findOneAndUpdate')).toBeCalledTimes(
-        1,
-      );
+  describe('getStatsArmorySetting', () => {
+    it('should return StatsArmorySetting', async () => {
+      const result = await statisticsService.getStatsArmorySetting('className');
+      expect(result).toStrictEqual({
+        classEngraveName1: {
+          count: 3,
+          abilities: {
+            ability: 3,
+          },
+          engraves: [
+            {
+              classEngraveName1: 3,
+              engraveName1: 3,
+            },
+            {},
+            {},
+          ],
+          itemSets: {
+            itemSet: 3,
+          },
+          elixirs: {
+            elixir: 3,
+          },
+        },
+        classEngraveName2: {
+          count: 0,
+          abilities: {},
+          engraves: [{}, {}, {}],
+          itemSets: {},
+          elixirs: {},
+        },
+        count: 3,
+        pair: {
+          count: 0,
+          abilities: {},
+          engraves: [{}, {}, {}],
+          itemSets: {},
+          elixirs: {},
+        },
+      });
+      expect(
+        jest.spyOn(engraveService, 'findClassEngraveNames'),
+      ).toBeCalledTimes(1);
+      expect(
+        jest.spyOn(armorySettingsService, 'findArmorySettingsByClassName'),
+      ).toBeCalledTimes(1);
+    });
+
+    it('should return null', async () => {
+      const result = await statisticsService.getStatsArmorySetting('null');
+      expect(result).toBe(null);
+    });
+  });
+
+  describe('createArmorySetting', () => {
+    it('should return CreateArmorysettingDto', async () => {
+      const result = await statisticsService.createArmorySetting({
+        characterName: 'characterName',
+        className: 'className',
+        itemLevel: 0,
+        ability: 'ability',
+        engraves: [{ engraveName: 'engraveName1', engraveLevel: 0 }],
+        classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 0 }],
+        itemSet: 'itemSet',
+        elixir: 'elixir',
+      });
+      expect(result).toStrictEqual({
+        characterName: 'characterName',
+        className: 'className',
+        itemLevel: 0,
+        ability: 'ability',
+        engraves: [{ engraveName: 'engraveName1', engraveLevel: 0 }],
+        classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 0 }],
+        itemSet: 'itemSet',
+        elixir: 'elixir',
+      });
+      expect(
+        jest.spyOn(armorySettingsService, 'createArmorySetting'),
+      ).toBeCalledTimes(1);
+    });
+  });
+
+  describe('getStatsSkillSetting', () => {
+    it('should return StatsSkillSetting', async () => {
+      const result = await statisticsService.getStatsSkillSetting('className');
+      expect(result).toStrictEqual({
+        count: 3,
+        classEngraveName1: {
+          count: 3,
+          skillName: {
+            count: 3,
+            levels: {
+              '0': 3,
+            },
+            tripods: {
+              tripod1: 3,
+              tripod2: 3,
+            },
+            runes: {
+              runeName: 3,
+            },
+          },
+        },
+        classEngraveName2: {
+          count: 0,
+        },
+        pair: {
+          count: 0,
+        },
+      });
+      expect(
+        jest.spyOn(engraveService, 'findClassEngraveNames'),
+      ).toBeCalledTimes(1);
+      expect(
+        jest.spyOn(skillSettingsService, 'findSkillSettingsByClassName'),
+      ).toBeCalledTimes(1);
+    });
+
+    it('should return null', async () => {
+      const result = await statisticsService.getStatsSkillSetting('null');
+      expect(result).toBe(null);
+    });
+  });
+
+  describe('createSkillSetting', () => {
+    it('should return CreateSkillSettingDto', async () => {
+      const result = await statisticsService.createSkillSetting({
+        characterName: 'characterName',
+        className: 'className',
+        classEngraves: ['classEngraveName1', 'classEngraveName2'],
+        skillUsages: [
+          {
+            skillName: 'skillName',
+            skillLevel: 0,
+            tripodNames: ['tripod1', 'tripod2'],
+            runeName: 'runeName',
+          },
+        ],
+      });
+      expect(result).toStrictEqual({
+        characterName: 'characterName',
+        className: 'className',
+        classEngraves: ['classEngraveName1', 'classEngraveName2'],
+        skillUsages: [
+          {
+            skillName: 'skillName',
+            skillLevel: 0,
+            tripodNames: ['tripod1', 'tripod2'],
+            runeName: 'runeName',
+          },
+        ],
+      });
+      expect(
+        jest.spyOn(skillSettingsService, 'createSkillSetting'),
+      ).toBeCalledTimes(1);
     });
   });
 });
