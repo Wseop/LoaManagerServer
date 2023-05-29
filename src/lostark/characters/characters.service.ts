@@ -90,11 +90,15 @@ export class CharactersService {
 
     if (result.profile.itemLevel >= 1560) {
       this.convertToArmorySetting(result).then((armorySetting) => {
-        this.armorySettingsService.createArmorySetting(armorySetting);
+        if (armorySetting !== null) {
+          this.armorySettingsService.createArmorySetting(armorySetting);
+        }
       });
 
       this.convertToSkillSetting(result).then((skillSetting) => {
-        this.skillSettingsService.createSkillSetting(skillSetting);
+        if (skillSetting !== null) {
+          this.skillSettingsService.createSkillSetting(skillSetting);
+        }
       });
     }
 
@@ -311,7 +315,7 @@ export class CharactersService {
   ) {
     const characterCards: CharacterCard[] = [];
 
-    if (cards) {
+    if (cards?.Effects) {
       await Promise.all(
         cards.Effects.map((card) => {
           if (card.Items.length !== 0) {
@@ -456,7 +460,7 @@ export class CharactersService {
     }
 
     // itemLevel
-    if (itemTitle.leftStr2?.includes('아이템 레벨 ')) {
+    if (itemTitle?.leftStr2?.includes('아이템 레벨 ')) {
       const start =
         itemTitle.leftStr2.indexOf('아이템 레벨 ') +
         String('아이템 레벨 ').length;
@@ -470,7 +474,7 @@ export class CharactersService {
 
   parseTooltipItemPartBox(itemPartBox, characterEquipment: CharacterEquipment) {
     // itemSet
-    if (itemPartBox.Element_000?.includes('세트 효과 레벨')) {
+    if (itemPartBox?.Element_000?.includes('세트 효과 레벨')) {
       const setName = itemPartBox.Element_001.substring(0, 2);
       const levelStart =
         itemPartBox.Element_001.indexOf('Lv.') + String('Lv.').length;
@@ -491,7 +495,7 @@ export class CharactersService {
       characterEquipment.type === '귀걸이' ||
       characterEquipment.type === '반지'
     ) {
-      if (itemPartBox.Element_000?.includes('추가 효과')) {
+      if (itemPartBox?.Element_000?.includes('추가 효과')) {
         characterEquipment.abilities = {};
 
         // 문자열 재구성
@@ -518,7 +522,7 @@ export class CharactersService {
     }
 
     // bracelet effect
-    if (itemPartBox.Element_000?.includes('팔찌 효과')) {
+    if (itemPartBox?.Element_000?.includes('팔찌 효과')) {
       characterEquipment.braceletEffects = [];
 
       // 문자열 재구성
@@ -552,7 +556,7 @@ export class CharactersService {
     characterEquipment: CharacterEquipment,
   ) {
     // elixir
-    if (indentStringGroup.Element_000?.topStr?.includes('엘릭서 효과')) {
+    if (indentStringGroup?.Element_000?.topStr?.includes('엘릭서 효과')) {
       characterEquipment.elixirs = {};
 
       const elixirEffect = indentStringGroup.Element_000.contentStr;
@@ -580,7 +584,7 @@ export class CharactersService {
     }
 
     // engrave
-    if (indentStringGroup.Element_000?.topStr?.includes('각인 효과')) {
+    if (indentStringGroup?.Element_000?.topStr?.includes('각인 효과')) {
       characterEquipment.engraves = {};
 
       const engraveEffect = indentStringGroup.Element_000.contentStr;
@@ -626,6 +630,10 @@ export class CharactersService {
         createArmorySettingDto.ability += ability.name;
       },
     );
+
+    if (characterInfo.engraves === null) {
+      return null;
+    }
 
     // engraves, classEngraves
     characterInfo.engraves.forEach((engrave) => {
@@ -768,19 +776,27 @@ export class CharactersService {
       characterInfo.profile.className,
     );
 
+    if (characterInfo.engraves === null) {
+      return null;
+    }
+
     characterInfo.engraves.forEach((engrave) => {
       if (classEngraveNames.includes(engrave.engraveName)) {
         createSkillSettingDto.classEngraves.push(engrave.engraveName);
       }
     });
 
+    if (characterInfo.skills === null) {
+      return null;
+    }
+
     // skillUsages
     characterInfo.skills.forEach((skill) => {
       const skillUsage: SkillUsage = {
-        skillName: skill.skillName,
-        skillLevel: skill.skillLevel,
+        skillName: skill?.skillName,
+        skillLevel: skill?.skillLevel,
         tripodNames: [],
-        runeName: skill.rune?.runeName,
+        runeName: skill?.rune?.runeName,
       };
 
       skill.tripods.forEach((tripod) => {
