@@ -25,8 +25,16 @@ export class CharactersService {
     private readonly engraveService: EngraveService,
   ) {}
 
-  async parseSiblings(siblings: SiblingDto[]) {
-    const result = [];
+  async parseSiblings(
+    siblings: {
+      ServerName: string;
+      CharacterName: string;
+      CharacterLevel: number;
+      CharacterClassName: string;
+      ItemAvgLevel: string;
+    }[],
+  ) {
+    const result: SiblingDto[] = [];
 
     await Promise.all(
       siblings.map((sibling) => {
@@ -35,7 +43,7 @@ export class CharactersService {
           characterName: sibling.CharacterName,
           characterLevel: sibling.CharacterLevel,
           className: sibling.CharacterClassName,
-          itemLevel: sibling.ItemAvgLevel,
+          itemLevel: Number.parseFloat(sibling.ItemAvgLevel.replace(',', '')),
         });
       }),
     );
@@ -80,13 +88,15 @@ export class CharactersService {
       }),
     );
 
-    this.convertToArmorySetting(result).then((armorySetting) => {
-      this.armorySettingsService.createArmorySetting(armorySetting);
-    });
+    if (result.profile.itemLevel >= 1560) {
+      this.convertToArmorySetting(result).then((armorySetting) => {
+        this.armorySettingsService.createArmorySetting(armorySetting);
+      });
 
-    this.convertToSkillSetting(result).then((skillSetting) => {
-      this.skillSettingsService.createSkillSetting(skillSetting);
-    });
+      this.convertToSkillSetting(result).then((skillSetting) => {
+        this.skillSettingsService.createSkillSetting(skillSetting);
+      });
+    }
 
     return result;
   }
@@ -465,7 +475,9 @@ export class CharactersService {
       const levelStart =
         itemPartBox.Element_001.indexOf('Lv.') + String('Lv.').length;
       const levelEnd = itemPartBox.Element_001.indexOf('</FONT>');
-      const setLevel = itemPartBox.Element_001.substring(levelStart, levelEnd);
+      const setLevel = Number(
+        itemPartBox.Element_001.substring(levelStart, levelEnd),
+      );
 
       characterEquipment.itemSet = {
         setName: setName,
@@ -628,6 +640,10 @@ export class CharactersService {
     createArmorySettingDto.itemSet = this.convertToArmoryItemSet(
       characterInfo.equipments,
     );
+
+    if (createArmorySettingDto.itemSet === '') {
+      return null;
+    }
 
     // elixir
     createArmorySettingDto.elixir = this.convertToArmoryElixir(

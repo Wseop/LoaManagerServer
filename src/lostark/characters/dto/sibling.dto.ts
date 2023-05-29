@@ -1,8 +1,7 @@
 export class SiblingDto {
-  ServerName: string;
-  CharacterName: string;
-  CharacterLevel: number;
-  CharacterClassName: string;
-  ItemAvgLevel: string;
-  ItemMaxLevel: string;
+  serverName: string;
+  characterName: string;
+  characterLevel: number;
+  className: string;
+  itemLevel: number;
 }
