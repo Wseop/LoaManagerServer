@@ -104,7 +104,7 @@ export class StatisticsService {
       className,
     );
     if (classEngraveNames.length === 0) return null;
-    else classEngraveNames.push('pair');
+    else classEngraveNames.push('쌍직각');
 
     // StatsArmorySetting 초기화
     const statsArmorySetting: StatsArmorySetting = {
@@ -127,7 +127,7 @@ export class StatisticsService {
       const classEngraveName =
         armorySetting.classEngraves.length === 1
           ? armorySetting.classEngraves[0].engraveName
-          : 'pair';
+          : '쌍직각';
 
       if (statsArmorySetting[classEngraveName] !== undefined) {
         // count
@@ -183,7 +183,7 @@ export class StatisticsService {
       className,
     );
     if (classEngraveNames.length === 0) return null;
-    else classEngraveNames.push('pair');
+    else classEngraveNames.push('쌍직각');
 
     // StatsSkillSetting 초기화
     const statsSkillSetting: StatsSkillSetting = {
@@ -202,7 +202,7 @@ export class StatisticsService {
       const classEngraveName =
         skillSetting.classEngraves.length === 1
           ? skillSetting.classEngraves[0]
-          : 'pair';
+          : '쌍직각';
 
       if (statsSkillSetting[classEngraveName] !== undefined) {
         statsSkillSetting.count++;
