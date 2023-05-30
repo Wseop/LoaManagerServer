@@ -5,13 +5,13 @@ import { ArmorySettingsService } from './armory-settings/armory-settings.service
 import { SkillSettingsService } from './skill-settings/skill-settings.service';
 import { GuardianReward } from './guardian-rewards/schemas/guardian-reward.schema';
 import { ChaosReward } from './chaos-rewards/schemas/chaos-reward.schema';
-import { StatsChaosReward } from './interfaces/stats-chaos-reward.interface';
-import { StatsGuardianReward } from './interfaces/stats-guardian-reward.interface';
+import { StatsChaosReward } from './dto/stats-chaos-reward.dto';
+import { StatsGuardianReward } from './dto/stats-guardian-reward.dto';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
-import { StatsArmorySetting } from './interfaces/stats-armory-setting.interface';
+import { StatsArmorySetting } from './dto/stats-armory-setting.dto';
 import { EngraveService } from '../resources/engrave/engrave.service';
-import { StatsSkillSetting } from './interfaces/stats-skill-setting.interface';
+import { StatsSkillSetting } from './dto/stats-skill-setting.dto';
 
 @Injectable()
 export class StatisticsService {

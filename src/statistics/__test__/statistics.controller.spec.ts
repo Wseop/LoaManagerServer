@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StatisticsService } from '../statistics.service';
 import { StatisticsController } from '../statistics.controller';
-import { StatsChaosReward } from '../interfaces/stats-chaos-reward.interface';
-import { StatsGuardianReward } from '../interfaces/stats-guardian-reward.interface';
-import { StatsArmorySetting } from '../interfaces/stats-armory-setting.interface';
-import { StatsSkillSetting } from '../interfaces/stats-skill-setting.interface';
+import { StatsChaosReward } from '../dto/stats-chaos-reward.dto';
+import { StatsGuardianReward } from '../dto/stats-guardian-reward.dto';
+import { StatsArmorySetting } from '../dto/stats-armory-setting.dto';
+import { StatsSkillSetting } from '../dto/stats-skill-setting.dto';
 import { CreateChaosRewardDto } from '../chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from '../guardian-rewards/dto/create-guardian-reward.dto';
 
