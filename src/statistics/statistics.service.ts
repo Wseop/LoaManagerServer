@@ -5,13 +5,13 @@ import { ArmorySettingsService } from './armory-settings/armory-settings.service
 import { SkillSettingsService } from './skill-settings/skill-settings.service';
 import { GuardianReward } from './guardian-rewards/schemas/guardian-reward.schema';
 import { ChaosReward } from './chaos-rewards/schemas/chaos-reward.schema';
-import { StatsChaosReward } from './interfaces/stats-chaos-reward.interface';
-import { StatsGuardianReward } from './interfaces/stats-guardian-reward.interface';
+import { StatsChaosReward } from './dto/stats-chaos-reward.dto';
+import { StatsGuardianReward } from './dto/stats-guardian-reward.dto';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
-import { StatsArmorySetting } from './interfaces/stats-armory-setting.interface';
+import { StatsArmorySetting } from './dto/stats-armory-setting.dto';
 import { EngraveService } from '../resources/engrave/engrave.service';
-import { StatsSkillSetting } from './interfaces/stats-skill-setting.interface';
+import { StatsSkillSetting } from './dto/stats-skill-setting.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -104,7 +104,7 @@ export class StatisticsService {
       className,
     );
     if (classEngraveNames.length === 0) return null;
-    else classEngraveNames.push('pair');
+    else classEngraveNames.push('쌍직각');
 
     // StatsArmorySetting 초기화
     const statsArmorySetting: StatsArmorySetting = {
@@ -127,7 +127,7 @@ export class StatisticsService {
       const classEngraveName =
         armorySetting.classEngraves.length === 1
           ? armorySetting.classEngraves[0].engraveName
-          : 'pair';
+          : '쌍직각';
 
       if (statsArmorySetting[classEngraveName] !== undefined) {
         // count
@@ -183,7 +183,7 @@ export class StatisticsService {
       className,
     );
     if (classEngraveNames.length === 0) return null;
-    else classEngraveNames.push('pair');
+    else classEngraveNames.push('쌍직각');
 
     // StatsSkillSetting 초기화
     const statsSkillSetting: StatsSkillSetting = {
@@ -202,7 +202,7 @@ export class StatisticsService {
       const classEngraveName =
         skillSetting.classEngraves.length === 1
           ? skillSetting.classEngraves[0]
-          : 'pair';
+          : '쌍직각';
 
       if (statsSkillSetting[classEngraveName] !== undefined) {
         statsSkillSetting.count++;

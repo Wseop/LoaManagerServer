@@ -32,7 +32,7 @@ export class AuctionsService {
           SecondOption: tripodCode,
           MinValue: 5,
         });
-      } else if (query.skillCodes.length === query.tripodCodes?.length) {
+      } else if (query.skillCodes.length === query?.tripodCodes?.length) {
         query.skillCodes.forEach((skillCode, i) => {
           searchOption.SkillOptions.push({
             FirstOption: skillCode,

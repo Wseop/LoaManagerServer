@@ -25,8 +25,16 @@ export class CharactersService {
     private readonly engraveService: EngraveService,
   ) {}
 
-  async parseSiblings(siblings: SiblingDto[]) {
-    const result = [];
+  async parseSiblings(
+    siblings: {
+      ServerName: string;
+      CharacterName: string;
+      CharacterLevel: number;
+      CharacterClassName: string;
+      ItemAvgLevel: string;
+    }[],
+  ) {
+    const result: SiblingDto[] = [];
 
     await Promise.all(
       siblings.map((sibling) => {
@@ -35,7 +43,7 @@ export class CharactersService {
           characterName: sibling.CharacterName,
           characterLevel: sibling.CharacterLevel,
           className: sibling.CharacterClassName,
-          itemLevel: sibling.ItemAvgLevel,
+          itemLevel: Number.parseFloat(sibling.ItemAvgLevel.replace(',', '')),
         });
       }),
     );
@@ -80,13 +88,19 @@ export class CharactersService {
       }),
     );
 
-    this.convertToArmorySetting(result).then((armorySetting) => {
-      this.armorySettingsService.createArmorySetting(armorySetting);
-    });
+    if (result.profile.itemLevel >= 1560) {
+      this.convertToArmorySetting(result).then((armorySetting) => {
+        if (armorySetting !== null) {
+          this.armorySettingsService.createArmorySetting(armorySetting);
+        }
+      });
 
-    this.convertToSkillSetting(result).then((skillSetting) => {
-      this.skillSettingsService.createSkillSetting(skillSetting);
-    });
+      this.convertToSkillSetting(result).then((skillSetting) => {
+        if (skillSetting !== null) {
+          this.skillSettingsService.createSkillSetting(skillSetting);
+        }
+      });
+    }
 
     return result;
   }
@@ -301,7 +315,7 @@ export class CharactersService {
   ) {
     const characterCards: CharacterCard[] = [];
 
-    if (cards) {
+    if (cards?.Effects) {
       await Promise.all(
         cards.Effects.map((card) => {
           if (card.Items.length !== 0) {
@@ -446,7 +460,7 @@ export class CharactersService {
     }
 
     // itemLevel
-    if (itemTitle.leftStr2?.includes('아이템 레벨 ')) {
+    if (itemTitle?.leftStr2?.includes('아이템 레벨 ')) {
       const start =
         itemTitle.leftStr2.indexOf('아이템 레벨 ') +
         String('아이템 레벨 ').length;
@@ -460,12 +474,14 @@ export class CharactersService {
 
   parseTooltipItemPartBox(itemPartBox, characterEquipment: CharacterEquipment) {
     // itemSet
-    if (itemPartBox.Element_000?.includes('세트 효과 레벨')) {
+    if (itemPartBox?.Element_000?.includes('세트 효과 레벨')) {
       const setName = itemPartBox.Element_001.substring(0, 2);
       const levelStart =
         itemPartBox.Element_001.indexOf('Lv.') + String('Lv.').length;
       const levelEnd = itemPartBox.Element_001.indexOf('</FONT>');
-      const setLevel = itemPartBox.Element_001.substring(levelStart, levelEnd);
+      const setLevel = Number(
+        itemPartBox.Element_001.substring(levelStart, levelEnd),
+      );
 
       characterEquipment.itemSet = {
         setName: setName,
@@ -479,7 +495,7 @@ export class CharactersService {
       characterEquipment.type === '귀걸이' ||
       characterEquipment.type === '반지'
     ) {
-      if (itemPartBox.Element_000?.includes('추가 효과')) {
+      if (itemPartBox?.Element_000?.includes('추가 효과')) {
         characterEquipment.abilities = {};
 
         // 문자열 재구성
@@ -506,7 +522,7 @@ export class CharactersService {
     }
 
     // bracelet effect
-    if (itemPartBox.Element_000?.includes('팔찌 효과')) {
+    if (itemPartBox?.Element_000?.includes('팔찌 효과')) {
       characterEquipment.braceletEffects = [];
 
       // 문자열 재구성
@@ -540,7 +556,7 @@ export class CharactersService {
     characterEquipment: CharacterEquipment,
   ) {
     // elixir
-    if (indentStringGroup.Element_000?.topStr?.includes('엘릭서 효과')) {
+    if (indentStringGroup?.Element_000?.topStr?.includes('엘릭서 효과')) {
       characterEquipment.elixirs = {};
 
       const elixirEffect = indentStringGroup.Element_000.contentStr;
@@ -568,7 +584,7 @@ export class CharactersService {
     }
 
     // engrave
-    if (indentStringGroup.Element_000?.topStr?.includes('각인 효과')) {
+    if (indentStringGroup?.Element_000?.topStr?.includes('각인 효과')) {
       characterEquipment.engraves = {};
 
       const engraveEffect = indentStringGroup.Element_000.contentStr;
@@ -615,6 +631,10 @@ export class CharactersService {
       },
     );
 
+    if (characterInfo.engraves === null) {
+      return null;
+    }
+
     // engraves, classEngraves
     characterInfo.engraves.forEach((engrave) => {
       if (classEngraveNames.includes(engrave.engraveName)) {
@@ -628,6 +648,10 @@ export class CharactersService {
     createArmorySettingDto.itemSet = this.convertToArmoryItemSet(
       characterInfo.equipments,
     );
+
+    if (createArmorySettingDto.itemSet === '') {
+      return null;
+    }
 
     // elixir
     createArmorySettingDto.elixir = this.convertToArmoryElixir(
@@ -752,19 +776,27 @@ export class CharactersService {
       characterInfo.profile.className,
     );
 
+    if (characterInfo.engraves === null) {
+      return null;
+    }
+
     characterInfo.engraves.forEach((engrave) => {
       if (classEngraveNames.includes(engrave.engraveName)) {
         createSkillSettingDto.classEngraves.push(engrave.engraveName);
       }
     });
 
+    if (characterInfo.skills === null) {
+      return null;
+    }
+
     // skillUsages
     characterInfo.skills.forEach((skill) => {
       const skillUsage: SkillUsage = {
-        skillName: skill.skillName,
-        skillLevel: skill.skillLevel,
+        skillName: skill?.skillName,
+        skillLevel: skill?.skillLevel,
         tripodNames: [],
-        runeName: skill.rune?.runeName,
+        runeName: skill?.rune?.runeName,
       };
 
       skill.tripods.forEach((tripod) => {
