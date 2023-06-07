@@ -131,7 +131,7 @@ export class LostarkService {
     } else {
       const result = await this.post(url, searchOption);
 
-      result.data.Items.forEach((item) => {
+      result.data.Items?.forEach((item) => {
         auctionItems.push(this.auctionsService.parseSearchResult(item));
       });
     }
