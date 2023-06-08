@@ -1,5 +1,5 @@
 import { EngraveService } from '../../resources/engrave/engrave.service';
-import { ArmorySettingsService } from '../armory-settings/armory-settings.service';
+import { ArmorySettingsService } from '../armory/armory-settings.service';
 import { ChaosRewardsService } from '../chaos-rewards/chaos-rewards.service';
 import { GuardianRewardsService } from '../guardian-rewards/guardian-rewards.service';
 import { SkillSettingsService } from '../skill-settings/skill-settings.service';
