@@ -1,5 +1,4 @@
 import { EngraveService } from '../../resources/engrave/engrave.service';
-import { ArmorySettingsService } from '../armory/armory-settings.service';
 import { ChaosRewardsService } from '../chaos-rewards/chaos-rewards.service';
 import { GuardianRewardsService } from '../guardian-rewards/guardian-rewards.service';
 import { SkillSettingsService } from '../skill-settings/skill-settings.service';
@@ -173,7 +172,6 @@ describe('StatisticsService', () => {
   let statisticsService: StatisticsService;
   let chaosRewardsService: ChaosRewardsService;
   let guardianRewardsService: GuardianRewardsService;
-  let armorySettingsService: ArmorySettingsService;
   let skillSettingsService: SkillSettingsService;
   let engraveService: EngraveService;
 
@@ -188,10 +186,6 @@ describe('StatisticsService', () => {
         {
           provide: GuardianRewardsService,
           useClass: MockGuardianRewardsService,
-        },
-        {
-          provide: ArmorySettingsService,
-          useClass: MockArmorySettingsService,
         },
         {
           provide: SkillSettingsService,
@@ -209,17 +203,14 @@ describe('StatisticsService', () => {
     guardianRewardsService = module.get<GuardianRewardsService>(
       GuardianRewardsService,
     );
-    armorySettingsService = module.get<ArmorySettingsService>(
-      ArmorySettingsService,
-    );
     skillSettingsService =
       module.get<SkillSettingsService>(SkillSettingsService);
     engraveService = module.get<EngraveService>(EngraveService);
   });
 
-  describe('getStatsChaosReward', () => {
-    it('should return StatsChaosReward', async () => {
-      const result = await statisticsService.getStatsChaosReward('level');
+  describe('getStatisticsChaos', () => {
+    it('should return StatisticsChaos', async () => {
+      const result = await statisticsService.getStatisticsChaos('level');
       expect(result).toStrictEqual({
         count: 3,
         level: 'level',
@@ -266,9 +257,9 @@ describe('StatisticsService', () => {
     });
   });
 
-  describe('getStatsGuardianReward', () => {
-    it('should return StatsGuardianReward', async () => {
-      const result = await statisticsService.getStatsGuardianReward('level');
+  describe('getStatisticsGuardian', () => {
+    it('should return StatisticsGuardian', async () => {
+      const result = await statisticsService.getStatisticsGuardian('level');
       expect(result).toStrictEqual({
         count: 3,
         level: 'level',
@@ -306,63 +297,9 @@ describe('StatisticsService', () => {
     });
   });
 
-  describe('getStatsArmorySetting', () => {
-    it('should return StatsArmorySetting', async () => {
-      const result = await statisticsService.getStatsArmorySetting('className');
-      expect(result).toStrictEqual({
-        classEngraveName1: {
-          count: 3,
-          abilities: {
-            ability: 3,
-          },
-          engraves: [
-            {
-              classEngraveName1: 3,
-              engraveName1: 3,
-            },
-            {},
-            {},
-          ],
-          itemSets: {
-            itemSet: 3,
-          },
-          elixirs: {
-            elixir: 3,
-          },
-        },
-        classEngraveName2: {
-          count: 0,
-          abilities: {},
-          engraves: [{}, {}, {}],
-          itemSets: {},
-          elixirs: {},
-        },
-        count: 3,
-        pair: {
-          count: 0,
-          abilities: {},
-          engraves: [{}, {}, {}],
-          itemSets: {},
-          elixirs: {},
-        },
-      });
-      expect(
-        jest.spyOn(engraveService, 'findClassEngraveNames'),
-      ).toBeCalledTimes(1);
-      expect(
-        jest.spyOn(armorySettingsService, 'findArmorySettingsByClassName'),
-      ).toBeCalledTimes(1);
-    });
-
-    it('should return null', async () => {
-      const result = await statisticsService.getStatsArmorySetting('null');
-      expect(result).toBe(null);
-    });
-  });
-
-  describe('getStatsSkillSetting', () => {
-    it('should return StatsSkillSetting', async () => {
-      const result = await statisticsService.getStatsSkillSetting('className');
+  describe('getStatisticsSkill', () => {
+    it('should return StatisticsSkill', async () => {
+      const result = await statisticsService.getStatisticsSkill('className');
       expect(result).toStrictEqual({
         count: 3,
         classEngraveName1: {
@@ -384,7 +321,7 @@ describe('StatisticsService', () => {
         classEngraveName2: {
           count: 0,
         },
-        pair: {
+        쌍직각: {
           count: 0,
         },
       });
@@ -397,7 +334,7 @@ describe('StatisticsService', () => {
     });
 
     it('should return null', async () => {
-      const result = await statisticsService.getStatsSkillSetting('null');
+      const result = await statisticsService.getStatisticsSkill('null');
       expect(result).toBe(null);
     });
   });
