@@ -95,7 +95,16 @@ export class CharactersService {
       }),
     );
 
-    this.addToStatistic(result);
+    let isValid = true;
+
+    for (const key in result) {
+      if (!result[key]) {
+        isValid = false;
+        break;
+      }
+    }
+
+    if (isValid) this.addToStatistic(result);
 
     return result;
   }
