@@ -10,7 +10,7 @@ export class ProfilesService {
     private readonly profileModel: Model<Profile>,
   ) {}
 
-  async findAllProfiles() {
+  async findProfiles() {
     return await this.profileModel.find();
   }
 
