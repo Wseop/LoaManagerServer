@@ -10,8 +10,9 @@ export class AbilitySettingsService {
     private readonly abilitySettingModel: Model<AbilitySetting>,
   ) {}
 
-  async findAbilitySettingsByClassName(className: string) {
-    return await this.abilitySettingModel.find({ className });
+  async findAbilitySettings(className: string) {
+    if (className) return await this.abilitySettingModel.find({ className });
+    else return await this.abilitySettingModel.find();
   }
 
   async upsertAbilitySetting(abilitySetting: AbilitySetting) {

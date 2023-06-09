@@ -10,8 +10,9 @@ export class EngraveSettingsService {
     private readonly engraveSettingModel: Model<EngraveSetting>,
   ) {}
 
-  async findEngraveSettingsByClassName(className: string) {
-    return await this.engraveSettingModel.find({ className });
+  async findEngraveSettings(className: string) {
+    if (className) return await this.engraveSettingModel.find({ className });
+    else return await this.engraveSettingModel.find();
   }
 
   async upsertEngraveSetting(engraveSetting: EngraveSetting) {

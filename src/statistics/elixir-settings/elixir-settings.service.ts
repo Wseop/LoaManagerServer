@@ -11,8 +11,9 @@ export class ElixirSettingsService {
     private readonly elixirSettingModel: Model<ElixirSetting>,
   ) {}
 
-  async findElixirSettingsByClassName(className: string) {
-    return await this.elixirSettingModel.find({ className });
+  async findElixirSettings(className: string) {
+    if (className) return await this.elixirSettingModel.find({ className });
+    else return await this.elixirSettingModel.find();
   }
 
   async upsertElixirSetting(elixirSetting: ElixirSetting) {

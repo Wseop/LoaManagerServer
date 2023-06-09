@@ -49,7 +49,56 @@ export class StatisticsController {
   }
 
   @Get('/skill/:className')
+  @ApiOkResponse()
   getStatisticsSkill(@Param('className') className: string) {
     return this.statisticsService.getStatisticsSkill(className);
+  }
+
+  @Get('/ability')
+  @ApiOkResponse()
+  getStatisticsAbility() {
+    return this.statisticsService.getStatisticsAbility(null);
+  }
+
+  @Get('/ability/:className')
+  @ApiOkResponse()
+  getStatisticsAbilitByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsAbility(className);
+  }
+
+  @Get('/elixir')
+  @ApiOkResponse()
+  getStatisticsElixir() {
+    return this.statisticsService.getStatisticsElixir(null);
+  }
+
+  @Get('/elixir/:className')
+  @ApiOkResponse()
+  getStatisticsElixirByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsElixir(className);
+  }
+
+  @Get('/engrave')
+  @ApiOkResponse()
+  getStatisticsEngrave() {
+    return this.statisticsService.getStatisticEngrave(null);
+  }
+
+  @Get('/engrave/:className')
+  @ApiOkResponse()
+  getStatisticsEngraveByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticEngrave(className);
+  }
+
+  @Get('/set')
+  @ApiOkResponse()
+  getStatisticsSet() {
+    return this.statisticsService.getStatisticsSet(null);
+  }
+
+  @Get('/set/:className')
+  @ApiOkResponse()
+  getStatisticsSetByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsSet(className);
   }
 }

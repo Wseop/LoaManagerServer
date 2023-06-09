@@ -11,8 +11,9 @@ export class SetSettingsService {
     private readonly setSettingModel: Model<SetSetting>,
   ) {}
 
-  async findSetSettingsByClassName(className: string) {
-    return await this.setSettingModel.find({ className });
+  async findSetSettings(className: string) {
+    if (className) return await this.setSettingModel.find({ className });
+    else return await this.setSettingModel.find();
   }
 
   async upsertSetSetting(setSetting: SetSetting) {

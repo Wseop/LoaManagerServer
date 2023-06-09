@@ -9,19 +9,16 @@ import { CharacterSkill } from 'src/lostark/characters/dto/characterInfo.dto';
 export class SkillSettingsService {
   constructor(
     @InjectModel(SkillSetting.name)
-    private readonly statsSkillModel: Model<SkillSetting>,
+    private readonly skillSettingModel: Model<SkillSetting>,
   ) {}
 
-  async findSkillSettings() {
-    return await this.statsSkillModel.find();
-  }
-
-  async findSkillSettingsByClassName(className: string) {
-    return await this.statsSkillModel.find({ className });
+  async findSkillSettings(className: string) {
+    if (className) return await this.skillSettingModel.find({ className });
+    else return await this.skillSettingModel.find();
   }
 
   async upsertSkillSetting(createSkillSettingDto: CreateSkillSettingDto) {
-    return await this.statsSkillModel.findOneAndUpdate(
+    return await this.skillSettingModel.findOneAndUpdate(
       { characterName: createSkillSettingDto.characterName },
       createSkillSettingDto,
       { upsert: true, new: true },
