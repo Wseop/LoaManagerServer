@@ -31,7 +31,7 @@ export class SkillSetting {
   className: string;
 
   @Prop()
-  classEngraves: string[];
+  classEngrave: string;
 
   @Prop()
   skillUsages: SkillUsage[];

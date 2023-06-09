@@ -22,7 +22,7 @@ export class ProfilesService {
     return await this.profileModel.find({ className });
   }
 
-  async createProfile(profile: Profile) {
+  async upsertProfile(profile: Profile) {
     return await this.profileModel.findOneAndUpdate(
       { characterName: profile.characterName },
       profile,

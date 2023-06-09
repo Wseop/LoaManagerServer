@@ -1,6 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { CharacterEngrave } from 'src/lostark/characters/dto/characterInfo.dto';
 
 @Schema()
 export class EngraveSetting {
@@ -20,11 +26,10 @@ export class EngraveSetting {
   classEngrave: string;
 
   @Prop()
-  @IsNotEmpty()
-  engraves: {
-    engraveName: string;
-    engraveLevel: number;
-  }[];
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CharacterEngrave)
+  engraves: CharacterEngrave[];
 }
 
 export const EngraveSettingSchema =

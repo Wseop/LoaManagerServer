@@ -17,7 +17,6 @@ export class StatisticsService {
     private readonly chaosRewardsService: ChaosRewardsService,
     private readonly guardianRewardsService: GuardianRewardsService,
     private readonly skillSettingsService: SkillSettingsService,
-
     private readonly engraveService: EngraveService,
   ) {}
 
@@ -117,38 +116,38 @@ export class StatisticsService {
     (
       await this.skillSettingsService.findSkillSettingsByClassName(className)
     ).forEach((skillSetting) => {
-      const classEngraveName =
-        skillSetting.classEngraves.length === 1
-          ? skillSetting.classEngraves[0]
-          : '쌍직각';
-
-      if (statisticsSkill[classEngraveName] !== undefined) {
+      if (statisticsSkill[skillSetting.classEngrave] !== undefined) {
         statisticsSkill.count++;
-        statisticsSkill[classEngraveName]['count']++;
+        statisticsSkill[skillSetting.classEngrave]['count']++;
 
         skillSetting.skillUsages.forEach((skillUsage) => {
           // skillCount
-          statisticsSkill[classEngraveName][skillUsage.skillName] === undefined
-            ? (statisticsSkill[classEngraveName][skillUsage.skillName] = {
+          statisticsSkill[skillSetting.classEngrave][skillUsage.skillName] ===
+          undefined
+            ? (statisticsSkill[skillSetting.classEngrave][
+                skillUsage.skillName
+              ] = {
                 count: 1,
                 levels: {},
                 tripods: {},
                 runes: {},
               })
-            : statisticsSkill[classEngraveName][skillUsage.skillName][
+            : statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
                 'count'
               ]++;
 
           // skillLevel
           this.addCount(
-            statisticsSkill[classEngraveName][skillUsage.skillName]['levels'],
+            statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
+              'levels'
+            ],
             skillUsage.skillLevel.toString(),
           );
 
           // tripod
           skillUsage.tripodNames.forEach((tripodName) => {
             this.addCount(
-              statisticsSkill[classEngraveName][skillUsage.skillName][
+              statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
                 'tripods'
               ],
               tripodName,
@@ -159,7 +158,9 @@ export class StatisticsService {
           const runeName =
             skillUsage.runeName === '' ? '미착용' : skillUsage.runeName;
           this.addCount(
-            statisticsSkill[classEngraveName][skillUsage.skillName]['runes'],
+            statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
+              'runes'
+            ],
             runeName,
           );
         });

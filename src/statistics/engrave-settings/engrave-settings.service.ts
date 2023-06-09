@@ -14,7 +14,7 @@ export class EngraveSettingsService {
     return await this.engraveSettingModel.find({ className });
   }
 
-  async createEngraveSetting(engraveSetting: EngraveSetting) {
+  async upsertEngraveSetting(engraveSetting: EngraveSetting) {
     return await this.engraveSettingModel.findOneAndUpdate(
       { characterName: engraveSetting.characterName },
       engraveSetting,

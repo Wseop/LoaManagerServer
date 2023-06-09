@@ -21,8 +21,8 @@ export class CreateSkillSettingDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString({ each: true })
-  classEngraves: string[];
+  @IsString()
+  classEngrave: string;
 
   @ApiProperty({ type: [SkillUsage] })
   @ArrayNotEmpty()
