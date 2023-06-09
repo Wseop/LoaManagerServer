@@ -610,19 +610,28 @@ export class CharactersService {
         characterInfo.profile.className,
       );
 
-      // 장착중인 직업각인 추출
-      let classEngrave: string = '';
+      // 메인 직업각인 추출
+      let mainClassEngrave: string = '';
       let classEngraves = characterInfo.engraves
         .map((engrave) => {
-          if (classEngraveNames.includes(engrave.engraveName))
-            return engrave.engraveName;
+          if (classEngraveNames.includes(engrave.engraveName)) {
+            return engrave;
+          }
         })
         .filter((element) => element);
 
-      if (classEngraves.length === 1) classEngrave = classEngraves[0];
-      else if (classEngraves.length === 2) classEngrave = '쌍직각';
-      else return null;
+      if (classEngraves.length === 1) {
+        mainClassEngrave = classEngraves[0].engraveName;
+      } else if (classEngraves.length === 2) {
+        mainClassEngrave =
+          classEngraves[0].engraveLevel === 3
+            ? classEngraves[0].engraveName
+            : classEngraves[1].engraveName;
+      }
 
+      if (mainClassEngrave === '') return null;
+
+      // statistic 데이터로 추가
       this.profilesService.upsertProfile({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
@@ -632,7 +641,7 @@ export class CharactersService {
       this.abilitySettingsService.upsertAbilitySetting({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
-        classEngrave: classEngrave,
+        classEngrave: mainClassEngrave,
         ability: this.abilitySettingsService.parseMainAbilities(
           characterInfo.profile.stats,
         ),
@@ -645,7 +654,7 @@ export class CharactersService {
         this.elixirSettingsService.upsertElixirSetting({
           characterName: characterInfo.profile.characterName,
           className: characterInfo.profile.className,
-          classEngrave: classEngrave,
+          classEngrave: mainClassEngrave,
           elixir: elixir,
         });
       }
@@ -653,7 +662,7 @@ export class CharactersService {
       this.engraveSettingsService.upsertEngraveSetting({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
-        classEngrave: classEngrave,
+        classEngrave: mainClassEngrave,
         engraves: characterInfo.engraves,
       });
 
@@ -662,7 +671,7 @@ export class CharactersService {
         this.setSettingsService.upsertSetSetting({
           characterName: characterInfo.profile.characterName,
           className: characterInfo.profile.className,
-          classEngrave: classEngrave,
+          classEngrave: mainClassEngrave,
           set: set,
         });
       }
@@ -670,7 +679,7 @@ export class CharactersService {
       this.skillSettingsService.upsertSkillSetting({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
-        classEngrave: classEngrave,
+        classEngrave: mainClassEngrave,
         skillUsages: this.skillSettingsService.parseSkillUsage(
           characterInfo.skills,
         ),
