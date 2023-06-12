@@ -15,14 +15,7 @@ import { ElixirSettingsService } from './elixir-settings/elixir-settings.service
 import { EngraveSettingsService } from './engrave-settings/engrave-settings.service';
 import { ProfilesService } from './profiles/profiles.service';
 import { SetSettingsService } from './set-settings/set-settings.service';
-import { StatisticsAbility } from './dto/statistics-ability.dto';
-import { StatisticsElixir } from './dto/statistics-elixir.dto';
-import { StatisticsEngrave } from './dto/statistics-engrave.dto';
-import { StatisticsSet } from './dto/statistics-set.dto';
-import { StatisticsAbilityAll } from './dto/statistics-ability-all.dto';
-import { StatisticsElixirAll } from './dto/statistics-elixir-all.dto';
-import { StatisticsEngraveAll } from './dto/statistics-engrave-all.dto';
-import { StatisticsSetAll } from './dto/statistics-set-all.dto';
+import { StatisticsCount } from './dto/statistics-count.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -189,162 +182,130 @@ export class StatisticsService {
     return statisticsSkill;
   }
 
-  async getStatisticsAbilityAll() {
-    const statisticsAbilityAll: StatisticsAbilityAll = {
-      count: 0,
-    };
-
-    (await this.abilitySettingsService.findAbilitySettings(null)).forEach(
-      (abilitySetting) => {
-        statisticsAbilityAll.count++;
-
-        if (abilitySetting.ability)
-          this.addCount(statisticsAbilityAll, abilitySetting.ability);
-      },
-    );
-
-    return statisticsAbilityAll;
-  }
-
   async getStatisticsAbility(className: string) {
     // StatisticsAbility 초기화
-    const statisticsAbility: StatisticsAbility = {
+    const statisticsAbility: StatisticsCount = {
       count: 0,
     };
 
-    (await this.engraveService.findClassEngraveNames(className)).forEach(
-      (classEngraveName) => {
-        statisticsAbility[classEngraveName] = {
-          count: 0,
-        };
-      },
-    );
+    if (className) {
+      (await this.engraveService.findClassEngraveNames(className)).forEach(
+        (classEngraveName) => {
+          statisticsAbility[classEngraveName] = {
+            count: 0,
+          };
+        },
+      );
+    }
 
     // 데이터 합산
     (await this.abilitySettingsService.findAbilitySettings(className)).forEach(
       (abilitySetting) => {
         statisticsAbility.count++;
-        statisticsAbility[abilitySetting.classEngrave]['count']++;
 
-        if (abilitySetting.ability)
-          this.addCount(
-            statisticsAbility[abilitySetting.classEngrave],
-            abilitySetting.ability,
-          );
+        if (className)
+          statisticsAbility[abilitySetting.classEngrave]['count']++;
+
+        if (abilitySetting.ability) {
+          if (className) {
+            this.addCount(
+              statisticsAbility[abilitySetting.classEngrave],
+              abilitySetting.ability,
+            );
+          } else {
+            this.addCount(statisticsAbility, abilitySetting.ability);
+          }
+        }
       },
     );
 
     return statisticsAbility;
   }
 
-  async getStatisticsElixirAll() {
-    const statisticsElixirAll: StatisticsElixirAll = {
-      count: 0,
-    };
-
-    (await this.elixirSettingsService.findElixirSettings(null)).forEach(
-      (elixirSetting) => {
-        statisticsElixirAll.count++;
-
-        if (elixirSetting.elixir)
-          this.addCount(statisticsElixirAll, elixirSetting.elixir);
-      },
-    );
-
-    return statisticsElixirAll;
-  }
-
   async getStatisticsElixir(className: string) {
     // StatisticsElixir 초기화
-    const statisticsElixir: StatisticsElixir = {
+    const statisticsElixir: StatisticsCount = {
       count: 0,
     };
 
-    (await this.engraveService.findClassEngraveNames(className)).forEach(
-      (classEngraveName) => {
-        statisticsElixir[classEngraveName] = {
-          count: 0,
-        };
-      },
-    );
+    if (className) {
+      (await this.engraveService.findClassEngraveNames(className)).forEach(
+        (classEngraveName) => {
+          statisticsElixir[classEngraveName] = {
+            count: 0,
+          };
+        },
+      );
+    }
 
     // 데이터 합산
     (await this.elixirSettingsService.findElixirSettings(className)).forEach(
       (elixirSetting) => {
         statisticsElixir.count++;
-        statisticsElixir[elixirSetting.classEngrave]['count']++;
 
-        if (elixirSetting.elixir)
-          this.addCount(
-            statisticsElixir[elixirSetting.classEngrave],
-            elixirSetting.elixir,
-          );
+        if (className) statisticsElixir[elixirSetting.classEngrave]['count']++;
+
+        if (elixirSetting.elixir) {
+          if (className) {
+            this.addCount(
+              statisticsElixir[elixirSetting.classEngrave],
+              elixirSetting.elixir,
+            );
+          } else {
+            this.addCount(statisticsElixir, elixirSetting.elixir);
+          }
+        }
       },
     );
 
     return statisticsElixir;
   }
 
-  async getStatisticEngraveAll() {
-    const statisticsEngraveAll: StatisticsEngraveAll[] = Array.from(
-      { length: 3 },
-      () => {
-        return { count: 0 };
-      },
-    );
-
-    (await this.engraveSettingsService.findEngraveSettings(null)).forEach(
-      (engraveSetting) => {
-        statisticsEngraveAll.forEach((v) => {
-          v.count++;
-        });
-
-        engraveSetting.engraves.forEach((engrave) => {
-          this.addCount(
-            statisticsEngraveAll[engrave.engraveLevel - 1],
-            engrave.engraveName,
-          );
-        });
-      },
-    );
-
-    return statisticsEngraveAll;
-  }
-
   async getStatisticEngrave(className: string) {
     // StatisticsEngrave 초기화
-    const statisticsEngraves: StatisticsEngrave[] = Array.from(
+    const statisticsEngraves: StatisticsCount[] = Array.from(
       { length: 3 },
       () => {
         return { count: 0 };
       },
     );
 
-    (await this.engraveService.findClassEngraveNames(className)).forEach(
-      (classEngraveName) => {
-        statisticsEngraves.forEach((statisticsEngrave) => {
-          statisticsEngrave[classEngraveName] = {
-            count: 0,
-          };
-        });
-      },
-    );
+    if (className) {
+      (await this.engraveService.findClassEngraveNames(className)).forEach(
+        (classEngraveName) => {
+          statisticsEngraves.forEach((statisticsEngrave) => {
+            statisticsEngrave[classEngraveName] = {
+              count: 0,
+            };
+          });
+        },
+      );
+    }
 
     // 데이터 합산
     (await this.engraveSettingsService.findEngraveSettings(className)).forEach(
       (engraveSetting) => {
         statisticsEngraves.forEach((statisticsEngrave) => {
           statisticsEngrave.count++;
-          statisticsEngrave[engraveSetting.classEngrave]['count']++;
+
+          if (className)
+            statisticsEngrave[engraveSetting.classEngrave]['count']++;
         });
 
         engraveSetting.engraves.forEach((engrave) => {
-          this.addCount(
-            statisticsEngraves[engrave.engraveLevel - 1][
-              engraveSetting.classEngrave
-            ],
-            engrave.engraveName,
-          );
+          if (className) {
+            this.addCount(
+              statisticsEngraves[engrave.engraveLevel - 1][
+                engraveSetting.classEngrave
+              ],
+              engrave.engraveName,
+            );
+          } else {
+            this.addCount(
+              statisticsEngraves[engrave.engraveLevel - 1],
+              engrave.engraveName,
+            );
+          }
         });
       },
     );
@@ -352,44 +313,37 @@ export class StatisticsService {
     return statisticsEngraves;
   }
 
-  async getStatisticsSetAll() {
-    const statisticsSetAll: StatisticsSetAll = {
-      count: 0,
-    };
-
-    (await this.setSettingsService.findSetSettings(null)).forEach(
-      (setSetting) => {
-        statisticsSetAll.count++;
-
-        if (setSetting.set) this.addCount(statisticsSetAll, setSetting.set);
-      },
-    );
-
-    return statisticsSetAll;
-  }
-
   async getStatisticsSet(className: string) {
     // StatisticsSet 초기화
-    const statisticsSet: StatisticsSet = {
+    const statisticsSet: StatisticsCount = {
       count: 0,
     };
 
-    (await this.engraveService.findClassEngraveNames(className)).forEach(
-      (classEngraveName) => {
-        statisticsSet[classEngraveName] = {
-          count: 0,
-        };
-      },
-    );
+    if (className) {
+      (await this.engraveService.findClassEngraveNames(className)).forEach(
+        (classEngraveName) => {
+          statisticsSet[classEngraveName] = {
+            count: 0,
+          };
+        },
+      );
+    }
 
     // 데이터 합산
     (await this.setSettingsService.findSetSettings(className)).forEach(
       (setSetting) => {
         statisticsSet.count++;
-        statisticsSet[setSetting.classEngrave]['count']++;
 
-        if (setSetting.set)
-          this.addCount(statisticsSet[setSetting.classEngrave], setSetting.set);
+        if (className) statisticsSet[setSetting.classEngrave]['count']++;
+
+        if (setSetting.set) {
+          if (className)
+            this.addCount(
+              statisticsSet[setSetting.classEngrave],
+              setSetting.set,
+            );
+          else this.addCount(statisticsSet, setSetting.set);
+        }
       },
     );
 

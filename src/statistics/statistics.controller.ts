@@ -57,7 +57,7 @@ export class StatisticsController {
   @Get('/ability')
   @ApiOkResponse()
   getStatisticsAbility() {
-    return this.statisticsService.getStatisticsAbilityAll();
+    return this.statisticsService.getStatisticsAbility(null);
   }
 
   @Get('/ability/:className')
@@ -69,7 +69,7 @@ export class StatisticsController {
   @Get('/elixir')
   @ApiOkResponse()
   getStatisticsElixir() {
-    return this.statisticsService.getStatisticsElixirAll();
+    return this.statisticsService.getStatisticsElixir(null);
   }
 
   @Get('/elixir/:className')
@@ -81,7 +81,7 @@ export class StatisticsController {
   @Get('/engrave')
   @ApiOkResponse()
   getStatisticsEngrave() {
-    return this.statisticsService.getStatisticEngraveAll();
+    return this.statisticsService.getStatisticEngrave(null);
   }
 
   @Get('/engrave/:className')
@@ -93,7 +93,7 @@ export class StatisticsController {
   @Get('/set')
   @ApiOkResponse()
   getStatisticsSet() {
-    return this.statisticsService.getStatisticsSetAll();
+    return this.statisticsService.getStatisticsSet(null);
   }
 
   @Get('/set/:className')
