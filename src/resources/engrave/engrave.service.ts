@@ -15,27 +15,24 @@ export class EngraveService {
   }
 
   async findClassEngraves(className: string) {
-    return await this.engraveModel.find({ className });
+    return (await this.engraveModel.find())
+      .map((engrave) => {
+        if (className && engrave.className === className) return engrave;
+        else if (!className && engrave.className) return engrave;
+      })
+      .filter((element) => element);
   }
 
   async findClassEngraveNames(className: string) {
-    const classEngraveNames = [];
-
-    (await this.engraveModel.find({ className })).forEach((classEngrave) => {
-      classEngraveNames.push(classEngrave.engraveName);
+    return (await this.findClassEngraves(className)).map((element) => {
+      return element.engraveName;
     });
-
-    return classEngraveNames;
   }
 
   async findClassEngraveCodes(className: string) {
-    const classEngraveCodes = [];
-
-    (await this.engraveModel.find({ className })).forEach((classEngrave) => {
-      classEngraveCodes.push(classEngrave.code);
+    return (await this.findClassEngraves(className)).map((element) => {
+      return element.code;
     });
-
-    return classEngraveCodes;
   }
 
   async createEngrave(createEngraveDto: CreateEngraveDto) {

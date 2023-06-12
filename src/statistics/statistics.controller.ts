@@ -16,13 +16,13 @@ import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Get('/rewards/chaos/:level')
+  @Get('/chaos/:level')
   @ApiOkResponse()
-  getStatsChaosReward(@Param('level') level: string) {
-    return this.statisticsService.getStatsChaosReward(level);
+  getStatisticsChaos(@Param('level') level: string) {
+    return this.statisticsService.getStatisticsChaos(level);
   }
 
-  @Post('/rewards/chaos')
+  @Post('/chaos')
   @UseGuards(AuthGuard('access'))
   @ApiUnauthorizedResponse()
   @ApiBadRequestResponse()
@@ -31,13 +31,13 @@ export class StatisticsController {
     return this.statisticsService.createChaosReward(createChaosRewardDto);
   }
 
-  @Get('/rewards/guardian/:level')
+  @Get('/guardian/:level')
   @ApiOkResponse()
-  getStatsGuardianReward(@Param('level') level: string) {
-    return this.statisticsService.getStatsGuardianReward(level);
+  getStatisticsGuardian(@Param('level') level: string) {
+    return this.statisticsService.getStatisticsGuardian(level);
   }
 
-  @Post('/rewards/guardian')
+  @Post('/guardian')
   @UseGuards(AuthGuard('access'))
   @ApiUnauthorizedResponse()
   @ApiBadRequestResponse()
@@ -48,13 +48,57 @@ export class StatisticsController {
     return this.statisticsService.createGuardianReward(createGuardianRewardDto);
   }
 
-  @Get('/settings/armory/:className')
-  getStatsArmorySetting(@Param('className') className: string) {
-    return this.statisticsService.getStatsArmorySetting(className);
+  @Get('/skill/:className')
+  @ApiOkResponse()
+  getStatisticsSkill(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsSkill(className);
   }
 
-  @Get('/settings/skill/:className')
-  getStatsSkillSetting(@Param('className') className: string) {
-    return this.statisticsService.getStatsSkillSetting(className);
+  @Get('/ability')
+  @ApiOkResponse()
+  getStatisticsAbility() {
+    return this.statisticsService.getStatisticsAbility(null);
+  }
+
+  @Get('/ability/:className')
+  @ApiOkResponse()
+  getStatisticsAbilitByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsAbility(className);
+  }
+
+  @Get('/elixir')
+  @ApiOkResponse()
+  getStatisticsElixir() {
+    return this.statisticsService.getStatisticsElixir(null);
+  }
+
+  @Get('/elixir/:className')
+  @ApiOkResponse()
+  getStatisticsElixirByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsElixir(className);
+  }
+
+  @Get('/engrave')
+  @ApiOkResponse()
+  getStatisticsEngrave() {
+    return this.statisticsService.getStatisticEngrave(null);
+  }
+
+  @Get('/engrave/:className')
+  @ApiOkResponse()
+  getStatisticsEngraveByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticEngrave(className);
+  }
+
+  @Get('/set')
+  @ApiOkResponse()
+  getStatisticsSet() {
+    return this.statisticsService.getStatisticsSet(null);
+  }
+
+  @Get('/set/:className')
+  @ApiOkResponse()
+  getStatisticsSetByClassName(@Param('className') className: string) {
+    return this.statisticsService.getStatisticsSet(className);
   }
 }

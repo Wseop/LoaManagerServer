@@ -26,7 +26,7 @@ import { MarketQueryDto } from './markets/dto/market-query.dto';
 @ApiTags('lostark')
 @Controller('lostark')
 export class LostarkController {
-  constructor(private readonly lostarkService: LostarkService) {}
+  constructor(private readonly lostarkService: LostarkService) { }
 
   @Post('/apiKey')
   @UseGuards(AuthGuard('access'))

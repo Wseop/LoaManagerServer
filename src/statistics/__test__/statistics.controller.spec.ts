@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StatisticsService } from '../statistics.service';
 import { StatisticsController } from '../statistics.controller';
-import { StatsChaosReward } from '../dto/stats-chaos-reward.dto';
-import { StatsGuardianReward } from '../dto/stats-guardian-reward.dto';
-import { StatsArmorySetting } from '../dto/stats-armory-setting.dto';
-import { StatsSkillSetting } from '../dto/stats-skill-setting.dto';
+import { StatisticsChaos } from '../dto/statistics-chaos.dto';
+import { StatisticsGuardian } from '../dto/statistics-guardian.dto';
+import { StatisticsSkill } from '../dto/statistics-skill.dto';
 import { CreateChaosRewardDto } from '../chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from '../guardian-rewards/dto/create-guardian-reward.dto';
 
-const mockStatsChaosReward: StatsChaosReward = {
+const mockStatisticsChaos: StatisticsChaos = {
   count: 0,
   level: 'level',
   itemCounts: {
@@ -30,7 +29,7 @@ const mockCreateChaosRewardDto: CreateChaosRewardDto = {
   leapStone: 0,
   gem: 0,
 };
-const mockStatsGuardianReward: StatsGuardianReward = {
+const mockStatisticsGuardian: StatisticsGuardian = {
   count: 0,
   level: 'level',
   itemCounts: {
@@ -46,23 +45,7 @@ const mockCreateGuardianRewardDto: CreateGuardianRewardDto = {
   protectionStone: 0,
   leapStone: 0,
 };
-const mockStatsArmorySetting: StatsArmorySetting = {
-  count: 0,
-  classEngraveCode: {
-    count: 0,
-    abilities: {
-      ability: 0,
-    },
-    engraves: [{ engrave1: 0 }, { engrave2: 0 }, { engrave3: 0 }],
-    itemSets: {
-      itemSet: 0,
-    },
-    elixirs: {
-      elixir: 0,
-    },
-  },
-};
-const mockStatsSkillSetting: StatsSkillSetting = {
+const mockStatisticsSkill: StatisticsSkill = {
   count: 0,
   classEngrave: {
     count: 0,
@@ -82,15 +65,13 @@ const mockStatsSkillSetting: StatsSkillSetting = {
 };
 
 class MockStatisticsService {
-  getStatsChaosReward = jest.fn().mockReturnValue(mockStatsChaosReward);
+  getStatisticsChaos = jest.fn().mockReturnValue(mockStatisticsChaos);
   createChaosReward = jest.fn().mockReturnValue(mockCreateChaosRewardDto);
 
-  getStatsGuardianReward = jest.fn().mockReturnValue(mockStatsGuardianReward);
+  getStatisticsGuardian = jest.fn().mockReturnValue(mockStatisticsGuardian);
   createGuardianReward = jest.fn().mockReturnValue(mockCreateGuardianRewardDto);
 
-  getStatsArmorySetting = jest.fn().mockReturnValue(mockStatsArmorySetting);
-
-  getStatsSkillSetting = jest.fn().mockReturnValue(mockStatsSkillSetting);
+  getStatisticsSkill = jest.fn().mockReturnValue(mockStatisticsSkill);
 }
 
 describe('StatisticsController', () => {
@@ -114,35 +95,27 @@ describe('StatisticsController', () => {
   });
 
   describe('GET', () => {
-    it('should return statsChaosReward', () => {
-      const result = statisticsController.getStatsChaosReward('');
-      expect(result).toStrictEqual(mockStatsChaosReward);
+    it('should return statisticsChaos', () => {
+      const result = statisticsController.getStatisticsChaos('');
+      expect(result).toStrictEqual(mockStatisticsChaos);
       expect(
-        jest.spyOn(statisticsService, 'getStatsChaosReward'),
+        jest.spyOn(statisticsService, 'getStatisticsChaos'),
       ).toBeCalledTimes(1);
     });
 
-    it('should return statsGuardianReward', () => {
-      const result = statisticsController.getStatsGuardianReward('');
-      expect(result).toStrictEqual(mockStatsGuardianReward);
+    it('should return statisticsGuardian', () => {
+      const result = statisticsController.getStatisticsGuardian('');
+      expect(result).toStrictEqual(mockStatisticsGuardian);
       expect(
-        jest.spyOn(statisticsService, 'getStatsGuardianReward'),
+        jest.spyOn(statisticsService, 'getStatisticsGuardian'),
       ).toBeCalledTimes(1);
     });
 
-    it('should return statsArmorySetting', () => {
-      const result = statisticsController.getStatsArmorySetting('');
-      expect(result).toStrictEqual(mockStatsArmorySetting);
+    it('should return statisticsSkill', () => {
+      const result = statisticsController.getStatisticsSkill('');
+      expect(result).toStrictEqual(mockStatisticsSkill);
       expect(
-        jest.spyOn(statisticsService, 'getStatsArmorySetting'),
-      ).toBeCalledTimes(1);
-    });
-
-    it('should return statsSkillSetting', () => {
-      const result = statisticsController.getStatsSkillSetting('');
-      expect(result).toStrictEqual(mockStatsSkillSetting);
-      expect(
-        jest.spyOn(statisticsService, 'getStatsSkillSetting'),
+        jest.spyOn(statisticsService, 'getStatisticsSkill'),
       ).toBeCalledTimes(1);
     });
   });

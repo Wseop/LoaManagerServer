@@ -26,7 +26,7 @@ export class LostarkService {
     private readonly charactersService: CharactersService,
     private readonly auctionsService: AuctionsService,
     private readonly marketsService: MarketsService,
-  ) {}
+  ) { }
 
   async createApiKey(createApiKeyDto: CreateApiKeyDto) {
     return await this.apiKeysService.createApiKey(createApiKeyDto);
@@ -161,7 +161,7 @@ export class LostarkService {
     } else {
       const result = await this.post(url, searchOption);
 
-      result.data.Items.forEach((item) => {
+      result.data.Items?.forEach((item) => {
         marketItems.push(this.marketsService.parseSearchResult(item));
       });
     }
