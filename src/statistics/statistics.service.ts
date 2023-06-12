@@ -19,6 +19,10 @@ import { StatisticsAbility } from './dto/statistics-ability.dto';
 import { StatisticsElixir } from './dto/statistics-elixir.dto';
 import { StatisticsEngrave } from './dto/statistics-engrave.dto';
 import { StatisticsSet } from './dto/statistics-set.dto';
+import { StatisticsAbilityAll } from './dto/statistics-ability-all.dto';
+import { StatisticsElixirAll } from './dto/statistics-elixir-all.dto';
+import { StatisticsEngraveAll } from './dto/statistics-engrave-all.dto';
+import { StatisticsSetAll } from './dto/statistics-set-all.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -32,7 +36,7 @@ export class StatisticsService {
     private readonly profilesService: ProfilesService,
     private readonly setSettingsService: SetSettingsService,
     private readonly engraveService: EngraveService,
-  ) { }
+  ) {}
 
   async getStatisticsChaos(level: string) {
     const chaosRewards: ChaosReward[] =
@@ -137,23 +141,23 @@ export class StatisticsService {
           skillSetting.skillUsages.forEach((skillUsage) => {
             // skillCount
             statisticsSkill[skillSetting.classEngrave][skillUsage.skillName] ===
-              undefined
+            undefined
               ? (statisticsSkill[skillSetting.classEngrave][
-                skillUsage.skillName
-              ] = {
-                count: 1,
-                levels: {},
-                tripods: {},
-                runes: {},
-              })
+                  skillUsage.skillName
+                ] = {
+                  count: 1,
+                  levels: {},
+                  tripods: {},
+                  runes: {},
+                })
               : statisticsSkill[skillSetting.classEngrave][
-              skillUsage.skillName
-              ]['count']++;
+                  skillUsage.skillName
+                ]['count']++;
 
             // skillLevel
             this.addCount(
               statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
-              'levels'
+                'levels'
               ],
               skillUsage.skillLevel.toString(),
             );
@@ -162,7 +166,7 @@ export class StatisticsService {
             skillUsage.tripodNames.forEach((tripodName) => {
               this.addCount(
                 statisticsSkill[skillSetting.classEngrave][
-                skillUsage.skillName
+                  skillUsage.skillName
                 ]['tripods'],
                 tripodName,
               );
@@ -173,7 +177,7 @@ export class StatisticsService {
               skillUsage.runeName === '' ? '미착용' : skillUsage.runeName;
             this.addCount(
               statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
-              'runes'
+                'runes'
               ],
               runeName,
             );
@@ -183,6 +187,23 @@ export class StatisticsService {
     );
 
     return statisticsSkill;
+  }
+
+  async getStatisticsAbilityAll() {
+    const statisticsAbilityAll: StatisticsAbilityAll = {
+      count: 0,
+    };
+
+    (await this.abilitySettingsService.findAbilitySettings(null)).forEach(
+      (abilitySetting) => {
+        statisticsAbilityAll.count++;
+
+        if (abilitySetting.ability)
+          this.addCount(statisticsAbilityAll, abilitySetting.ability);
+      },
+    );
+
+    return statisticsAbilityAll;
   }
 
   async getStatisticsAbility(className: string) {
@@ -205,14 +226,32 @@ export class StatisticsService {
         statisticsAbility.count++;
         statisticsAbility[abilitySetting.classEngrave]['count']++;
 
-        this.addCount(
-          statisticsAbility[abilitySetting.classEngrave],
-          abilitySetting.ability,
-        );
+        if (abilitySetting.ability)
+          this.addCount(
+            statisticsAbility[abilitySetting.classEngrave],
+            abilitySetting.ability,
+          );
       },
     );
 
     return statisticsAbility;
+  }
+
+  async getStatisticsElixirAll() {
+    const statisticsElixirAll: StatisticsElixirAll = {
+      count: 0,
+    };
+
+    (await this.elixirSettingsService.findElixirSettings(null)).forEach(
+      (elixirSetting) => {
+        statisticsElixirAll.count++;
+
+        if (elixirSetting.elixir)
+          this.addCount(statisticsElixirAll, elixirSetting.elixir);
+      },
+    );
+
+    return statisticsElixirAll;
   }
 
   async getStatisticsElixir(className: string) {
@@ -235,14 +274,41 @@ export class StatisticsService {
         statisticsElixir.count++;
         statisticsElixir[elixirSetting.classEngrave]['count']++;
 
-        this.addCount(
-          statisticsElixir[elixirSetting.classEngrave],
-          elixirSetting.elixir,
-        );
+        if (elixirSetting.elixir)
+          this.addCount(
+            statisticsElixir[elixirSetting.classEngrave],
+            elixirSetting.elixir,
+          );
       },
     );
 
     return statisticsElixir;
+  }
+
+  async getStatisticEngraveAll() {
+    const statisticsEngraveAll: StatisticsEngraveAll[] = Array.from(
+      { length: 3 },
+      () => {
+        return { count: 0 };
+      },
+    );
+
+    (await this.engraveSettingsService.findEngraveSettings(null)).forEach(
+      (engraveSetting) => {
+        statisticsEngraveAll.forEach((v) => {
+          v.count++;
+        });
+
+        engraveSetting.engraves.forEach((engrave) => {
+          this.addCount(
+            statisticsEngraveAll[engrave.engraveLevel - 1],
+            engrave.engraveName,
+          );
+        });
+      },
+    );
+
+    return statisticsEngraveAll;
   }
 
   async getStatisticEngrave(className: string) {
@@ -275,7 +341,7 @@ export class StatisticsService {
         engraveSetting.engraves.forEach((engrave) => {
           this.addCount(
             statisticsEngraves[engrave.engraveLevel - 1][
-            engraveSetting.classEngrave
+              engraveSetting.classEngrave
             ],
             engrave.engraveName,
           );
@@ -284,6 +350,22 @@ export class StatisticsService {
     );
 
     return statisticsEngraves;
+  }
+
+  async getStatisticsSetAll() {
+    const statisticsSetAll: StatisticsSetAll = {
+      count: 0,
+    };
+
+    (await this.setSettingsService.findSetSettings(null)).forEach(
+      (setSetting) => {
+        statisticsSetAll.count++;
+
+        if (setSetting.set) this.addCount(statisticsSetAll, setSetting.set);
+      },
+    );
+
+    return statisticsSetAll;
   }
 
   async getStatisticsSet(className: string) {
@@ -306,7 +388,8 @@ export class StatisticsService {
         statisticsSet.count++;
         statisticsSet[setSetting.classEngrave]['count']++;
 
-        this.addCount(statisticsSet[setSetting.classEngrave], setSetting.set);
+        if (setSetting.set)
+          this.addCount(statisticsSet[setSetting.classEngrave], setSetting.set);
       },
     );
 
