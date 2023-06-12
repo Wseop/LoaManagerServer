@@ -26,7 +26,7 @@ export class LostarkService {
     private readonly charactersService: CharactersService,
     private readonly auctionsService: AuctionsService,
     private readonly marketsService: MarketsService,
-  ) {}
+  ) { }
 
   async createApiKey(createApiKeyDto: CreateApiKeyDto) {
     return await this.apiKeysService.createApiKey(createApiKeyDto);
