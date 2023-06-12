@@ -32,7 +32,7 @@ export class StatisticsService {
     private readonly profilesService: ProfilesService,
     private readonly setSettingsService: SetSettingsService,
     private readonly engraveService: EngraveService,
-  ) {}
+  ) { }
 
   async getStatisticsChaos(level: string) {
     const chaosRewards: ChaosReward[] =
@@ -137,23 +137,23 @@ export class StatisticsService {
           skillSetting.skillUsages.forEach((skillUsage) => {
             // skillCount
             statisticsSkill[skillSetting.classEngrave][skillUsage.skillName] ===
-            undefined
+              undefined
               ? (statisticsSkill[skillSetting.classEngrave][
-                  skillUsage.skillName
-                ] = {
-                  count: 1,
-                  levels: {},
-                  tripods: {},
-                  runes: {},
-                })
+                skillUsage.skillName
+              ] = {
+                count: 1,
+                levels: {},
+                tripods: {},
+                runes: {},
+              })
               : statisticsSkill[skillSetting.classEngrave][
-                  skillUsage.skillName
-                ]['count']++;
+              skillUsage.skillName
+              ]['count']++;
 
             // skillLevel
             this.addCount(
               statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
-                'levels'
+              'levels'
               ],
               skillUsage.skillLevel.toString(),
             );
@@ -162,7 +162,7 @@ export class StatisticsService {
             skillUsage.tripodNames.forEach((tripodName) => {
               this.addCount(
                 statisticsSkill[skillSetting.classEngrave][
-                  skillUsage.skillName
+                skillUsage.skillName
                 ]['tripods'],
                 tripodName,
               );
@@ -173,7 +173,7 @@ export class StatisticsService {
               skillUsage.runeName === '' ? '미착용' : skillUsage.runeName;
             this.addCount(
               statisticsSkill[skillSetting.classEngrave][skillUsage.skillName][
-                'runes'
+              'runes'
               ],
               runeName,
             );
@@ -275,7 +275,7 @@ export class StatisticsService {
         engraveSetting.engraves.forEach((engrave) => {
           this.addCount(
             statisticsEngraves[engrave.engraveLevel - 1][
-              engraveSetting.classEngrave
+            engraveSetting.classEngrave
             ],
             engrave.engraveName,
           );

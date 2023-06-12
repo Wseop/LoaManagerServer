@@ -1,6 +1,11 @@
 import { EngraveService } from '../../resources/engrave/engrave.service';
+import { AbilitySettingsService } from '../ability-settings/ability-settings.service';
 import { ChaosRewardsService } from '../chaos-rewards/chaos-rewards.service';
+import { ElixirSettingsService } from '../elixir-settings/elixir-settings.service';
+import { EngraveSettingsService } from '../engrave-settings/engrave-settings.service';
 import { GuardianRewardsService } from '../guardian-rewards/guardian-rewards.service';
+import { ProfilesService } from '../profiles/profiles.service';
+import { SetSettingsService } from '../set-settings/set-settings.service';
 import { SkillSettingsService } from '../skill-settings/skill-settings.service';
 import { StatisticsService } from '../statistics.service';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -81,83 +86,54 @@ class MockGuardianRewardsService {
     leapStone: 1,
   });
 }
-class MockArmorySettingsService {
-  findArmorySettingsByClassName = jest.fn().mockResolvedValue([
-    {
-      characterName: 'characterName',
-      className: 'className',
-      itemLevel: 0,
-      ability: 'ability',
-      engraves: [{ engraveName: 'engraveName1', engraveLevel: 1 }],
-      classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 1 }],
-      itemSet: 'itemSet',
-      elixir: 'elixir',
-    },
-    {
-      characterName: 'characterName',
-      className: 'className',
-      itemLevel: 0,
-      ability: 'ability',
-      engraves: [{ engraveName: 'engraveName1', engraveLevel: 1 }],
-      classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 1 }],
-      itemSet: 'itemSet',
-      elixir: 'elixir',
-    },
-    {
-      characterName: 'characterName',
-      className: 'className',
-      itemLevel: 0,
-      ability: 'ability',
-      engraves: [{ engraveName: 'engraveName1', engraveLevel: 1 }],
-      classEngraves: [{ engraveName: 'classEngraveName1', engraveLevel: 1 }],
-      itemSet: 'itemSet',
-      elixir: 'elixir',
-    },
-  ]);
-}
 class MockSkillSettingsService {
-  findSkillSettingsByClassName = jest.fn().mockResolvedValue([
+  findSkillSettings = jest.fn().mockResolvedValue([
     {
-      characterName: 'characterName',
+      characterName: 'characterName1',
       className: 'className',
-      classEngraves: ['classEngraveName1'],
+      classEngrave: 'classEngraveName1',
       skillUsages: [
         {
           skillName: 'skillName',
-          skillLevel: 0,
+          skillLevel: 1,
           tripodNames: ['tripod1', 'tripod2'],
           runeName: 'runeName',
         },
       ],
     },
     {
-      characterName: 'characterName',
+      characterName: 'characterName2',
       className: 'className',
-      classEngraves: ['classEngraveName1'],
+      classEngrave: 'classEngraveName1',
       skillUsages: [
         {
           skillName: 'skillName',
-          skillLevel: 0,
-          tripodNames: ['tripod1', 'tripod2'],
+          skillLevel: 2,
+          tripodNames: [],
           runeName: 'runeName',
         },
       ],
     },
     {
-      characterName: 'characterName',
+      characterName: 'characterName3',
       className: 'className',
-      classEngraves: ['classEngraveName1'],
+      classEngrave: 'classEngraveName2',
       skillUsages: [
         {
           skillName: 'skillName',
-          skillLevel: 0,
+          skillLevel: 3,
           tripodNames: ['tripod1', 'tripod2'],
-          runeName: 'runeName',
+          runeName: null,
         },
       ],
     },
   ]);
 }
+class MockAbilitySettingsService { }
+class MockElixirSettingsService { }
+class MockEngraveSettingsService { }
+class MockProfilesService { }
+class MockSetSettingsService { }
 class MockEngraveService {
   findClassEngraveNames = jest.fn((className) => {
     if (className === 'className') {
@@ -173,6 +149,11 @@ describe('StatisticsService', () => {
   let chaosRewardsService: ChaosRewardsService;
   let guardianRewardsService: GuardianRewardsService;
   let skillSettingsService: SkillSettingsService;
+  let abilitySettingsService: AbilitySettingsService;
+  let elixirSettingsService: ElixirSettingsService;
+  let engraveSettingsService: EngraveSettingsService;
+  let profilesService: ProfilesService;
+  let setSettingsService: SetSettingsService;
   let engraveService: EngraveService;
 
   beforeEach(async () => {
@@ -192,6 +173,26 @@ describe('StatisticsService', () => {
           useClass: MockSkillSettingsService,
         },
         {
+          provide: AbilitySettingsService,
+          useClass: MockAbilitySettingsService,
+        },
+        {
+          provide: ElixirSettingsService,
+          useClass: MockElixirSettingsService,
+        },
+        {
+          provide: EngraveSettingsService,
+          useClass: MockEngraveSettingsService
+        },
+        {
+          provide: ProfilesService,
+          useClass: MockProfilesService,
+        },
+        {
+          provide: SetSettingsService,
+          useClass: MockSetSettingsService
+        },
+        {
           provide: EngraveService,
           useClass: MockEngraveService,
         },
@@ -205,6 +206,11 @@ describe('StatisticsService', () => {
     );
     skillSettingsService =
       module.get<SkillSettingsService>(SkillSettingsService);
+    abilitySettingsService = module.get<AbilitySettingsService>(AbilitySettingsService);
+    elixirSettingsService = module.get<ElixirSettingsService>(ElixirSettingsService);
+    engraveSettingsService = module.get<EngraveSettingsService>(EngraveSettingsService);
+    profilesService = module.get<ProfilesService>(ProfilesService);
+    setSettingsService = module.get<SetSettingsService>(SetSettingsService);
     engraveService = module.get<EngraveService>(EngraveService);
   });
 
@@ -303,33 +309,44 @@ describe('StatisticsService', () => {
       expect(result).toStrictEqual({
         count: 3,
         classEngraveName1: {
-          count: 3,
+          count: 2,
           skillName: {
-            count: 3,
+            count: 2,
             levels: {
-              '0': 3,
+              '1': 1,
+              '2': 1,
             },
             tripods: {
-              tripod1: 3,
-              tripod2: 3,
+              tripod1: 1,
+              tripod2: 1,
             },
             runes: {
-              runeName: 3,
+              runeName: 2,
             },
           },
         },
         classEngraveName2: {
-          count: 0,
-        },
-        쌍직각: {
-          count: 0,
-        },
+          count: 1,
+          skillName: {
+            count: 1,
+            levels: {
+              '3': 1
+            },
+            tripods: {
+              tripod1: 1,
+              tripod2: 1,
+            },
+            runes: {
+              'null': 1,
+            },
+          },
+        }
       });
       expect(
         jest.spyOn(engraveService, 'findClassEngraveNames'),
       ).toBeCalledTimes(1);
       expect(
-        jest.spyOn(skillSettingsService, 'findSkillSettingsByClassName'),
+        jest.spyOn(skillSettingsService, 'findSkillSettings'),
       ).toBeCalledTimes(1);
     });
 

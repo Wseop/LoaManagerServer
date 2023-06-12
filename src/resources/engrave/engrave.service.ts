@@ -8,7 +8,7 @@ import { CreateEngraveDto } from './dto/create-engrave.dto';
 export class EngraveService {
   constructor(
     @InjectModel(Engrave.name) private readonly engraveModel: Model<Engrave>,
-  ) {}
+  ) { }
 
   async findEngraves() {
     return await this.engraveModel.find();

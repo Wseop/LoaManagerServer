@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { EngraveService } from '../../resources/engrave/engrave.service';
-import { CreateSkillSettingDto } from '../../statistics/skill-settings/dto/create-skill-setting.dto';
 import { SkillSettingsService } from '../../statistics/skill-settings/skill-settings.service';
 import { SiblingDto } from './dto/sibling.dto';
 import {
@@ -13,12 +12,11 @@ import {
   CharacterProfile,
   CharacterSkill,
 } from './dto/characterInfo.dto';
-import { SkillUsage } from 'src/statistics/skill-settings/schemas/skill-setting.schema';
-import { ProfilesService } from 'src/statistics/profiles/profiles.service';
-import { AbilitySettingsService } from 'src/statistics/ability-settings/ability-settings.service';
-import { ElixirSettingsService } from 'src/statistics/elixir-settings/elixir-settings.service';
-import { EngraveSettingsService } from 'src/statistics/engrave-settings/engrave-settings.service';
-import { SetSettingsService } from 'src/statistics/set-settings/set-settings.service';
+import { ProfilesService } from '../../statistics/profiles/profiles.service';
+import { AbilitySettingsService } from '../../statistics/ability-settings/ability-settings.service';
+import { ElixirSettingsService } from '../../statistics/elixir-settings/elixir-settings.service';
+import { EngraveSettingsService } from '../../statistics/engrave-settings/engrave-settings.service';
+import { SetSettingsService } from '../../statistics/set-settings/set-settings.service';
 
 @Injectable()
 export class CharactersService {
@@ -30,7 +28,7 @@ export class CharactersService {
     private readonly setSettingsService: SetSettingsService,
     private readonly skillSettingsService: SkillSettingsService,
     private readonly engraveService: EngraveService,
-  ) {}
+  ) { }
 
   async parseSiblings(
     siblings: {
