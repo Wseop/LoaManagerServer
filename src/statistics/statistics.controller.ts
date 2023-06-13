@@ -81,13 +81,13 @@ export class StatisticsController {
   @Get('/engrave')
   @ApiOkResponse()
   getStatisticsEngrave() {
-    return this.statisticsService.getStatisticEngrave(null);
+    return this.statisticsService.getStatisticsEngrave(null);
   }
 
   @Get('/engrave/:className')
   @ApiOkResponse()
   getStatisticsEngraveByClassName(@Param('className') className: string) {
-    return this.statisticsService.getStatisticEngrave(className);
+    return this.statisticsService.getStatisticsEngrave(className);
   }
 
   @Get('/set')

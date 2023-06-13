@@ -261,7 +261,7 @@ export class StatisticsService {
     return statisticsElixir;
   }
 
-  async getStatisticEngrave(className: string) {
+  async getStatisticsEngrave(className: string) {
     // StatisticsEngrave 초기화
     const statisticsEngraves: StatisticsCount[] = Array.from(
       { length: 3 },
