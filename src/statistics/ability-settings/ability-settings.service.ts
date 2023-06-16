@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { AbilitySetting } from './schemas/ability-setting.schema';
 import { Model } from 'mongoose';
+import { ProfileStat } from 'src/lostark/characters/interfaces/character-profile.interface';
 
 @Injectable()
 export class AbilitySettingsService {
@@ -27,7 +28,7 @@ export class AbilitySettingsService {
     return await this.abilitySettingModel.deleteOne({ characterName });
   }
 
-  parseMainAbilities(stats: { [stat: string]: number }) {
+  parseMainAbilities(stats: ProfileStat) {
     const keys = ['치명', '특화', '신속', '제압', '인내', '숙련'];
     const abilities: { ability: string; value: number }[] = [];
     let result: string = '';

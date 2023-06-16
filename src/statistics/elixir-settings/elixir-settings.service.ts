@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ElixirSetting } from './schemas/elixir-setting.schema';
 import { Model } from 'mongoose';
-import { CharacterEquipment } from 'src/lostark/characters/dto/characterInfo.dto';
+import { CharacterEquipment } from 'src/lostark/characters/interfaces/character-equipment.interface';
 
 @Injectable()
 export class ElixirSettingsService {
@@ -28,20 +28,20 @@ export class ElixirSettingsService {
     return await this.elixirSettingModel.deleteOne({ characterName });
   }
 
-  parseElixir(equipments: { [equipment: string]: CharacterEquipment }) {
+  parseElixir(equipments: CharacterEquipment[]) {
     let elixirLevelSum = 0;
     let elixirHead = '질서';
     let elixirHand = '혼돈';
 
-    for (const equipment in equipments) {
+    for (const equipment of equipments) {
       if (
-        equipment === '투구' ||
-        equipment === '상의' ||
-        equipment === '하의' ||
-        equipment === '장갑' ||
-        equipment === '어깨'
+        equipment.type === '투구' ||
+        equipment.type === '상의' ||
+        equipment.type === '하의' ||
+        equipment.type === '장갑' ||
+        equipment.type === '어깨'
       ) {
-        const elixirs = equipments[equipment].elixirs;
+        const elixirs = equipment.elixirs;
 
         if (elixirs) {
           for (const elixir in elixirs) {

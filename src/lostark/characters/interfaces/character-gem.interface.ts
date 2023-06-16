@@ -1,21 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class MarketItemDto {
+export class CharacterGem {
   @ApiProperty()
-  itemName: string;
+  type: string;
 
   @ApiProperty()
-  itemGrade: string;
+  gemLevel: number;
 
   @ApiProperty()
   iconPath: string;
 
   @ApiProperty()
-  avgPrice: number;
+  itemGrade: string;
 
   @ApiProperty()
-  recentPrice: number;
-
-  @ApiProperty()
-  minPrice: number;
+  skillName: string;
 }

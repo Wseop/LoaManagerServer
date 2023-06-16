@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SkillSetting, SkillUsage } from './schemas/skill-setting.schema';
 import { CreateSkillSettingDto } from './dto/create-skill-setting.dto';
-import { CharacterSkill } from 'src/lostark/characters/dto/characterInfo.dto';
+import { CharacterSkill } from 'src/lostark/characters/interfaces/character-skill.interface';
 
 @Injectable()
 export class SkillSettingsService {
