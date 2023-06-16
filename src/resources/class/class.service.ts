@@ -11,7 +11,7 @@ export class ClassService {
   ) {}
 
   async findClasses() {
-    return await this.classModel.find();
+    return await this.classModel.find({}, { _id: 0 });
   }
 
   async createClass(createClassDto: CreateClassDto) {
@@ -27,9 +27,12 @@ export class ClassService {
     if (replaceResult.matchedCount === 0) {
       return null;
     } else {
-      return await this.classModel.findOne({
-        parent: replaceClassDto.parent,
-      });
+      return await this.classModel.findOne(
+        {
+          parent: replaceClassDto.parent,
+        },
+        { _id: 0 },
+      );
     }
   }
 }

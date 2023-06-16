@@ -8,10 +8,10 @@ import { CreateEngraveDto } from './dto/create-engrave.dto';
 export class EngraveService {
   constructor(
     @InjectModel(Engrave.name) private readonly engraveModel: Model<Engrave>,
-  ) { }
+  ) {}
 
   async findEngraves() {
-    return await this.engraveModel.find();
+    return await this.engraveModel.find({}, { _id: 0 });
   }
 
   async findClassEngraves(className: string) {
@@ -50,9 +50,12 @@ export class EngraveService {
     if (replaceResult.matchedCount === 0) {
       return null;
     } else {
-      return await this.engraveModel.findOne({
-        engraveName: replaceEngraveDto.engraveName,
-      });
+      return await this.engraveModel.findOne(
+        {
+          engraveName: replaceEngraveDto.engraveName,
+        },
+        { _id: 0 },
+      );
     }
   }
 }

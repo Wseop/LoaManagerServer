@@ -5,8 +5,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { SkillElement } from '../schemas/skill.schema';
 import { Type } from 'class-transformer';
+import { SkillElement } from '../interfaces/skill.interface';
 
 export class CreateSkillDto {
   @ApiProperty()

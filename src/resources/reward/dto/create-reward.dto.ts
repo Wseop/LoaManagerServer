@@ -5,8 +5,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { RewardElement } from '../schemas/reward.schema';
 import { Type } from 'class-transformer';
+import { RewardElement } from '../interfaces/reward.interface';
 
 export class CreateRewardDto {
   @ApiProperty()
