@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { CharacterEngrave } from 'src/lostark/characters/interfaces/character-engrave.interface';
+import { CharacterEngrave } from '../../../lostark/characters/interfaces/character-engrave.interface';
 
 @Schema()
 export class EngraveSetting {
