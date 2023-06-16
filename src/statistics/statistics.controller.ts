@@ -11,7 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
 
-@ApiTags('statistics')
+@ApiTags('Statistics')
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}

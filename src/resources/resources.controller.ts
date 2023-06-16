@@ -22,7 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { ResourceCategory } from './enums/resource-category.enum';
 
-@ApiTags('resources')
+@ApiTags('Resources')
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}

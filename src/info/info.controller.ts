@@ -2,7 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { InfoService } from './info.service';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('info')
+@ApiTags('Info')
 @Controller('info')
 export class InfoController {
   constructor(private readonly infoService: InfoService) {}
