@@ -4,6 +4,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -19,6 +20,7 @@ export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
   @Get('/chaos/:level')
+  @ApiParam({ name: 'level', required: true, example: '계몽1' })
   @ApiOkResponse({ type: StatisticsChaosDto })
   getStatisticsChaos(@Param('level') level: string) {
     return this.statisticsService.getStatisticsChaos(level);
@@ -34,6 +36,7 @@ export class StatisticsController {
   }
 
   @Get('/guardian/:level')
+  @ApiParam({ name: 'level', required: true, example: '가르가디스' })
   @ApiOkResponse({ type: StatisticsGuardianDto })
   getStatisticsGuardian(@Param('level') level: string) {
     return this.statisticsService.getStatisticsGuardian(level);
@@ -51,6 +54,7 @@ export class StatisticsController {
   }
 
   @Get('/skill/:className')
+  @ApiParam({ name: 'className', required: true, example: '버서커' })
   @ApiOkResponse()
   getStatisticsSkill(@Param('className') className: string) {
     return this.statisticsService.getStatisticsSkill(className);
@@ -63,6 +67,7 @@ export class StatisticsController {
   }
 
   @Get('/ability/:className')
+  @ApiParam({ name: 'className', required: true, example: '버서커' })
   @ApiOkResponse()
   getStatisticsAbilitByClassName(@Param('className') className: string) {
     return this.statisticsService.getStatisticsAbility(className);
@@ -75,6 +80,7 @@ export class StatisticsController {
   }
 
   @Get('/elixir/:className')
+  @ApiParam({ name: 'className', required: true, example: '버서커' })
   @ApiOkResponse()
   getStatisticsElixirByClassName(@Param('className') className: string) {
     return this.statisticsService.getStatisticsElixir(className);
@@ -87,6 +93,7 @@ export class StatisticsController {
   }
 
   @Get('/engrave/:className')
+  @ApiParam({ name: 'className', required: true, example: '버서커' })
   @ApiOkResponse()
   getStatisticsEngraveByClassName(@Param('className') className: string) {
     return this.statisticsService.getStatisticsEngrave(className);
@@ -99,6 +106,7 @@ export class StatisticsController {
   }
 
   @Get('/set/:className')
+  @ApiParam({ name: 'className', required: true, example: '버서커' })
   @ApiOkResponse()
   getStatisticsSetByClassName(@Param('className') className: string) {
     return this.statisticsService.getStatisticsSet(className);

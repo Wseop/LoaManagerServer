@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiParam,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiTooManyRequestsResponse,
@@ -41,6 +42,11 @@ export class LostarkController {
   }
 
   @Get('/characters/:characterName')
+  @ApiParam({
+    name: 'characterName',
+    required: true,
+    example: '쿠키바닐라쉐이크',
+  })
   @ApiOkResponse({ type: CharacterInfoDto })
   @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
@@ -51,6 +57,11 @@ export class LostarkController {
   }
 
   @Get('/characters/:characterName/siblings')
+  @ApiParam({
+    name: 'characterName',
+    required: true,
+    example: '쿠키바닐라쉐이크',
+  })
   @ApiOkResponse({ type: [SiblingDto] })
   @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
