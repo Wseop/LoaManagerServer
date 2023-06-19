@@ -8,7 +8,7 @@ import { AuctionSearchOption } from './interfaces/auction-search-option.interfac
 export class AuctionsService {
   constructor() {}
 
-  buildSearchOption(query: AuctionQueryDto) {
+  buildSearchOption(query: AuctionQueryDto): AuctionSearchOption {
     const searchOption: AuctionSearchOption = {
       Sort: 'BUY_PRICE',
       SortCondition: 'ASC',
@@ -82,7 +82,7 @@ export class AuctionsService {
     return searchOption;
   }
 
-  parseSearchResult(searchResult: AuctionSearchResult) {
+  parseSearchResult(searchResult: AuctionSearchResult): AuctionItemDto {
     const auctionItem: AuctionItemDto = {
       buyPrice: searchResult.AuctionInfo.BuyPrice,
       startPrice: searchResult.AuctionInfo.StartPrice,

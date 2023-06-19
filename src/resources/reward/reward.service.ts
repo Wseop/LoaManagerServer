@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Reward } from './schemas/reward.schema';
 import { Model } from 'mongoose';
 import { CreateRewardDto } from './dto/create-reward.dto';
+import { RewardDto } from './dto/reward.dto';
 
 @Injectable()
 export class RewardService {
@@ -10,19 +11,19 @@ export class RewardService {
     @InjectModel(Reward.name) private readonly rewardModel: Model<Reward>,
   ) {}
 
-  async findRewards() {
+  async findRewards(): Promise<RewardDto[]> {
     return await this.rewardModel.find({}, { _id: 0 });
   }
 
-  async findRewardByContent(content: string) {
+  async findRewardByContent(content: string): Promise<RewardDto> {
     return await this.rewardModel.findOne({ content }, { _id: 0 });
   }
 
-  async createReward(createRewardDto: CreateRewardDto) {
+  async createReward(createRewardDto: CreateRewardDto): Promise<RewardDto> {
     return await this.rewardModel.create(createRewardDto);
   }
 
-  async replaceReward(replaceRewardDto: CreateRewardDto) {
+  async replaceReward(replaceRewardDto: CreateRewardDto): Promise<RewardDto> {
     const replaceResult = await this.rewardModel.replaceOne(
       { content: replaceRewardDto.content },
       replaceRewardDto,

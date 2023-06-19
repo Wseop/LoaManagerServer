@@ -15,7 +15,7 @@ export class ApiKeysService {
     this.apiKeyIndex = 0;
   }
 
-  async createApiKey(createApiKeyDto: CreateApiKeyDto) {
+  async createApiKey(createApiKeyDto: CreateApiKeyDto): Promise<ApiKey> {
     const newApiKey: ApiKey = {
       index: await this.apiKeyModel.countDocuments(),
       apiKey: createApiKeyDto.apiKey,
@@ -24,7 +24,7 @@ export class ApiKeysService {
     return await this.apiKeyModel.create(newApiKey);
   }
 
-  async getNextKeyIndex() {
+  async getNextKeyIndex(): Promise<number> {
     if ((await this.apiKeyModel.estimatedDocumentCount()) <= this.apiKeyIndex) {
       this.apiKeyIndex = 0;
     }
@@ -32,7 +32,7 @@ export class ApiKeysService {
     return this.apiKeyIndex++;
   }
 
-  async getApiKey() {
+  async getApiKey(): Promise<string> {
     return (
       await this.apiKeyModel.findOne({
         index: await this.getNextKeyIndex(),

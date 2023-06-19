@@ -17,6 +17,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -51,7 +52,7 @@ export class ResourcesController {
 
   @Get('/reward/:content')
   @ApiOkResponse({ type: RewardDto })
-  findRewardByContent(@Param('content') content: string) {
+  findRewardByContent(@Param('content') content: string): Promise<RewardDto> {
     return this.resourcesService.findRewardByContent(content);
   }
 
@@ -62,8 +63,11 @@ export class ResourcesController {
   }
 
   @Get('/skill/:className')
+  @ApiParam({ name: 'className', required: true, example: '버서커' })
   @ApiOkResponse({ type: SkillDto })
-  findSkillByClassName(@Param('className') className: string) {
+  findSkillByClassName(
+    @Param('className') className: string,
+  ): Promise<SkillDto> {
     return this.resourcesService.findSkillByClassName(className);
   }
 

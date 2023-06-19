@@ -12,12 +12,14 @@ export class SkillSettingsService {
     private readonly skillSettingModel: Model<SkillSetting>,
   ) {}
 
-  async findSkillSettings(className: string) {
+  async findSkillSettings(className: string): Promise<SkillSetting[]> {
     if (className) return await this.skillSettingModel.find({ className });
     else return await this.skillSettingModel.find();
   }
 
-  async upsertSkillSetting(createSkillSettingDto: CreateSkillSettingDto) {
+  async upsertSkillSetting(
+    createSkillSettingDto: CreateSkillSettingDto,
+  ): Promise<SkillSetting> {
     return await this.skillSettingModel.findOneAndUpdate(
       { characterName: createSkillSettingDto.characterName },
       createSkillSettingDto,
@@ -25,7 +27,7 @@ export class SkillSettingsService {
     );
   }
 
-  parseSkillUsage(skills: CharacterSkill[]) {
+  parseSkillUsage(skills: CharacterSkill[]): SkillUsage[] {
     const skillUsages = [];
 
     skills.forEach((skill) => {

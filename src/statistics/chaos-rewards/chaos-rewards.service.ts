@@ -11,15 +11,17 @@ export class ChaosRewardsService {
     private readonly statsChaosModel: Model<ChaosReward>,
   ) {}
 
-  async findChaosRewards() {
+  async findChaosRewards(): Promise<ChaosReward[]> {
     return await this.statsChaosModel.find();
   }
 
-  async findChaosRewardsByLevel(level: string) {
+  async findChaosRewardsByLevel(level: string): Promise<ChaosReward[]> {
     return await this.statsChaosModel.find({ level });
   }
 
-  async createChaosReward(createChaosRewardDto: CreateChaosRewardDto) {
+  async createChaosReward(
+    createChaosRewardDto: CreateChaosRewardDto,
+  ): Promise<ChaosReward> {
     return await this.statsChaosModel.create(createChaosRewardDto);
   }
 }

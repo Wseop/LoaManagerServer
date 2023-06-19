@@ -10,12 +10,14 @@ export class EngraveSettingsService {
     private readonly engraveSettingModel: Model<EngraveSetting>,
   ) {}
 
-  async findEngraveSettings(className: string) {
+  async findEngraveSettings(className: string): Promise<EngraveSetting[]> {
     if (className) return await this.engraveSettingModel.find({ className });
     else return await this.engraveSettingModel.find();
   }
 
-  async upsertEngraveSetting(engraveSetting: EngraveSetting) {
+  async upsertEngraveSetting(
+    engraveSetting: EngraveSetting,
+  ): Promise<EngraveSetting> {
     return await this.engraveSettingModel.findOneAndUpdate(
       { characterName: engraveSetting.characterName },
       engraveSetting,

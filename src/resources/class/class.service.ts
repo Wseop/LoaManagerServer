@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Class } from './schemas/class.schema';
 import { Model } from 'mongoose';
 import { CreateClassDto } from './dto/create-class.dto';
+import { ClassDto } from './dto/class.dto';
 
 @Injectable()
 export class ClassService {
@@ -10,15 +11,15 @@ export class ClassService {
     @InjectModel(Class.name) private readonly classModel: Model<Class>,
   ) {}
 
-  async findClasses() {
+  async findClasses(): Promise<ClassDto[]> {
     return await this.classModel.find({}, { _id: 0 });
   }
 
-  async createClass(createClassDto: CreateClassDto) {
+  async createClass(createClassDto: CreateClassDto): Promise<ClassDto> {
     return await this.classModel.create(createClassDto);
   }
 
-  async replaceClass(replaceClassDto: CreateClassDto) {
+  async replaceClass(replaceClassDto: CreateClassDto): Promise<ClassDto> {
     const replaceResult = await this.classModel.replaceOne(
       { parent: replaceClassDto.parent },
       replaceClassDto,

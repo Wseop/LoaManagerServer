@@ -11,12 +11,14 @@ export class ElixirSettingsService {
     private readonly elixirSettingModel: Model<ElixirSetting>,
   ) {}
 
-  async findElixirSettings(className: string) {
+  async findElixirSettings(className: string): Promise<ElixirSetting[]> {
     if (className) return await this.elixirSettingModel.find({ className });
     else return await this.elixirSettingModel.find();
   }
 
-  async upsertElixirSetting(elixirSetting: ElixirSetting) {
+  async upsertElixirSetting(
+    elixirSetting: ElixirSetting,
+  ): Promise<ElixirSetting> {
     return await this.elixirSettingModel.findOneAndUpdate(
       { characterName: elixirSetting.characterName },
       elixirSetting,
@@ -28,7 +30,7 @@ export class ElixirSettingsService {
     return await this.elixirSettingModel.deleteOne({ characterName });
   }
 
-  parseElixir(equipments: CharacterEquipment[]) {
+  parseElixir(equipments: CharacterEquipment[]): string {
     let elixirLevelSum = 0;
     let elixirHead = '질서';
     let elixirHand = '혼돈';

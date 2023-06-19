@@ -8,7 +8,7 @@ import { MarketSearchOption } from './interfaces/market-search-option.interface'
 export class MarketsService {
   constructor() {}
 
-  buildSearchOption(query: MarketQueryDto) {
+  buildSearchOption(query: MarketQueryDto): MarketSearchOption {
     const searchOption: MarketSearchOption = {
       Sort: 'CURRENT_MIN_PRICE ',
       SortCondition: 'ASC',
@@ -22,7 +22,7 @@ export class MarketsService {
     return searchOption;
   }
 
-  parseSearchResult(searchResult: MarketSearchResult) {
+  parseSearchResult(searchResult: MarketSearchResult): MarketItemDto {
     const marketItem: MarketItemDto = {
       itemName: searchResult.Name,
       itemGrade: searchResult.Grade,

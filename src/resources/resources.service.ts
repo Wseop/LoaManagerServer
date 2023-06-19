@@ -8,6 +8,8 @@ import { CreateClassDto } from './class/dto/create-class.dto';
 import { CreateEngraveDto } from './engrave/dto/create-engrave.dto';
 import { CreateRewardDto } from './reward/dto/create-reward.dto';
 import { CreateSkillDto } from './skill/dto/create-skill.dto';
+import { RewardDto } from './reward/dto/reward.dto';
+import { SkillDto } from './skill/dto/skill.dto';
 
 @Injectable()
 export class ResourcesService {
@@ -33,11 +35,11 @@ export class ResourcesService {
     }
   }
 
-  async findRewardByContent(content: string) {
+  async findRewardByContent(content: string): Promise<RewardDto> {
     return await this.rewardService.findRewardByContent(content);
   }
 
-  async findSkillByClassName(className: string) {
+  async findSkillByClassName(className: string): Promise<SkillDto> {
     return await this.skillService.findSkillByClassName(className);
   }
 

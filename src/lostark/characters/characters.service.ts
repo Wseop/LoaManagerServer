@@ -36,7 +36,7 @@ export class CharactersService {
       CharacterClassName: string;
       ItemAvgLevel: string;
     }[],
-  ) {
+  ): Promise<SiblingDto[]> {
     const result: SiblingDto[] = [];
 
     await Promise.all(
@@ -62,7 +62,7 @@ export class CharactersService {
     ArmoryCard: {};
     ArmoryGem: {};
     Collectibles: [];
-  }) {
+  }): Promise<CharacterInfoDto> {
     const parseKeys = Object.keys(character);
     const parsers = [
       this.parseProfile,
@@ -123,7 +123,7 @@ export class CharactersService {
       CharacterClassName: string;
       ItemAvgLevel: string;
     },
-  ) {
+  ): Promise<CharacterProfile> {
     const characterProfile: CharacterProfile = {
       expeditionLevel: profile.ExpeditionLevel,
       title: profile.Title,
@@ -169,7 +169,7 @@ export class CharactersService {
       Grade: string;
       Tooltip: string;
     }[],
-  ) {
+  ): Promise<CharacterEquipment[]> {
     const characterEquipments: CharacterEquipment[] = [];
     let weapon = {};
     let hand = {};
@@ -236,7 +236,7 @@ export class CharactersService {
         Grade: string;
       };
     }[],
-  ) {
+  ): Promise<CharacterSkill[]> {
     const characterSkills: CharacterSkill[] = [];
 
     if (skills) {
@@ -285,7 +285,7 @@ export class CharactersService {
         Name: string;
       }[];
     },
-  ) {
+  ): Promise<CharacterEngrave[]> {
     const characterEngraves: CharacterEngrave[] = [];
 
     if (engraves) {
@@ -315,7 +315,7 @@ export class CharactersService {
         }[];
       }[];
     },
-  ) {
+  ): Promise<CharacterCard[]> {
     const characterCards: CharacterCard[] = [];
 
     if (cards?.Effects) {
@@ -365,7 +365,7 @@ export class CharactersService {
         Name: string;
       }[];
     },
-  ) {
+  ): Promise<CharacterGem[]> {
     const characterGems: CharacterGem[] = [];
 
     if (gems) {
@@ -405,7 +405,7 @@ export class CharactersService {
       Point: number;
       MaxPoint: number;
     }[],
-  ) {
+  ): Promise<CharacterCollectible[]> {
     const characterCollectibles: CharacterCollectible[] = [];
 
     if (collectibles) {

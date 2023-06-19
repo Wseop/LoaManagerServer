@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { InfoService } from './info.service';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { InfoDto } from './dto/info.dto';
 
 @ApiTags('Info')
@@ -10,13 +10,14 @@ export class InfoController {
 
   @Get()
   @ApiOkResponse({ type: [InfoDto] })
-  findAll() {
+  findAll(): Promise<InfoDto[]> {
     return this.infoService.findAll();
   }
 
   @Get(':key')
+  @ApiParam({ name: 'key', required: true, example: 'version' })
   @ApiOkResponse({ type: InfoDto })
-  find(@Param('key') key: string) {
+  find(@Param('key') key: string): Promise<InfoDto> {
     return this.infoService.find(key);
   }
 }

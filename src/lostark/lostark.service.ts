@@ -18,6 +18,9 @@ import { AuctionItemDto } from './auctions/dto/auction-item.dto';
 import { MarketItemDto } from './markets/dto/market-item.dto';
 import { AuctionSearchOption } from './auctions/interfaces/auction-search-option.interface';
 import { MarketSearchOption } from './markets/interfaces/market-search-option.interface';
+import { ApiKey } from './api-keys/schemas/api-key.schema';
+import { CharacterInfoDto } from './characters/dto/characterInfo.dto';
+import { SiblingDto } from './characters/dto/sibling.dto';
 
 @Injectable()
 export class LostarkService {
@@ -26,9 +29,9 @@ export class LostarkService {
     private readonly charactersService: CharactersService,
     private readonly auctionsService: AuctionsService,
     private readonly marketsService: MarketsService,
-  ) { }
+  ) {}
 
-  async createApiKey(createApiKeyDto: CreateApiKeyDto) {
+  async createApiKey(createApiKeyDto: CreateApiKeyDto): Promise<ApiKey> {
     return await this.apiKeysService.createApiKey(createApiKeyDto);
   }
 
@@ -85,7 +88,7 @@ export class LostarkService {
     }
   }
 
-  async getCharacterInfo(characterName: string) {
+  async getCharacterInfo(characterName: string): Promise<CharacterInfoDto> {
     const result = await this.get(
       `https://developer-lostark.game.onstove.com/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bcombat-skills%2Bengravings%2Bcards%2Bgems%2Bcollectibles`,
     );
@@ -97,7 +100,7 @@ export class LostarkService {
     }
   }
 
-  async getSiblings(characterName: string) {
+  async getSiblings(characterName: string): Promise<SiblingDto[]> {
     const result = await this.get(
       `https://developer-lostark.game.onstove.com/characters/${characterName}/siblings`,
     );
@@ -109,7 +112,7 @@ export class LostarkService {
     }
   }
 
-  async searchAuctionItems(query: AuctionQueryDto) {
+  async searchAuctionItems(query: AuctionQueryDto): Promise<AuctionItemDto[]> {
     const url = 'https://developer-lostark.game.onstove.com/auctions/items';
     const searchOption: AuctionSearchOption =
       this.auctionsService.buildSearchOption(query);
@@ -139,7 +142,7 @@ export class LostarkService {
     return auctionItems;
   }
 
-  async searchMarketItems(query: MarketQueryDto) {
+  async searchMarketItems(query: MarketQueryDto): Promise<MarketItemDto[]> {
     const url = 'https://developer-lostark.game.onstove.com/markets/items';
     const searchOption: MarketSearchOption =
       this.marketsService.buildSearchOption(query);

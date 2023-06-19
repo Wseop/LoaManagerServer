@@ -27,6 +27,7 @@ import { AuctionItemDto } from './auctions/dto/auction-item.dto';
 import { MarketItemDto } from './markets/dto/market-item.dto';
 import { CharacterInfoDto } from './characters/dto/characterInfo.dto';
 import { SiblingDto } from './characters/dto/sibling.dto';
+import { ApiKey } from './api-keys/schemas/api-key.schema';
 
 @ApiTags('Lostark')
 @Controller('lostark')
@@ -37,7 +38,7 @@ export class LostarkController {
   @UseGuards(AuthGuard('access'))
   @ApiUnauthorizedResponse()
   @ApiCreatedResponse()
-  createApiKey(@Body() createApiKey: CreateApiKeyDto) {
+  createApiKey(@Body() createApiKey: CreateApiKeyDto): Promise<ApiKey> {
     return this.lostarkService.createApiKey(createApiKey);
   }
 
@@ -52,7 +53,9 @@ export class LostarkController {
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
   })
-  getCharacterInfo(@Param('characterName') characterName: string) {
+  getCharacterInfo(
+    @Param('characterName') characterName: string,
+  ): Promise<CharacterInfoDto> {
     return this.lostarkService.getCharacterInfo(characterName);
   }
 
@@ -67,7 +70,9 @@ export class LostarkController {
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
   })
-  getSiblings(@Param('characterName') characterName: string) {
+  getSiblings(
+    @Param('characterName') characterName: string,
+  ): Promise<SiblingDto[]> {
     return this.lostarkService.getSiblings(characterName);
   }
 
@@ -78,7 +83,9 @@ export class LostarkController {
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
   })
-  searchAuctionItems(@Query() query: AuctionQueryDto) {
+  searchAuctionItems(
+    @Query() query: AuctionQueryDto,
+  ): Promise<AuctionItemDto[]> {
     return this.lostarkService.searchAuctionItems(query);
   }
 
@@ -89,7 +96,7 @@ export class LostarkController {
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
   })
-  searchMarketItems(@Query() query: MarketQueryDto) {
+  searchMarketItems(@Query() query: MarketQueryDto): Promise<MarketItemDto[]> {
     return this.lostarkService.searchMarketItems(query);
   }
 }

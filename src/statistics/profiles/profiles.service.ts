@@ -10,19 +10,19 @@ export class ProfilesService {
     private readonly profileModel: Model<Profile>,
   ) {}
 
-  async findProfiles() {
+  async findProfiles(): Promise<Profile[]> {
     return await this.profileModel.find();
   }
 
-  async findProfileByName(characterName: string) {
+  async findProfileByName(characterName: string): Promise<Profile> {
     return await this.profileModel.findOne({ characterName });
   }
 
-  async findProfilesByClassName(className: string) {
+  async findProfilesByClassName(className: string): Promise<Profile[]> {
     return await this.profileModel.find({ className });
   }
 
-  async upsertProfile(profile: Profile) {
+  async upsertProfile(profile: Profile): Promise<Profile> {
     return await this.profileModel.findOneAndUpdate(
       { characterName: profile.characterName },
       profile,

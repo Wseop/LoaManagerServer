@@ -31,7 +31,7 @@ export class StatisticsService {
     private readonly engraveService: EngraveService,
   ) {}
 
-  async getStatisticsChaos(level: string) {
+  async getStatisticsChaos(level: string): Promise<StatisticsChaosDto> {
     const chaosRewards: ChaosReward[] =
       await this.chaosRewardsService.findChaosRewardsByLevel(level);
     const statisticsChaos: StatisticsChaosDto = {
@@ -60,13 +60,15 @@ export class StatisticsService {
     return statisticsChaos;
   }
 
-  async createChaosReward(createChaosRewardDto: CreateChaosRewardDto) {
+  async createChaosReward(
+    createChaosRewardDto: CreateChaosRewardDto,
+  ): Promise<ChaosReward> {
     return await this.chaosRewardsService.createChaosReward(
       createChaosRewardDto,
     );
   }
 
-  async getStatisticsGuardian(level: string) {
+  async getStatisticsGuardian(level: string): Promise<StatisticsGuardianDto> {
     const guardianRewards: GuardianReward[] =
       await this.guardianRewardsService.findGuardianRewardsByLevel(level);
     const statisticsGuardian: StatisticsGuardianDto = {
@@ -92,7 +94,9 @@ export class StatisticsService {
     return statisticsGuardian;
   }
 
-  async createGuardianReward(createGuardianRewardDto: CreateGuardianRewardDto) {
+  async createGuardianReward(
+    createGuardianRewardDto: CreateGuardianRewardDto,
+  ): Promise<GuardianReward> {
     return await this.guardianRewardsService.createGuardianReward(
       createGuardianRewardDto,
     );
@@ -105,7 +109,7 @@ export class StatisticsService {
     object[key]++;
   }
 
-  async getStatisticsSkill(className: string) {
+  async getStatisticsSkill(className: string): Promise<StatisticsSkillDto> {
     // 직업 각인 목록 초기화
     const classEngraveNames = await this.engraveService.findClassEngraveNames(
       className,
@@ -182,7 +186,7 @@ export class StatisticsService {
     return statisticsSkill;
   }
 
-  async getStatisticsAbility(className: string) {
+  async getStatisticsAbility(className: string): Promise<StatisticsCountDto> {
     // StatisticsAbility 초기화
     const statisticsAbility: StatisticsCountDto = {
       count: 0,
@@ -222,7 +226,7 @@ export class StatisticsService {
     return statisticsAbility;
   }
 
-  async getStatisticsElixir(className: string) {
+  async getStatisticsElixir(className: string): Promise<StatisticsCountDto> {
     // StatisticsElixir 초기화
     const statisticsElixir: StatisticsCountDto = {
       count: 0,
@@ -261,7 +265,7 @@ export class StatisticsService {
     return statisticsElixir;
   }
 
-  async getStatisticsEngrave(className: string) {
+  async getStatisticsEngrave(className: string): Promise<StatisticsCountDto[]> {
     // StatisticsEngrave 초기화
     const statisticsEngraves: StatisticsCountDto[] = Array.from(
       { length: 3 },
@@ -313,7 +317,7 @@ export class StatisticsService {
     return statisticsEngraves;
   }
 
-  async getStatisticsSet(className: string) {
+  async getStatisticsSet(className: string): Promise<StatisticsCountDto> {
     // StatisticsSet 초기화
     const statisticsSet: StatisticsCountDto = {
       count: 0,

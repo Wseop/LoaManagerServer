@@ -11,12 +11,12 @@ export class SetSettingsService {
     private readonly setSettingModel: Model<SetSetting>,
   ) {}
 
-  async findSetSettings(className: string) {
+  async findSetSettings(className: string): Promise<SetSetting[]> {
     if (className) return await this.setSettingModel.find({ className });
     else return await this.setSettingModel.find();
   }
 
-  async upsertSetSetting(setSetting: SetSetting) {
+  async upsertSetSetting(setSetting: SetSetting): Promise<SetSetting> {
     return await this.setSettingModel.findOneAndUpdate(
       { characterName: setSetting.characterName },
       setSetting,
@@ -28,7 +28,7 @@ export class SetSettingsService {
     return await this.setSettingModel.deleteOne({ characterName });
   }
 
-  parseSet(equipments: CharacterEquipment[]) {
+  parseSet(equipments: CharacterEquipment[]): string {
     const itemSetNames = [
       '악몽',
       '사멸',

@@ -11,12 +11,14 @@ export class AbilitySettingsService {
     private readonly abilitySettingModel: Model<AbilitySetting>,
   ) {}
 
-  async findAbilitySettings(className: string) {
+  async findAbilitySettings(className: string): Promise<AbilitySetting[]> {
     if (className) return await this.abilitySettingModel.find({ className });
     else return await this.abilitySettingModel.find();
   }
 
-  async upsertAbilitySetting(abilitySetting: AbilitySetting) {
+  async upsertAbilitySetting(
+    abilitySetting: AbilitySetting,
+  ): Promise<AbilitySetting> {
     return await this.abilitySettingModel.findOneAndUpdate(
       { characterName: abilitySetting.characterName },
       abilitySetting,
@@ -28,7 +30,7 @@ export class AbilitySettingsService {
     return await this.abilitySettingModel.deleteOne({ characterName });
   }
 
-  parseMainAbilities(stats: ProfileStat) {
+  parseMainAbilities(stats: ProfileStat): string {
     const keys = ['치명', '특화', '신속', '제압', '인내', '숙련'];
     const abilities: { ability: string; value: number }[] = [];
     let result: string = '';

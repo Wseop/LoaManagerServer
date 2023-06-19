@@ -11,15 +11,17 @@ export class GuardianRewardsService {
     private readonly guardianRewardModel: Model<GuardianReward>,
   ) {}
 
-  async findGuardianRewards() {
+  async findGuardianRewards(): Promise<GuardianReward[]> {
     return await this.guardianRewardModel.find();
   }
 
-  async findGuardianRewardsByLevel(level: string) {
+  async findGuardianRewardsByLevel(level: string): Promise<GuardianReward[]> {
     return await this.guardianRewardModel.find({ level });
   }
 
-  async createGuardianReward(createGuardianRewardDto: CreateGuardianRewardDto) {
+  async createGuardianReward(
+    createGuardianRewardDto: CreateGuardianRewardDto,
+  ): Promise<GuardianReward> {
     return await this.guardianRewardModel.create(createGuardianRewardDto);
   }
 }
