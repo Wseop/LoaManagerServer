@@ -1,4 +1,4 @@
-export class StatisticsSkill {
+export class StatisticsSkillDto {
   count: number;
   [classEngrave: string]:
     | number

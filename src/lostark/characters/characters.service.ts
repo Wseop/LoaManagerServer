@@ -2,21 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { EngraveService } from '../../resources/engrave/engrave.service';
 import { SkillSettingsService } from '../../statistics/skill-settings/skill-settings.service';
 import { SiblingDto } from './dto/sibling.dto';
-import {
-  CharacterCard,
-  CharacterCollectible,
-  CharacterEngrave,
-  CharacterEquipment,
-  CharacterGem,
-  CharacterInfoDto,
-  CharacterProfile,
-  CharacterSkill,
-} from './dto/characterInfo.dto';
+import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { ProfilesService } from '../../statistics/profiles/profiles.service';
 import { AbilitySettingsService } from '../../statistics/ability-settings/ability-settings.service';
 import { ElixirSettingsService } from '../../statistics/elixir-settings/elixir-settings.service';
 import { EngraveSettingsService } from '../../statistics/engrave-settings/engrave-settings.service';
 import { SetSettingsService } from '../../statistics/set-settings/set-settings.service';
+import { CharacterProfile } from './interfaces/character-profile.interface';
+import { CharacterEquipment } from './interfaces/character-equipment.interface';
+import { CharacterSkill } from './interfaces/character-skill.interface';
+import { CharacterGem } from './interfaces/character-gem.interface';
+import { CharacterEngrave } from './interfaces/character-engrave.interface';
+import { CharacterCard } from './interfaces/character-card.interface';
+import { CharacterCollectible } from './interfaces/character-collectible.interface';
 
 @Injectable()
 export class CharactersService {
@@ -28,7 +26,7 @@ export class CharactersService {
     private readonly setSettingsService: SetSettingsService,
     private readonly skillSettingsService: SkillSettingsService,
     private readonly engraveService: EngraveService,
-  ) { }
+  ) {}
 
   async parseSiblings(
     siblings: {
@@ -132,7 +130,16 @@ export class CharactersService {
       guildName: profile.GuildName,
       usingSkillPoint: profile.UsingSkillPoint,
       totalSkillPoint: profile.TotalSkillPoint,
-      stats: {},
+      stats: {
+        치명: 0,
+        특화: 0,
+        제압: 0,
+        신속: 0,
+        인내: 0,
+        숙련: 0,
+        '최대 생명력': 0,
+        공격력: 0,
+      },
       serverName: profile.ServerName,
       characterName: profile.CharacterName,
       characterLevel: profile.CharacterLevel,
@@ -163,7 +170,9 @@ export class CharactersService {
       Tooltip: string;
     }[],
   ) {
-    const characterEquipments: { [equipment: string]: CharacterEquipment } = {};
+    const characterEquipments: CharacterEquipment[] = [];
+    let weapon = {};
+    let hand = {};
 
     if (equipments) {
       await Promise.all(
@@ -185,20 +194,11 @@ export class CharactersService {
               characterEquipment,
             );
 
-            if (
-              characterEquipment.type === '귀걸이' ||
-              characterEquipment.type === '반지'
-            ) {
-              if (characterEquipments[characterEquipment.type] === undefined) {
-                characterEquipments[characterEquipment.type] =
-                  characterEquipment;
-              } else {
-                characterEquipments[`${characterEquipment.type}2`] =
-                  characterEquipment;
-              }
-            } else {
-              characterEquipments[characterEquipment.type] = characterEquipment;
-            }
+            characterEquipments.push(characterEquipment);
+
+            if (characterEquipment.type === '무기') weapon = characterEquipment;
+            else if (characterEquipment.type === '장갑')
+              hand = characterEquipment;
           }
         }),
       );
@@ -208,11 +208,12 @@ export class CharactersService {
 
     // 에스더 무기인 경우 장갑의 세트효과를 할당
     if (
-      characterEquipments['무기']?.itemGrade === '에스더' &&
-      characterEquipments['장갑']?.itemSet
+      (weapon as CharacterEquipment).itemGrade === '에스더' &&
+      (hand as CharacterEquipment).itemSet
     ) {
-      characterEquipments['무기']['itemSet'] =
-        characterEquipments['장갑']['itemSet'];
+      (weapon as CharacterEquipment).itemSet = (
+        hand as CharacterEquipment
+      ).itemSet;
     }
 
     return characterEquipments;

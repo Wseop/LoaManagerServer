@@ -21,44 +21,48 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ResourceCategory } from './enums/resource-category.enum';
+import { RewardDto } from './reward/dto/reward.dto';
+import { ClassDto } from './class/dto/class.dto';
+import { EngraveDto } from './engrave/dto/engrave.dto';
+import { SkillDto } from './skill/dto/skill.dto';
 
-@ApiTags('resources')
+@ApiTags('Resources')
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Get('/class')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [ClassDto] })
   findClasses() {
     return this.resourcesService.findResources(ResourceCategory.Class);
   }
 
   @Get('/engrave')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [EngraveDto] })
   findEngraves() {
     return this.resourcesService.findResources(ResourceCategory.Engrave);
   }
 
   @Get('/reward')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [RewardDto] })
   findRewards() {
     return this.resourcesService.findResources(ResourceCategory.Reward);
   }
 
   @Get('/reward/:content')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: RewardDto })
   findRewardByContent(@Param('content') content: string) {
     return this.resourcesService.findRewardByContent(content);
   }
 
   @Get('/skill')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [SkillDto] })
   findSkills() {
     return this.resourcesService.findResources(ResourceCategory.Skill);
   }
 
   @Get('/skill/:className')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: SkillDto })
   findSkillByClassName(@Param('className') className: string) {
     return this.resourcesService.findSkillByClassName(className);
   }

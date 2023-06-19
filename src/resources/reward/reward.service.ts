@@ -11,11 +11,11 @@ export class RewardService {
   ) {}
 
   async findRewards() {
-    return await this.rewardModel.find();
+    return await this.rewardModel.find({}, { _id: 0 });
   }
 
   async findRewardByContent(content: string) {
-    return await this.rewardModel.findOne({ content });
+    return await this.rewardModel.findOne({ content }, { _id: 0 });
   }
 
   async createReward(createRewardDto: CreateRewardDto) {
@@ -31,9 +31,12 @@ export class RewardService {
     if (replaceResult.matchedCount === 0) {
       return null;
     } else {
-      return await this.rewardModel.findOne({
-        content: replaceRewardDto.content,
-      });
+      return await this.rewardModel.findOne(
+        {
+          content: replaceRewardDto.content,
+        },
+        { _id: 0 },
+      );
     }
   }
 }

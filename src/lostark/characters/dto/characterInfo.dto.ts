@@ -1,89 +1,31 @@
-export class CharacterProfile {
-  expeditionLevel: number;
-  title: string;
-  guildName: string;
-  usingSkillPoint: number;
-  totalSkillPoint: number;
-  stats: {
-    [stat: string]: number;
-  };
-  serverName: string;
-  characterName: string;
-  characterLevel: number;
-  className: string;
-  itemLevel: number;
-}
-
-export class CharacterEquipment {
-  type: string;
-  name: string;
-  iconPath: string;
-  itemGrade: string;
-  quality?: number;
-  itemLevel?: number;
-  itemSet?: {
-    setName: string;
-    setLevel: number;
-  };
-  elixirs?: {
-    [elixir: string]: number;
-  };
-  abilities?: {
-    [ability: string]: number;
-  };
-  engraves?: {
-    [engrave: string]: number;
-  };
-  braceletEffects?: string[];
-  isElla?: boolean;
-}
-
-export class CharacterSkill {
-  skillName: string;
-  skillLevel: number;
-  tripods: {
-    tripodName: string;
-    tripodLevel: number;
-  }[];
-  rune: {
-    runeName: string;
-    itemGrade: string;
-    iconPath: string;
-  };
-}
-
-export class CharacterGem {
-  type: string;
-  gemLevel: number;
-  iconPath: string;
-  itemGrade: string;
-  skillName: string;
-}
-
-export class CharacterEngrave {
-  engraveName: string;
-  engraveLevel: number;
-}
-
-export class CharacterCard {
-  cardSet: string;
-  awaken: number;
-}
-
-export class CharacterCollectible {
-  type: string;
-  point: number;
-  maxPoint: number;
-}
+import { ApiProperty } from '@nestjs/swagger';
+import { CharacterProfile } from '../interfaces/character-profile.interface';
+import { CharacterEquipment } from '../interfaces/character-equipment.interface';
+import { CharacterSkill } from '../interfaces/character-skill.interface';
+import { CharacterGem } from '../interfaces/character-gem.interface';
+import { CharacterEngrave } from '../interfaces/character-engrave.interface';
+import { CharacterCard } from '../interfaces/character-card.interface';
+import { CharacterCollectible } from '../interfaces/character-collectible.interface';
 
 export class CharacterInfoDto {
+  @ApiProperty({ type: CharacterProfile })
   profile: CharacterProfile;
-  equipments: {
-    [equipment: string]: CharacterEquipment;
-  };
+
+  @ApiProperty({ type: [CharacterEquipment] })
+  equipments: CharacterEquipment[];
+
+  @ApiProperty({ type: [CharacterSkill] })
   skills: CharacterSkill[];
+
+  @ApiProperty({ type: [CharacterGem] })
   gems: CharacterGem[];
+
+  @ApiProperty({ type: [CharacterEngrave] })
   engraves: CharacterEngrave[];
+
+  @ApiProperty({ type: [CharacterCard] })
   cards: CharacterCard[];
+
+  @ApiProperty({ type: [CharacterCollectible] })
   collectibles: CharacterCollectible[];
 }

@@ -1,18 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class SiblingDto {
+export class EngraveDto {
   @ApiProperty()
-  serverName: string;
+  code: number;
 
   @ApiProperty()
-  characterName: string;
-
-  @ApiProperty()
-  characterLevel: number;
+  engraveName: string;
 
   @ApiProperty()
   className: string;
 
   @ApiProperty()
-  itemLevel: number;
+  isPenalty: boolean;
 }

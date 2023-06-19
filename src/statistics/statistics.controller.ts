@@ -10,14 +10,16 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
+import { StatisticsChaosDto } from './dto/statistics-chaos.dto';
+import { StatisticsGuardianDto } from './dto/statistics-guardian.dto';
 
-@ApiTags('statistics')
+@ApiTags('Statistics')
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
   @Get('/chaos/:level')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: StatisticsChaosDto })
   getStatisticsChaos(@Param('level') level: string) {
     return this.statisticsService.getStatisticsChaos(level);
   }
@@ -32,7 +34,7 @@ export class StatisticsController {
   }
 
   @Get('/guardian/:level')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: StatisticsGuardianDto })
   getStatisticsGuardian(@Param('level') level: string) {
     return this.statisticsService.getStatisticsGuardian(level);
   }

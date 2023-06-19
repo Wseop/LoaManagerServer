@@ -11,11 +11,11 @@ export class SkillService {
   ) {}
 
   async findSkills() {
-    return await this.skillModel.find();
+    return await this.skillModel.find({}, { _id: 0 });
   }
 
   async findSkillByClassName(className: string) {
-    return await this.skillModel.findOne({ className });
+    return await this.skillModel.findOne({ className }, { _id: 0 });
   }
 
   async createSkill(createSkillDto: CreateSkillDto) {

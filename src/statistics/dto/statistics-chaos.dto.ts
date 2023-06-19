@@ -1,12 +1,32 @@
-export class StatisticsChaos {
+import { ApiProperty } from '@nestjs/swagger';
+
+class ChaosItemCounts {
+  @ApiProperty()
+  silling: number;
+
+  @ApiProperty()
+  shard: number;
+
+  @ApiProperty()
+  destructionStone: number;
+
+  @ApiProperty()
+  protectionStone: number;
+
+  @ApiProperty()
+  leapStone: number;
+
+  @ApiProperty()
+  gem: number;
+}
+
+export class StatisticsChaosDto {
+  @ApiProperty()
   count: number;
+
+  @ApiProperty()
   level: string;
-  itemCounts: {
-    silling: number;
-    shard: number;
-    destructionStone: number;
-    protectionStone: number;
-    leapStone: number;
-    gem: number;
-  };
+
+  @ApiProperty({ type: ChaosItemCounts })
+  itemCounts: ChaosItemCounts;
 }

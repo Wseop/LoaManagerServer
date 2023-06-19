@@ -1,9 +1,23 @@
-export class StatisticsGuardian {
+import { ApiProperty } from '@nestjs/swagger';
+
+class GuardianItemCounts {
+  @ApiProperty()
+  destructionStone: number;
+
+  @ApiProperty()
+  protectionStone: number;
+
+  @ApiProperty()
+  leapStone: number;
+}
+
+export class StatisticsGuardianDto {
+  @ApiProperty()
   count: number;
+
+  @ApiProperty()
   level: string;
-  itemCounts: {
-    destructionStone: number;
-    protectionStone: number;
-    leapStone: number;
-  };
+
+  @ApiProperty({ type: GuardianItemCounts })
+  itemCounts: GuardianItemCounts;
 }

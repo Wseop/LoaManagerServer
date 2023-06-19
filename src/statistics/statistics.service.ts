@@ -4,18 +4,18 @@ import { GuardianRewardsService } from './guardian-rewards/guardian-rewards.serv
 import { SkillSettingsService } from './skill-settings/skill-settings.service';
 import { GuardianReward } from './guardian-rewards/schemas/guardian-reward.schema';
 import { ChaosReward } from './chaos-rewards/schemas/chaos-reward.schema';
-import { StatisticsChaos } from './dto/statistics-chaos.dto';
-import { StatisticsGuardian } from './dto/statistics-guardian.dto';
+import { StatisticsChaosDto } from './dto/statistics-chaos.dto';
+import { StatisticsGuardianDto } from './dto/statistics-guardian.dto';
 import { CreateChaosRewardDto } from './chaos-rewards/dto/create-chaos-reward.dto';
 import { CreateGuardianRewardDto } from './guardian-rewards/dto/create-guardian-reward.dto';
 import { EngraveService } from '../resources/engrave/engrave.service';
-import { StatisticsSkill } from './dto/statistics-skill.dto';
+import { StatisticsSkillDto } from './dto/statistics-skill.dto';
 import { AbilitySettingsService } from './ability-settings/ability-settings.service';
 import { ElixirSettingsService } from './elixir-settings/elixir-settings.service';
 import { EngraveSettingsService } from './engrave-settings/engrave-settings.service';
 import { ProfilesService } from './profiles/profiles.service';
 import { SetSettingsService } from './set-settings/set-settings.service';
-import { StatisticsCount } from './dto/statistics-count.dto';
+import { StatisticsCountDto } from './dto/statistics-count.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -34,7 +34,7 @@ export class StatisticsService {
   async getStatisticsChaos(level: string) {
     const chaosRewards: ChaosReward[] =
       await this.chaosRewardsService.findChaosRewardsByLevel(level);
-    const statisticsChaos: StatisticsChaos = {
+    const statisticsChaos: StatisticsChaosDto = {
       count: 0,
       level: level,
       itemCounts: {
@@ -69,7 +69,7 @@ export class StatisticsService {
   async getStatisticsGuardian(level: string) {
     const guardianRewards: GuardianReward[] =
       await this.guardianRewardsService.findGuardianRewardsByLevel(level);
-    const statisticsGuardian: StatisticsGuardian = {
+    const statisticsGuardian: StatisticsGuardianDto = {
       count: 0,
       level: level,
       itemCounts: {
@@ -114,7 +114,7 @@ export class StatisticsService {
     if (classEngraveNames.length === 0) return null;
 
     // Statistics 초기화
-    const statisticsSkill: StatisticsSkill = {
+    const statisticsSkill: StatisticsSkillDto = {
       count: 0,
     };
 
@@ -184,7 +184,7 @@ export class StatisticsService {
 
   async getStatisticsAbility(className: string) {
     // StatisticsAbility 초기화
-    const statisticsAbility: StatisticsCount = {
+    const statisticsAbility: StatisticsCountDto = {
       count: 0,
     };
 
@@ -224,7 +224,7 @@ export class StatisticsService {
 
   async getStatisticsElixir(className: string) {
     // StatisticsElixir 초기화
-    const statisticsElixir: StatisticsCount = {
+    const statisticsElixir: StatisticsCountDto = {
       count: 0,
     };
 
@@ -263,7 +263,7 @@ export class StatisticsService {
 
   async getStatisticsEngrave(className: string) {
     // StatisticsEngrave 초기화
-    const statisticsEngraves: StatisticsCount[] = Array.from(
+    const statisticsEngraves: StatisticsCountDto[] = Array.from(
       { length: 3 },
       () => {
         return { count: 0 };
@@ -315,7 +315,7 @@ export class StatisticsService {
 
   async getStatisticsSet(className: string) {
     // StatisticsSet 초기화
-    const statisticsSet: StatisticsCount = {
+    const statisticsSet: StatisticsCountDto = {
       count: 0,
     };
 

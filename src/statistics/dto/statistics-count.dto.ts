@@ -1,4 +1,4 @@
-export class StatisticsCount {
+export class StatisticsCountDto {
   count: number;
   [key: string]:
     | number

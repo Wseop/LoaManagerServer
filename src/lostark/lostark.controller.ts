@@ -22,11 +22,15 @@ import {
 } from '@nestjs/swagger';
 import { AuctionQueryDto } from './auctions/dto/auction-query.dto';
 import { MarketQueryDto } from './markets/dto/market-query.dto';
+import { AuctionItemDto } from './auctions/dto/auction-item.dto';
+import { MarketItemDto } from './markets/dto/market-item.dto';
+import { CharacterInfoDto } from './characters/dto/characterInfo.dto';
+import { SiblingDto } from './characters/dto/sibling.dto';
 
-@ApiTags('lostark')
+@ApiTags('Lostark')
 @Controller('lostark')
 export class LostarkController {
-  constructor(private readonly lostarkService: LostarkService) { }
+  constructor(private readonly lostarkService: LostarkService) {}
 
   @Post('/apiKey')
   @UseGuards(AuthGuard('access'))
@@ -37,7 +41,7 @@ export class LostarkController {
   }
 
   @Get('/characters/:characterName')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: CharacterInfoDto })
   @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
@@ -47,7 +51,7 @@ export class LostarkController {
   }
 
   @Get('/characters/:characterName/siblings')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [SiblingDto] })
   @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
@@ -58,7 +62,7 @@ export class LostarkController {
 
   @Get('/auctions/items')
   @UsePipes(new ValidationPipe({ transform: true }))
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [AuctionItemDto] })
   @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',
@@ -69,7 +73,7 @@ export class LostarkController {
 
   @Get('/markets/items')
   @UsePipes(new ValidationPipe({ transform: true }))
-  @ApiOkResponse()
+  @ApiOkResponse({ type: [MarketItemDto] })
   @ApiTooManyRequestsResponse({ description: 'API request limit' })
   @ApiServiceUnavailableResponse({
     description: 'Lostark api server is under maintenance',

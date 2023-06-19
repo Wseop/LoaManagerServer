@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SetSetting } from './schemas/set-setting.schema';
 import { Model } from 'mongoose';
-import { CharacterEquipment } from 'src/lostark/characters/dto/characterInfo.dto';
+import { CharacterEquipment } from 'src/lostark/characters/interfaces/character-equipment.interface';
 
 @Injectable()
 export class SetSettingsService {
@@ -28,7 +28,7 @@ export class SetSettingsService {
     return await this.setSettingModel.deleteOne({ characterName });
   }
 
-  parseSet(equipments: { [equipment: string]: CharacterEquipment }) {
+  parseSet(equipments: CharacterEquipment[]) {
     const itemSetNames = [
       '악몽',
       '사멸',
@@ -42,18 +42,16 @@ export class SetSettingsService {
     ];
     const itemSetCounts = Array.from({ length: itemSetNames.length }, () => 0);
 
-    for (const equipment in equipments) {
+    for (const equipment of equipments) {
       if (
-        equipment === '무기' ||
-        equipment === '투구' ||
-        equipment === '상의' ||
-        equipment === '하의' ||
-        equipment === '장갑' ||
-        equipment === '어깨'
+        equipment.type === '무기' ||
+        equipment.type === '투구' ||
+        equipment.type === '상의' ||
+        equipment.type === '하의' ||
+        equipment.type === '장갑' ||
+        equipment.type === '어깨'
       ) {
-        itemSetCounts[
-          itemSetNames.indexOf(equipments[equipment].itemSet.setName)
-        ]++;
+        itemSetCounts[itemSetNames.indexOf(equipment.itemSet.setName)]++;
       }
     }
 

@@ -10,10 +10,10 @@ export class InfoService {
   ) {}
 
   async findAll() {
-    return await this.infoModel.find();
+    return await this.infoModel.find({}, { _id: 0 });
   }
 
   async find(key: string) {
-    return await this.infoModel.findOne({ key });
+    return await this.infoModel.findOne({ key }, { _id: 0 });
   }
 }
