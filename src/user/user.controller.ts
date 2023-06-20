@@ -16,7 +16,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
-@ApiTags('User')
+@ApiTags('[User]')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -39,7 +39,7 @@ export class UserController {
     description: 'non-existent userId or password mismatch',
   })
   @ApiCreatedResponse({ description: 'success signin' })
-  async signin(@Body() signinUserDto: SigninUserDto) {
+  async signin(@Body() signinUserDto: SigninUserDto): Promise<string> {
     const user = await this.userService.findUser(signinUserDto.userId);
 
     if (!user)

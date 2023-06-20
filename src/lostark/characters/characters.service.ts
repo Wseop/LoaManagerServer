@@ -4,7 +4,7 @@ import { SkillSettingsService } from '../../statistics/skill-settings/skill-sett
 import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { ProfilesService } from '../../statistics/profiles/profiles.service';
-import { AbilitySettingsService } from '../../statistics/ability-settings/ability-settings.service';
+import { StatisticAbilityService } from '../../statistics/statistic-ability/statistic-ability.service';
 import { ElixirSettingsService } from '../../statistics/elixir-settings/elixir-settings.service';
 import { EngraveSettingsService } from '../../statistics/engrave-settings/engrave-settings.service';
 import { SetSettingsService } from '../../statistics/set-settings/set-settings.service';
@@ -22,7 +22,7 @@ export class CharactersService {
   constructor(
     private readonly apiRequestService: ApiRequestService,
     private readonly profilesService: ProfilesService,
-    private readonly abilitySettingsService: AbilitySettingsService,
+    private readonly statisticAbilityService: StatisticAbilityService,
     private readonly elixirSettingsService: ElixirSettingsService,
     private readonly engraveSettingsService: EngraveSettingsService,
     private readonly setSettingsService: SetSettingsService,
@@ -672,11 +672,11 @@ export class CharactersService {
         itemLevel: characterInfo.profile.itemLevel,
       });
 
-      this.abilitySettingsService.upsertAbilitySetting({
+      this.statisticAbilityService.upsertAbilitySetting({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
-        ability: this.abilitySettingsService.parseMainAbilities(
+        ability: await this.statisticAbilityService.parseMainAbilities(
           characterInfo.profile.stats,
         ),
       });
