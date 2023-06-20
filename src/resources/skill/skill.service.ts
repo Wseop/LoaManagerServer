@@ -12,15 +12,20 @@ export class SkillService {
   ) {}
 
   async findSkills(): Promise<SkillDto[]> {
-    return await this.skillModel.find({}, { _id: 0 });
+    return await this.skillModel.find({}, { _id: 0, __v: 0 });
   }
 
   async findSkillByClassName(className: string): Promise<SkillDto> {
-    return await this.skillModel.findOne({ className }, { _id: 0 });
+    return await this.skillModel.findOne({ className }, { _id: 0, __v: 0 });
   }
 
   async createSkill(createSkillDto: CreateSkillDto): Promise<SkillDto> {
-    return await this.skillModel.create(createSkillDto);
+    const result = await this.skillModel.create(createSkillDto);
+
+    return {
+      className: result.className,
+      skills: result.skills,
+    };
   }
 
   async replaceSkill(replaceSkillDto: CreateSkillDto): Promise<SkillDto> {
@@ -34,9 +39,12 @@ export class SkillService {
     if (replaceResult.matchedCount === 0) {
       return null;
     } else {
-      return await this.skillModel.findOne({
-        className: replaceSkillDto.className,
-      });
+      return await this.skillModel.findOne(
+        {
+          className: replaceSkillDto.className,
+        },
+        { _id: 0, __v: 0 },
+      );
     }
   }
 }

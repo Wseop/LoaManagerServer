@@ -12,11 +12,16 @@ export class ClassService {
   ) {}
 
   async findClasses(): Promise<ClassDto[]> {
-    return await this.classModel.find({}, { _id: 0 });
+    return await this.classModel.find({}, { _id: 0, __v: 0 });
   }
 
   async createClass(createClassDto: CreateClassDto): Promise<ClassDto> {
-    return await this.classModel.create(createClassDto);
+    const result = await this.classModel.create(createClassDto);
+
+    return {
+      parent: result.parent,
+      child: result.child,
+    };
   }
 
   async replaceClass(replaceClassDto: CreateClassDto): Promise<ClassDto> {
@@ -32,7 +37,7 @@ export class ClassService {
         {
           parent: replaceClassDto.parent,
         },
-        { _id: 0 },
+        { _id: 0, __v: 0 },
       );
     }
   }

@@ -10,7 +10,7 @@ import { CharactersService } from './characters.service';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { SiblingDto } from './dto/sibling.dto';
 
-@ApiTags('Lostark - Characters')
+@ApiTags('[Lostark] characters')
 @Controller('lostark/characters')
 export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}

@@ -15,7 +15,7 @@ import { AuctionService } from './auction.service';
 import { AuctionItemDto } from './dto/auction-item.dto';
 import { AuctionQueryDto } from './dto/auction-query.dto';
 
-@ApiTags('Lostark - Auction')
+@ApiTags('[Lostark] auction')
 @Controller('lostark/auction')
 export class AuctionController {
   constructor(private readonly auctionService: AuctionService) {}

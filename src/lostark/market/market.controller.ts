@@ -15,7 +15,7 @@ import { MarketService } from './market.service';
 import { MarketItemDto } from './dto/market-item.dto';
 import { MarketQueryDto } from './dto/market-query.dto';
 
-@ApiTags('Lostark - Market')
+@ApiTags('[Lostark] market')
 @Controller('lostark/market')
 export class MarketController {
   constructor(private readonly marketService: MarketService) {}

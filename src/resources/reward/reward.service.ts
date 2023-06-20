@@ -12,15 +12,20 @@ export class RewardService {
   ) {}
 
   async findRewards(): Promise<RewardDto[]> {
-    return await this.rewardModel.find({}, { _id: 0 });
+    return await this.rewardModel.find({}, { _id: 0, __v: 0 });
   }
 
   async findRewardByContent(content: string): Promise<RewardDto> {
-    return await this.rewardModel.findOne({ content }, { _id: 0 });
+    return await this.rewardModel.findOne({ content }, { _id: 0, __v: 0 });
   }
 
   async createReward(createRewardDto: CreateRewardDto): Promise<RewardDto> {
-    return await this.rewardModel.create(createRewardDto);
+    const result = await this.rewardModel.create(createRewardDto);
+
+    return {
+      content: result.content,
+      rewards: result.rewards,
+    };
   }
 
   async replaceReward(replaceRewardDto: CreateRewardDto): Promise<RewardDto> {
@@ -36,7 +41,7 @@ export class RewardService {
         {
           content: replaceRewardDto.content,
         },
-        { _id: 0 },
+        { _id: 0, __v: 0 },
       );
     }
   }

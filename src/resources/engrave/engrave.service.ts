@@ -12,7 +12,7 @@ export class EngraveService {
   ) {}
 
   async findEngraves(): Promise<EngraveDto[]> {
-    return await this.engraveModel.find({}, { _id: 0 });
+    return await this.engraveModel.find({}, { _id: 0, __v: 0 });
   }
 
   async findClassEngraves(className: string): Promise<Engrave[]> {
@@ -37,7 +37,14 @@ export class EngraveService {
   }
 
   async createEngrave(createEngraveDto: CreateEngraveDto): Promise<EngraveDto> {
-    return await this.engraveModel.create(createEngraveDto);
+    const result = await this.engraveModel.create(createEngraveDto);
+
+    return {
+      code: result.code,
+      engraveName: result.engraveName,
+      className: result.className,
+      isPenalty: result.isPenalty,
+    };
   }
 
   async replaceEngrave(
@@ -45,7 +52,7 @@ export class EngraveService {
   ): Promise<EngraveDto> {
     const replaceResult = await this.engraveModel.replaceOne(
       {
-        engraveName: replaceEngraveDto.engraveName,
+        code: replaceEngraveDto.code,
       },
       replaceEngraveDto,
     );
@@ -57,7 +64,7 @@ export class EngraveService {
         {
           engraveName: replaceEngraveDto.engraveName,
         },
-        { _id: 0 },
+        { _id: 0, __v: 0 },
       );
     }
   }

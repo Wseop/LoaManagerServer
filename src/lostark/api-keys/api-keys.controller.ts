@@ -10,7 +10,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { ApiKey } from './schemas/api-key.schema';
 
-@ApiTags('Lostark - ApiKey')
+@ApiTags('[Lostark] api-key')
 @Controller('lostark/apikey')
 export class ApiKeysController {
   constructor(private readonly apiKeysService: ApiKeysService) {}
