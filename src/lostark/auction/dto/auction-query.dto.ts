@@ -10,7 +10,7 @@ import {
 import { ItemGrade } from '../../enums/item-grade.enum';
 
 export class AuctionQueryDto {
-  @ApiProperty({ required: true, type: Number })
+  @ApiProperty({ required: true, type: Number, example: 210000 })
   @IsNumber()
   @Type(() => Number)
   categoryCode: number;

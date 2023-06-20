@@ -20,8 +20,9 @@ export class ApiKeysService {
       index: await this.apiKeyModel.countDocuments(),
       apiKey: createApiKeyDto.apiKey,
     };
+    const result = await this.apiKeyModel.create(newApiKey);
 
-    return await this.apiKeyModel.create(newApiKey);
+    return { index: result.index, apiKey: result.apiKey };
   }
 
   async getNextKeyIndex(): Promise<number> {

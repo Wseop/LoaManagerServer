@@ -3,10 +3,40 @@ import { AuctionQueryDto } from './dto/auction-query.dto';
 import { AuctionSearchResult } from './interfaces/auction-search-result.interface';
 import { AuctionItemDto } from './dto/auction-item.dto';
 import { AuctionSearchOption } from './interfaces/auction-search-option.interface';
+import { ApiRequestService } from '../api-request/api-request.service';
 
 @Injectable()
-export class AuctionsService {
-  constructor() {}
+export class AuctionService {
+  constructor(private readonly apiRequestService: ApiRequestService) {}
+
+  async searchAuctionItems(query: AuctionQueryDto): Promise<AuctionItemDto[]> {
+    const url = 'https://developer-lostark.game.onstove.com/auctions/items';
+    const searchOption: AuctionSearchOption = this.buildSearchOption(query);
+    const auctionItems: AuctionItemDto[] = [];
+
+    if (query.pageAll) {
+      let pageNo = 1;
+
+      while (pageNo <= 10) {
+        searchOption.PageNo = pageNo++;
+
+        const result = await this.apiRequestService.post(url, searchOption);
+        if (result.data.Items === null) break;
+
+        result.data.Items.forEach((item) => {
+          auctionItems.push(this.parseSearchResult(item));
+        });
+      }
+    } else {
+      const result = await this.apiRequestService.post(url, searchOption);
+
+      result.data.Items?.forEach((item) => {
+        auctionItems.push(this.parseSearchResult(item));
+      });
+    }
+
+    return auctionItems;
+  }
 
   buildSearchOption(query: AuctionQueryDto): AuctionSearchOption {
     const searchOption: AuctionSearchOption = {

@@ -10,7 +10,7 @@ import {
 import { ItemGrade } from '../../enums/item-grade.enum';
 
 export class MarketQueryDto {
-  @ApiProperty({ required: true, type: Number })
+  @ApiProperty({ required: true, type: Number, example: 50010 })
   @IsNumber()
   @Type(() => Number)
   categoryCode: number;

@@ -15,10 +15,12 @@ import { CharacterGem } from './interfaces/character-gem.interface';
 import { CharacterEngrave } from './interfaces/character-engrave.interface';
 import { CharacterCard } from './interfaces/character-card.interface';
 import { CharacterCollectible } from './interfaces/character-collectible.interface';
+import { ApiRequestService } from '../api-request/api-request.service';
 
 @Injectable()
 export class CharactersService {
   constructor(
+    private readonly apiRequestService: ApiRequestService,
     private readonly profilesService: ProfilesService,
     private readonly abilitySettingsService: AbilitySettingsService,
     private readonly elixirSettingsService: ElixirSettingsService,
@@ -27,6 +29,30 @@ export class CharactersService {
     private readonly skillSettingsService: SkillSettingsService,
     private readonly engraveService: EngraveService,
   ) {}
+
+  async getCharacterInfo(characterName: string): Promise<CharacterInfoDto> {
+    const result = await this.apiRequestService.get(
+      `https://developer-lostark.game.onstove.com/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bcombat-skills%2Bengravings%2Bcards%2Bgems%2Bcollectibles`,
+    );
+
+    if (result.data === null) {
+      return null;
+    } else {
+      return await this.parseCharacter(result.data);
+    }
+  }
+
+  async getSiblings(characterName: string): Promise<SiblingDto[]> {
+    const result = await this.apiRequestService.get(
+      `https://developer-lostark.game.onstove.com/characters/${characterName}/siblings`,
+    );
+
+    if (result.data === null) {
+      return null;
+    } else {
+      return await this.parseSiblings(result.data);
+    }
+  }
 
   async parseSiblings(
     siblings: {
