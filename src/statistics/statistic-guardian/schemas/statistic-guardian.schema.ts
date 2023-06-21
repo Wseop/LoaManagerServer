@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
-export class GuardianReward {
+export class StatisticGuardian {
   @Prop()
   level: string;
 
@@ -18,5 +18,5 @@ export class GuardianReward {
   leapStone: number;
 }
 
-export const GuardianRewardSchema =
-  SchemaFactory.createForClass(GuardianReward);
+export const StatisticGuardianSchema =
+  SchemaFactory.createForClass(StatisticGuardian);

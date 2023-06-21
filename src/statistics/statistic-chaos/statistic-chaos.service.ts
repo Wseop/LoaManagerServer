@@ -39,8 +39,8 @@ export class StatisticChaosService {
 
   async getStatisticChaos(level: string): Promise<StatisticChaosDto> {
     const statisticChaos: StatisticChaosDto = {
-      count: 0,
       level: level,
+      count: 0,
       silling: 0,
       shard: 0,
       destructionStone: 0,
