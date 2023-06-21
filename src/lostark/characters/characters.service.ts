@@ -5,7 +5,6 @@ import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { ProfilesService } from '../../statistics/profiles/profiles.service';
 import { StatisticAbilityService } from '../../statistics/statistic-ability/statistic-ability.service';
-import { ElixirSettingsService } from '../../statistics/elixir-settings/elixir-settings.service';
 import { EngraveSettingsService } from '../../statistics/engrave-settings/engrave-settings.service';
 import { SetSettingsService } from '../../statistics/set-settings/set-settings.service';
 import { CharacterProfile } from './interfaces/character-profile.interface';
@@ -16,6 +15,7 @@ import { CharacterEngrave } from './interfaces/character-engrave.interface';
 import { CharacterCard } from './interfaces/character-card.interface';
 import { CharacterCollectible } from './interfaces/character-collectible.interface';
 import { ApiRequestService } from '../api-request/api-request.service';
+import { StatisticElixirService } from 'src/statistics/statistic-elixir/statistic-elixir.service';
 
 @Injectable()
 export class CharactersService {
@@ -23,7 +23,7 @@ export class CharactersService {
     private readonly apiRequestService: ApiRequestService,
     private readonly profilesService: ProfilesService,
     private readonly statisticAbilityService: StatisticAbilityService,
-    private readonly elixirSettingsService: ElixirSettingsService,
+    private readonly statisticElixirService: StatisticElixirService,
     private readonly engraveSettingsService: EngraveSettingsService,
     private readonly setSettingsService: SetSettingsService,
     private readonly skillSettingsService: SkillSettingsService,
@@ -681,11 +681,11 @@ export class CharactersService {
         ),
       });
 
-      const elixir = this.elixirSettingsService.parseElixir(
+      const elixir = this.statisticElixirService.parseElixir(
         characterInfo.equipments,
       );
       if (elixir) {
-        this.elixirSettingsService.upsertElixirSetting({
+        this.statisticElixirService.upsert({
           characterName: characterInfo.profile.characterName,
           className: characterInfo.profile.className,
           classEngrave: mainClassEngrave,

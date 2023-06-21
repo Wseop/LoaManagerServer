@@ -3,22 +3,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ElixirSetting } from './schemas/elixir-setting.schema';
 import { Model } from 'mongoose';
 import { CharacterEquipment } from 'src/lostark/characters/interfaces/character-equipment.interface';
+import { StatisticElixirDto } from './dto/statistic-elixir.dto';
 
 @Injectable()
-export class ElixirSettingsService {
+export class StatisticElixirService {
   constructor(
     @InjectModel(ElixirSetting.name)
     private readonly elixirSettingModel: Model<ElixirSetting>,
   ) {}
 
-  async findElixirSettings(className: string): Promise<ElixirSetting[]> {
-    if (className) return await this.elixirSettingModel.find({ className });
-    else return await this.elixirSettingModel.find();
+  async find(): Promise<ElixirSetting[]> {
+    return await this.elixirSettingModel.find();
   }
 
-  async upsertElixirSetting(
-    elixirSetting: ElixirSetting,
-  ): Promise<ElixirSetting> {
+  async findByClassEngrave(classEngrave: string): Promise<ElixirSetting[]> {
+    return await this.elixirSettingModel.find({ classEngrave });
+  }
+
+  async upsert(elixirSetting: ElixirSetting): Promise<ElixirSetting> {
     return await this.elixirSettingModel.findOneAndUpdate(
       { characterName: elixirSetting.characterName },
       elixirSetting,
@@ -26,8 +28,9 @@ export class ElixirSettingsService {
     );
   }
 
-  async deleteElixirSetting(characterName: string) {
-    return await this.elixirSettingModel.deleteOne({ characterName });
+  async deleteByCharacterName(characterName: string): Promise<number> {
+    return (await this.elixirSettingModel.deleteOne({ characterName }))
+      .deletedCount;
   }
 
   parseElixir(equipments: CharacterEquipment[]): string {
@@ -64,5 +67,36 @@ export class ElixirSettingsService {
     } else {
       return null;
     }
+  }
+
+  async getStatisticElixir(classEngrave: string): Promise<StatisticElixirDto> {
+    const elixirCountMap = new Map();
+    const datas =
+      classEngrave === null
+        ? await this.find()
+        : await this.findByClassEngrave(classEngrave);
+
+    datas.forEach((elixirSetting) => {
+      if (elixirCountMap.has(elixirSetting.elixir))
+        elixirCountMap.set(
+          elixirSetting.elixir,
+          elixirCountMap.get(elixirSetting.elixir) + 1,
+        );
+      else elixirCountMap.set(elixirSetting.elixir, 1);
+    });
+
+    const statisticElixir: StatisticElixirDto = {
+      count: 0,
+      elixirCounts: [],
+    };
+
+    elixirCountMap.forEach((count, elixir, _) => {
+      statisticElixir.count += count;
+      statisticElixir.elixirCounts.push({ elixir, count });
+    });
+
+    statisticElixir.elixirCounts.sort((a, b) => b.count - a.count);
+
+    return statisticElixir;
   }
 }

@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   AbilitySetting,
   AbilitySettingSchema,
-} from './schemas/ability-settings.schema';
+} from './schemas/ability-setting.schema';
 import { StatisticAbilityService } from './statistic-ability.service';
 import { StatisticAbilityController } from './statistic-ability.controller';
 

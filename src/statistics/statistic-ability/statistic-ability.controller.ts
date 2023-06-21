@@ -38,6 +38,7 @@ export class StatisticAbilityController {
 
   @Delete('/:characterName')
   @UseGuards(AuthGuard('access'))
+  @ApiOkResponse({ type: Number })
   @ApiUnauthorizedResponse()
   @ApiBearerAuth()
   deleteByCharacterName(

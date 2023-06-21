@@ -4,7 +4,8 @@ import {
   ElixirSetting,
   ElixirSettingSchema,
 } from './schemas/elixir-setting.schema';
-import { ElixirSettingsService } from './elixir-settings.service';
+import { StatisticElixirController } from './statistic-elixir.controller';
+import { StatisticElixirService } from './statistic-elixir.service';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { ElixirSettingsService } from './elixir-settings.service';
       { name: ElixirSetting.name, schema: ElixirSettingSchema },
     ]),
   ],
-  providers: [ElixirSettingsService],
-  exports: [ElixirSettingsService],
+  controllers: [StatisticElixirController],
+  providers: [StatisticElixirService],
+  exports: [StatisticElixirService],
 })
-export class ElixirSettingsModule {}
+export class StatisticElixirModule {}

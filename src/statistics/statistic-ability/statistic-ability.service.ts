@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { AbilitySetting } from './schemas/ability-settings.schema';
+import { AbilitySetting } from './schemas/ability-setting.schema';
 import { Model } from 'mongoose';
 import { ProfileStat } from 'src/lostark/characters/interfaces/character-profile.interface';
 import { StatisticAbilityDto } from './dto/statistic-ability.dto';
