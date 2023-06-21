@@ -3,20 +3,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SetSetting } from './schemas/set-setting.schema';
 import { Model } from 'mongoose';
 import { CharacterEquipment } from 'src/lostark/characters/interfaces/character-equipment.interface';
+import { StatisticSetDto } from './dto/statistic-set.dto';
 
 @Injectable()
-export class SetSettingsService {
+export class StatisticSetService {
   constructor(
     @InjectModel(SetSetting.name)
     private readonly setSettingModel: Model<SetSetting>,
   ) {}
 
-  async findSetSettings(className: string): Promise<SetSetting[]> {
-    if (className) return await this.setSettingModel.find({ className });
-    else return await this.setSettingModel.find();
+  async find(): Promise<SetSetting[]> {
+    return await this.setSettingModel.find();
   }
 
-  async upsertSetSetting(setSetting: SetSetting): Promise<SetSetting> {
+  async findByClassEngrave(classEngrave: string): Promise<SetSetting[]> {
+    return await this.setSettingModel.find({ classEngrave });
+  }
+
+  async upsert(setSetting: SetSetting): Promise<SetSetting> {
     return await this.setSettingModel.findOneAndUpdate(
       { characterName: setSetting.characterName },
       setSetting,
@@ -24,8 +28,9 @@ export class SetSettingsService {
     );
   }
 
-  async deleteSetSetting(characterName: string) {
-    return await this.setSettingModel.deleteOne({ characterName });
+  async deleteByCharacterName(characterName: string): Promise<number> {
+    return (await this.setSettingModel.deleteOne({ characterName }))
+      .deletedCount;
   }
 
   parseSet(equipments: CharacterEquipment[]): string {
@@ -64,5 +69,33 @@ export class SetSettingsService {
     });
 
     return result;
+  }
+
+  async getStatisticSet(classEngrave: string): Promise<StatisticSetDto> {
+    const setCountMap = new Map();
+    const datas =
+      classEngrave === null
+        ? await this.find()
+        : await this.findByClassEngrave(classEngrave);
+
+    datas.forEach((setSetting) => {
+      if (setCountMap.has(setSetting.set))
+        setCountMap.set(setSetting.set, setCountMap.get(setSetting.set) + 1);
+      else setCountMap.set(setSetting.set, 1);
+    });
+
+    const statisticSet: StatisticSetDto = {
+      count: 0,
+      setCounts: [],
+    };
+
+    setCountMap.forEach((count, set, _) => {
+      statisticSet.count += count;
+      statisticSet.setCounts.push({ set, count });
+    });
+
+    statisticSet.setCounts.sort((a, b) => b.count - a.count);
+
+    return statisticSet;
   }
 }

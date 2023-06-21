@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SetSetting, SetSettingSchema } from './schemas/set-setting.schema';
-import { SetSettingsService } from './set-settings.service';
+import { StatisticSetService } from './statistic-set.service';
+import { StatisticSetController } from './statistic-set.controller';
 
 @Module({
   imports: [
@@ -9,7 +10,8 @@ import { SetSettingsService } from './set-settings.service';
       { name: SetSetting.name, schema: SetSettingSchema },
     ]),
   ],
-  providers: [SetSettingsService],
-  exports: [SetSettingsService],
+  controllers: [StatisticSetController],
+  providers: [StatisticSetService],
+  exports: [StatisticSetService],
 })
-export class SetSettingsModule {}
+export class StatisticSetModule {}
