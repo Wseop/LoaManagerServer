@@ -4,25 +4,23 @@ import { AbilitySetting } from './schemas/ability-settings.schema';
 import { Model } from 'mongoose';
 import { ProfileStat } from 'src/lostark/characters/interfaces/character-profile.interface';
 import { StatisticAbilityDto } from './dto/statistic-ability.dto';
-import { EngraveService } from 'src/resources/engrave/engrave.service';
 
 @Injectable()
 export class StatisticAbilityService {
   constructor(
     @InjectModel(AbilitySetting.name)
     private readonly abilitySettingModel: Model<AbilitySetting>,
-    private readonly engraveService: EngraveService,
   ) {}
 
-  async findAbilitySettings(classEngrave: string): Promise<AbilitySetting[]> {
-    if (classEngrave)
-      return await this.abilitySettingModel.find({ classEngrave });
-    else return await this.abilitySettingModel.find();
+  async find(): Promise<AbilitySetting[]> {
+    return await this.abilitySettingModel.find();
   }
 
-  async upsertAbilitySetting(
-    abilitySetting: AbilitySetting,
-  ): Promise<AbilitySetting> {
+  async findByClassEngrave(classEngrave: string): Promise<AbilitySetting[]> {
+    return await this.abilitySettingModel.find({ classEngrave });
+  }
+
+  async upsert(abilitySetting: AbilitySetting): Promise<AbilitySetting> {
     return await this.abilitySettingModel.findOneAndUpdate(
       { characterName: abilitySetting.characterName },
       abilitySetting,
@@ -30,8 +28,9 @@ export class StatisticAbilityService {
     );
   }
 
-  async deleteAbilitySetting(characterName: string) {
-    return await this.abilitySettingModel.deleteOne({ characterName });
+  async deleteByCharacterName(characterName: string): Promise<number> {
+    return (await this.abilitySettingModel.deleteOne({ characterName }))
+      .deletedCount;
   }
 
   async parseMainAbilities(stats: ProfileStat): Promise<string> {
@@ -56,12 +55,16 @@ export class StatisticAbilityService {
     return result;
   }
 
-  async getStatisticsAbility(
+  async getStatisticAbility(
     classEngrave: string,
   ): Promise<StatisticAbilityDto> {
     const abilityCountMap = new Map();
+    const datas =
+      classEngrave === null
+        ? await this.find()
+        : await this.findByClassEngrave(classEngrave);
 
-    (await this.findAbilitySettings(classEngrave)).forEach((abilitySetting) => {
+    datas.forEach((abilitySetting) => {
       if (abilityCountMap.has(abilitySetting.ability))
         abilityCountMap.set(
           abilitySetting.ability,

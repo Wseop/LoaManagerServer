@@ -29,14 +29,14 @@ export class RewardController {
   @Get()
   @ApiOkResponse({ type: [RewardDto] })
   findRewards(): Promise<RewardDto[]> {
-    return this.rewardService.findRewards();
+    return this.rewardService.find();
   }
 
   @Get('/:content')
   @ApiParam({ name: 'content', required: true, example: '혼돈의 상아탑(하드)' })
   @ApiOkResponse({ type: RewardDto })
   findRewardByContent(@Param('content') content: string): Promise<RewardDto> {
-    return this.rewardService.findRewardByContent(content);
+    return this.rewardService.findOneByContent(content);
   }
 
   @Post()
@@ -46,7 +46,7 @@ export class RewardController {
   @ApiCreatedResponse({ type: RewardDto })
   @ApiBearerAuth()
   createReward(@Body() createRewardDto: CreateRewardDto): Promise<RewardDto> {
-    return this.rewardService.createReward(createRewardDto);
+    return this.rewardService.create(createRewardDto);
   }
 
   @Put()
@@ -56,6 +56,6 @@ export class RewardController {
   @ApiCreatedResponse({ type: RewardDto })
   @ApiBearerAuth()
   replaceReward(@Body() createRewardDto: CreateRewardDto): Promise<RewardDto> {
-    return this.rewardService.replaceReward(createRewardDto);
+    return this.rewardService.replaceOne(createRewardDto);
   }
 }

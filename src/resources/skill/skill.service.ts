@@ -11,15 +11,15 @@ export class SkillService {
     @InjectModel(Skill.name) private readonly skillModel: Model<Skill>,
   ) {}
 
-  async findSkills(): Promise<SkillDto[]> {
+  async find(): Promise<SkillDto[]> {
     return await this.skillModel.find({}, { _id: 0, __v: 0 });
   }
 
-  async findSkillByClassName(className: string): Promise<SkillDto> {
+  async findOneByClassName(className: string): Promise<SkillDto> {
     return await this.skillModel.findOne({ className }, { _id: 0, __v: 0 });
   }
 
-  async createSkill(createSkillDto: CreateSkillDto): Promise<SkillDto> {
+  async create(createSkillDto: CreateSkillDto): Promise<SkillDto> {
     const result = await this.skillModel.create(createSkillDto);
 
     return {
@@ -28,7 +28,7 @@ export class SkillService {
     };
   }
 
-  async replaceSkill(replaceSkillDto: CreateSkillDto): Promise<SkillDto> {
+  async replaceOne(replaceSkillDto: CreateSkillDto): Promise<SkillDto> {
     const replaceResult = await this.skillModel.replaceOne(
       {
         className: replaceSkillDto.className,

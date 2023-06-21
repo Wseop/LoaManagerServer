@@ -11,13 +11,13 @@ export class InfoController {
   @Get()
   @ApiOkResponse({ type: [InfoDto] })
   findAll(): Promise<InfoDto[]> {
-    return this.infoService.findAll();
+    return this.infoService.find();
   }
 
   @Get(':key')
   @ApiParam({ name: 'key', required: true, example: 'version' })
   @ApiOkResponse({ type: InfoDto })
   find(@Param('key') key: string): Promise<InfoDto> {
-    return this.infoService.find(key);
+    return this.infoService.findByKey(key);
   }
 }

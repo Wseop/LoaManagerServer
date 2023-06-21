@@ -20,7 +20,7 @@ export class ClassController {
   @Get()
   @ApiOkResponse({ type: [ClassDto] })
   findClasses(): Promise<ClassDto[]> {
-    return this.classService.findClasses();
+    return this.classService.find();
   }
 
   @Post()
@@ -30,7 +30,7 @@ export class ClassController {
   @ApiCreatedResponse({ type: ClassDto })
   @ApiBearerAuth()
   createClass(@Body() createClassDto: CreateClassDto): Promise<ClassDto> {
-    return this.classService.createClass(createClassDto);
+    return this.classService.create(createClassDto);
   }
 
   @Put()
@@ -40,6 +40,6 @@ export class ClassController {
   @ApiCreatedResponse({ type: ClassDto })
   @ApiBearerAuth()
   replaceClass(@Body() createClassDto: CreateClassDto): Promise<ClassDto> {
-    return this.classService.replaceClass(createClassDto);
+    return this.classService.replaceOne(createClassDto);
   }
 }

@@ -672,7 +672,7 @@ export class CharactersService {
         itemLevel: characterInfo.profile.itemLevel,
       });
 
-      this.statisticAbilityService.upsertAbilitySetting({
+      this.statisticAbilityService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,

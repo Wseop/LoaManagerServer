@@ -29,7 +29,7 @@ export class SkillController {
   @Get()
   @ApiOkResponse({ type: [SkillDto] })
   findSkills(): Promise<SkillDto[]> {
-    return this.skillService.findSkills();
+    return this.skillService.find();
   }
 
   @Get('/:className')
@@ -38,7 +38,7 @@ export class SkillController {
   findSkillByClassName(
     @Param('className') className: string,
   ): Promise<SkillDto> {
-    return this.skillService.findSkillByClassName(className);
+    return this.skillService.findOneByClassName(className);
   }
 
   @Post()
@@ -48,7 +48,7 @@ export class SkillController {
   @ApiCreatedResponse({ type: SkillDto })
   @ApiBearerAuth()
   createSkill(@Body() createSkillDto: CreateSkillDto): Promise<SkillDto> {
-    return this.skillService.createSkill(createSkillDto);
+    return this.skillService.create(createSkillDto);
   }
 
   @Put()
@@ -58,6 +58,6 @@ export class SkillController {
   @ApiCreatedResponse({ type: SkillDto })
   @ApiBearerAuth()
   replaceSkill(@Body() createSkillDto: CreateSkillDto): Promise<SkillDto> {
-    return this.skillService.replaceSkill(createSkillDto);
+    return this.skillService.replaceOne(createSkillDto);
   }
 }
