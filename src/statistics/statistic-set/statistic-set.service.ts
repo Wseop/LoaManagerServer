@@ -85,12 +85,11 @@ export class StatisticSetService {
     });
 
     const statisticSet: StatisticSetDto = {
-      count: 0,
+      count: datas.length,
       setCounts: [],
     };
 
     setCountMap.forEach((count, set, _) => {
-      statisticSet.count += count;
       statisticSet.setCounts.push({ set, count });
     });
 

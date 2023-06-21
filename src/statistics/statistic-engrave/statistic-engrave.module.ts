@@ -4,7 +4,8 @@ import {
   EngraveSetting,
   EngraveSettingSchema,
 } from './schemas/engrave-setting.schema';
-import { EngraveSettingsService } from './engrave-settings.service';
+import { StatisticEngraveController } from './statistic-engrave.controller';
+import { StatisticEngraveService } from './statistic-engrave.service';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { EngraveSettingsService } from './engrave-settings.service';
       { name: EngraveSetting.name, schema: EngraveSettingSchema },
     ]),
   ],
-  providers: [EngraveSettingsService],
-  exports: [EngraveSettingsService],
+  controllers: [StatisticEngraveController],
+  providers: [StatisticEngraveService],
+  exports: [StatisticEngraveService],
 })
-export class EngraveSettingsModule {}
+export class StatisticEngraveModule {}

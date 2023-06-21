@@ -86,12 +86,11 @@ export class StatisticElixirService {
     });
 
     const statisticElixir: StatisticElixirDto = {
-      count: 0,
+      count: datas.length,
       elixirCounts: [],
     };
 
     elixirCountMap.forEach((count, elixir, _) => {
-      statisticElixir.count += count;
       statisticElixir.elixirCounts.push({ elixir, count });
     });
 

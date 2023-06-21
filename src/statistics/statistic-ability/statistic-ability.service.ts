@@ -74,12 +74,11 @@ export class StatisticAbilityService {
     });
 
     const statisticAbility: StatisticAbilityDto = {
-      count: 0,
+      count: datas.length,
       abilityCounts: [],
     };
 
     abilityCountMap.forEach((count, ability, _) => {
-      statisticAbility.count += count;
       statisticAbility.abilityCounts.push({ ability, count });
     });
 

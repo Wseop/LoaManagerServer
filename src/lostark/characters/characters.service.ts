@@ -5,7 +5,6 @@ import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { ProfilesService } from '../../statistics/profiles/profiles.service';
 import { StatisticAbilityService } from '../../statistics/statistic-ability/statistic-ability.service';
-import { EngraveSettingsService } from '../../statistics/engrave-settings/engrave-settings.service';
 import { CharacterProfile } from './interfaces/character-profile.interface';
 import { CharacterEquipment } from './interfaces/character-equipment.interface';
 import { CharacterSkill } from './interfaces/character-skill.interface';
@@ -16,6 +15,7 @@ import { CharacterCollectible } from './interfaces/character-collectible.interfa
 import { ApiRequestService } from '../api-request/api-request.service';
 import { StatisticElixirService } from 'src/statistics/statistic-elixir/statistic-elixir.service';
 import { StatisticSetService } from 'src/statistics/statistic-set/statistic-set.service';
+import { StatisticEngraveService } from 'src/statistics/statistic-engrave/statistic-engrave.service';
 
 @Injectable()
 export class CharactersService {
@@ -24,7 +24,7 @@ export class CharactersService {
     private readonly profilesService: ProfilesService,
     private readonly statisticAbilityService: StatisticAbilityService,
     private readonly statisticElixirService: StatisticElixirService,
-    private readonly engraveSettingsService: EngraveSettingsService,
+    private readonly statisticEngraveService: StatisticEngraveService,
     private readonly statisticSetService: StatisticSetService,
     private readonly skillSettingsService: SkillSettingsService,
     private readonly engraveService: EngraveService,
@@ -693,7 +693,7 @@ export class CharactersService {
         });
       }
 
-      this.engraveSettingsService.upsertEngraveSetting({
+      this.statisticEngraveService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
