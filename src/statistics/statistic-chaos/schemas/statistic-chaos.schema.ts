@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
-export class ChaosReward {
+export class StatisticChaos {
   @Prop()
   level: string;
 
@@ -27,4 +27,5 @@ export class ChaosReward {
   gem: number;
 }
 
-export const ChaosRewardSchema = SchemaFactory.createForClass(ChaosReward);
+export const StatisticChaosSchema =
+  SchemaFactory.createForClass(StatisticChaos);
