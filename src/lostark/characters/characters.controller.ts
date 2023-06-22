@@ -32,7 +32,7 @@ export class CharactersController {
     return this.charactersService.getCharacterInfo(characterName);
   }
 
-  @Get('/characters/:characterName/siblings')
+  @Get('/:characterName/siblings')
   @ApiParam({
     name: 'characterName',
     required: true,
