@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { EngraveService } from '../../resources/engrave/engrave.service';
-import { SkillSettingsService } from '../../statistics/skill-settings/skill-settings.service';
 import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { ProfilesService } from '../../statistics/profiles/profiles.service';
@@ -16,6 +15,7 @@ import { ApiRequestService } from '../api-request/api-request.service';
 import { StatisticElixirService } from 'src/statistics/statistic-elixir/statistic-elixir.service';
 import { StatisticSetService } from 'src/statistics/statistic-set/statistic-set.service';
 import { StatisticEngraveService } from 'src/statistics/statistic-engrave/statistic-engrave.service';
+import { StatisticSkillService } from 'src/statistics/statistic-skill/statistic-skill.service';
 
 @Injectable()
 export class CharactersService {
@@ -26,7 +26,7 @@ export class CharactersService {
     private readonly statisticElixirService: StatisticElixirService,
     private readonly statisticEngraveService: StatisticEngraveService,
     private readonly statisticSetService: StatisticSetService,
-    private readonly skillSettingsService: SkillSettingsService,
+    private readonly statisticSkillService: StatisticSkillService,
     private readonly engraveService: EngraveService,
   ) {}
 
@@ -710,11 +710,11 @@ export class CharactersService {
         });
       }
 
-      this.skillSettingsService.upsertSkillSetting({
+      this.statisticSkillService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
-        skillUsages: this.skillSettingsService.parseSkillUsage(
+        skillUsages: this.statisticSkillService.parseSkillUsage(
           characterInfo.skills,
         ),
       });

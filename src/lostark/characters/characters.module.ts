@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CharactersService } from './characters.service';
-import { SkillSettingsModule } from 'src/statistics/skill-settings/skill-settings.module';
 import { EngraveModule } from 'src/resources/engrave/engrave.module';
 import { ProfilesModule } from 'src/statistics/profiles/profiles.module';
 import { CharactersController } from './characters.controller';
@@ -9,6 +8,7 @@ import { StatisticAbilityModule } from 'src/statistics/statistic-ability/statist
 import { StatisticElixirModule } from 'src/statistics/statistic-elixir/statistic-elixir.module';
 import { StatisticSetModule } from 'src/statistics/statistic-set/statistic-set.module';
 import { StatisticEngraveModule } from 'src/statistics/statistic-engrave/statistic-engrave.module';
+import { StatisticSkillModule } from 'src/statistics/statistic-skill/statistic-skill.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { StatisticEngraveModule } from 'src/statistics/statistic-engrave/statist
     StatisticElixirModule,
     StatisticEngraveModule,
     StatisticSetModule,
-    SkillSettingsModule,
+    StatisticSkillModule,
     EngraveModule,
   ],
   controllers: [CharactersController],

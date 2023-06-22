@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SkillSettingsService } from './skill-settings.service';
 import {
   SkillSetting,
   SkillSettingSchema,
 } from './schemas/skill-setting.schema';
+import { StatisticSkillController } from './statistic-skill.controller';
+import { StatisticSkillService } from './statistic-skill.service';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import {
       { name: SkillSetting.name, schema: SkillSettingSchema },
     ]),
   ],
-  providers: [SkillSettingsService],
-  exports: [SkillSettingsService],
+  controllers: [StatisticSkillController],
+  providers: [StatisticSkillService],
+  exports: [StatisticSkillService],
 })
-export class SkillSettingsModule {}
+export class StatisticSkillModule {}
