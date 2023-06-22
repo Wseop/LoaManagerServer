@@ -51,7 +51,7 @@ describe('SkillService', () => {
 
   describe('findSkills', () => {
     it('should return skill', async () => {
-      const result = await skillService.findSkills();
+      const result = await skillService.find();
       expect(result).toStrictEqual(mockSkill);
       expect(jest.spyOn(skillModel, 'find')).toBeCalledTimes(1);
     });
@@ -59,7 +59,7 @@ describe('SkillService', () => {
 
   describe('createSkill', () => {
     it('should return skill', async () => {
-      const result = await skillService.createSkill(mockSkill);
+      const result = await skillService.create(mockSkill);
       expect(result).toStrictEqual(mockSkill);
       expect(jest.spyOn(skillModel, 'create')).toBeCalledTimes(1);
     });
@@ -75,7 +75,7 @@ describe('SkillService', () => {
         upsertedId: null,
       });
 
-      const result = await skillService.replaceSkill(mockSkill);
+      const result = await skillService.replaceOne(mockSkill);
       expect(result).toBe(null);
       expect(jest.spyOn(skillModel, 'replaceOne')).toBeCalledTimes(1);
       expect(jest.spyOn(skillModel, 'findOne')).toBeCalledTimes(0);
@@ -90,7 +90,7 @@ describe('SkillService', () => {
         upsertedId: null,
       });
 
-      const result = await skillService.replaceSkill(mockSkill);
+      const result = await skillService.replaceOne(mockSkill);
       expect(result).toStrictEqual(mockSkill);
       expect(jest.spyOn(skillModel, 'replaceOne')).toBeCalledTimes(1);
       expect(jest.spyOn(skillModel, 'findOne')).toBeCalledTimes(1);

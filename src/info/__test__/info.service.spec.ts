@@ -35,7 +35,7 @@ describe('InfoService', () => {
 
   describe('findAll()', () => {
     it('should return an array of infos', async () => {
-      const result = await infoService.findAll();
+      const result = await infoService.find();
 
       expect(result).toStrictEqual([mockInfo]);
       expect(jest.spyOn(infoModel, 'find')).toBeCalledTimes(1);
@@ -44,7 +44,7 @@ describe('InfoService', () => {
 
   describe('find(key)', () => {
     it('should return an info', async () => {
-      const result = await infoService.find('key');
+      const result = await infoService.findByKey('key');
 
       expect(result).toStrictEqual(mockInfo);
       expect(jest.spyOn(infoModel, 'findOne')).toBeCalledTimes(1);
