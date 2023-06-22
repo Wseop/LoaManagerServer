@@ -6,11 +6,13 @@ import { StatisticElixirModule } from './statistic-elixir/statistic-elixir.modul
 import { StatisticSetModule } from './statistic-set/statistic-set.module';
 import { StatisticEngraveModule } from './statistic-engrave/statistic-engrave.module';
 import { StatisticSkillModule } from './statistic-skill/statistic-skill.module';
+import { StatisticProfileModule } from './statistic-profile/statistic-profile.module';
 
 @Module({
   imports: [
     StatisticChaosModule,
     StatisticGuardianModule,
+    StatisticProfileModule,
     StatisticAbilityModule,
     StatisticElixirModule,
     StatisticSetModule,

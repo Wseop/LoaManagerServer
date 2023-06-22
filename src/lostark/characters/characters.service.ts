@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { EngraveService } from '../../resources/engrave/engrave.service';
 import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
-import { ProfilesService } from '../../statistics/profiles/profiles.service';
 import { StatisticAbilityService } from '../../statistics/statistic-ability/statistic-ability.service';
 import { CharacterProfile } from './interfaces/character-profile.interface';
 import { CharacterEquipment } from './interfaces/character-equipment.interface';
@@ -16,12 +15,13 @@ import { StatisticElixirService } from 'src/statistics/statistic-elixir/statisti
 import { StatisticSetService } from 'src/statistics/statistic-set/statistic-set.service';
 import { StatisticEngraveService } from 'src/statistics/statistic-engrave/statistic-engrave.service';
 import { StatisticSkillService } from 'src/statistics/statistic-skill/statistic-skill.service';
+import { StatisticProfileService } from 'src/statistics/statistic-profile/statistic-profile.service';
 
 @Injectable()
 export class CharactersService {
   constructor(
     private readonly apiRequestService: ApiRequestService,
-    private readonly profilesService: ProfilesService,
+    private readonly statisticProfileService: StatisticProfileService,
     private readonly statisticAbilityService: StatisticAbilityService,
     private readonly statisticElixirService: StatisticElixirService,
     private readonly statisticEngraveService: StatisticEngraveService,
@@ -666,9 +666,10 @@ export class CharactersService {
       if (mainClassEngrave === '') return null;
 
       // statistic 데이터로 추가
-      this.profilesService.upsertProfile({
+      this.statisticProfileService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
+        classEngrave: mainClassEngrave,
         itemLevel: characterInfo.profile.itemLevel,
       });
 
