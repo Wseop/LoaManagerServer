@@ -11,19 +11,24 @@ export class SkillService {
     @InjectModel(Skill.name) private readonly skillModel: Model<Skill>,
   ) {}
 
-  async findSkills(): Promise<SkillDto[]> {
-    return await this.skillModel.find({}, { _id: 0 });
+  async find(): Promise<SkillDto[]> {
+    return await this.skillModel.find({}, { _id: 0, __v: 0 });
   }
 
-  async findSkillByClassName(className: string): Promise<SkillDto> {
-    return await this.skillModel.findOne({ className }, { _id: 0 });
+  async findOneByClassName(className: string): Promise<SkillDto> {
+    return await this.skillModel.findOne({ className }, { _id: 0, __v: 0 });
   }
 
-  async createSkill(createSkillDto: CreateSkillDto): Promise<SkillDto> {
-    return await this.skillModel.create(createSkillDto);
+  async create(createSkillDto: CreateSkillDto): Promise<SkillDto> {
+    const result = await this.skillModel.create(createSkillDto);
+
+    return {
+      className: result.className,
+      skills: result.skills,
+    };
   }
 
-  async replaceSkill(replaceSkillDto: CreateSkillDto): Promise<SkillDto> {
+  async replaceOne(replaceSkillDto: CreateSkillDto): Promise<SkillDto> {
     const replaceResult = await this.skillModel.replaceOne(
       {
         className: replaceSkillDto.className,
@@ -34,9 +39,12 @@ export class SkillService {
     if (replaceResult.matchedCount === 0) {
       return null;
     } else {
-      return await this.skillModel.findOne({
-        className: replaceSkillDto.className,
-      });
+      return await this.skillModel.findOne(
+        {
+          className: replaceSkillDto.className,
+        },
+        { _id: 0, __v: 0 },
+      );
     }
   }
 }

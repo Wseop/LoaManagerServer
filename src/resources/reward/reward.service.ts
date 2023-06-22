@@ -11,19 +11,24 @@ export class RewardService {
     @InjectModel(Reward.name) private readonly rewardModel: Model<Reward>,
   ) {}
 
-  async findRewards(): Promise<RewardDto[]> {
-    return await this.rewardModel.find({}, { _id: 0 });
+  async find(): Promise<RewardDto[]> {
+    return await this.rewardModel.find({}, { _id: 0, __v: 0 });
   }
 
-  async findRewardByContent(content: string): Promise<RewardDto> {
-    return await this.rewardModel.findOne({ content }, { _id: 0 });
+  async findOneByContent(content: string): Promise<RewardDto> {
+    return await this.rewardModel.findOne({ content }, { _id: 0, __v: 0 });
   }
 
-  async createReward(createRewardDto: CreateRewardDto): Promise<RewardDto> {
-    return await this.rewardModel.create(createRewardDto);
+  async create(createRewardDto: CreateRewardDto): Promise<RewardDto> {
+    const result = await this.rewardModel.create(createRewardDto);
+
+    return {
+      content: result.content,
+      rewards: result.rewards,
+    };
   }
 
-  async replaceReward(replaceRewardDto: CreateRewardDto): Promise<RewardDto> {
+  async replaceOne(replaceRewardDto: CreateRewardDto): Promise<RewardDto> {
     const replaceResult = await this.rewardModel.replaceOne(
       { content: replaceRewardDto.content },
       replaceRewardDto,
@@ -36,7 +41,7 @@ export class RewardService {
         {
           content: replaceRewardDto.content,
         },
-        { _id: 0 },
+        { _id: 0, __v: 0 },
       );
     }
   }

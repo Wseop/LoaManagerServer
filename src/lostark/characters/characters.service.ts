@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { EngraveService } from '../../resources/engrave/engrave.service';
-import { SkillSettingsService } from '../../statistics/skill-settings/skill-settings.service';
 import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
 import { ProfilesService } from '../../statistics/profiles/profiles.service';
-import { AbilitySettingsService } from '../../statistics/ability-settings/ability-settings.service';
-import { ElixirSettingsService } from '../../statistics/elixir-settings/elixir-settings.service';
-import { EngraveSettingsService } from '../../statistics/engrave-settings/engrave-settings.service';
-import { SetSettingsService } from '../../statistics/set-settings/set-settings.service';
+import { StatisticAbilityService } from '../../statistics/statistic-ability/statistic-ability.service';
 import { CharacterProfile } from './interfaces/character-profile.interface';
 import { CharacterEquipment } from './interfaces/character-equipment.interface';
 import { CharacterSkill } from './interfaces/character-skill.interface';
@@ -15,18 +11,48 @@ import { CharacterGem } from './interfaces/character-gem.interface';
 import { CharacterEngrave } from './interfaces/character-engrave.interface';
 import { CharacterCard } from './interfaces/character-card.interface';
 import { CharacterCollectible } from './interfaces/character-collectible.interface';
+import { ApiRequestService } from '../api-request/api-request.service';
+import { StatisticElixirService } from 'src/statistics/statistic-elixir/statistic-elixir.service';
+import { StatisticSetService } from 'src/statistics/statistic-set/statistic-set.service';
+import { StatisticEngraveService } from 'src/statistics/statistic-engrave/statistic-engrave.service';
+import { StatisticSkillService } from 'src/statistics/statistic-skill/statistic-skill.service';
 
 @Injectable()
 export class CharactersService {
   constructor(
+    private readonly apiRequestService: ApiRequestService,
     private readonly profilesService: ProfilesService,
-    private readonly abilitySettingsService: AbilitySettingsService,
-    private readonly elixirSettingsService: ElixirSettingsService,
-    private readonly engraveSettingsService: EngraveSettingsService,
-    private readonly setSettingsService: SetSettingsService,
-    private readonly skillSettingsService: SkillSettingsService,
+    private readonly statisticAbilityService: StatisticAbilityService,
+    private readonly statisticElixirService: StatisticElixirService,
+    private readonly statisticEngraveService: StatisticEngraveService,
+    private readonly statisticSetService: StatisticSetService,
+    private readonly statisticSkillService: StatisticSkillService,
     private readonly engraveService: EngraveService,
   ) {}
+
+  async getCharacterInfo(characterName: string): Promise<CharacterInfoDto> {
+    const result = await this.apiRequestService.get(
+      `https://developer-lostark.game.onstove.com/armories/characters/${characterName}?filters=profiles%2Bequipment%2Bcombat-skills%2Bengravings%2Bcards%2Bgems%2Bcollectibles`,
+    );
+
+    if (result.data === null) {
+      return null;
+    } else {
+      return await this.parseCharacter(result.data);
+    }
+  }
+
+  async getSiblings(characterName: string): Promise<SiblingDto[]> {
+    const result = await this.apiRequestService.get(
+      `https://developer-lostark.game.onstove.com/characters/${characterName}/siblings`,
+    );
+
+    if (result.data === null) {
+      return null;
+    } else {
+      return await this.parseSiblings(result.data);
+    }
+  }
 
   async parseSiblings(
     siblings: {
@@ -646,20 +672,20 @@ export class CharactersService {
         itemLevel: characterInfo.profile.itemLevel,
       });
 
-      this.abilitySettingsService.upsertAbilitySetting({
+      this.statisticAbilityService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
-        ability: this.abilitySettingsService.parseMainAbilities(
+        ability: await this.statisticAbilityService.parseMainAbilities(
           characterInfo.profile.stats,
         ),
       });
 
-      const elixir = this.elixirSettingsService.parseElixir(
+      const elixir = this.statisticElixirService.parseElixir(
         characterInfo.equipments,
       );
       if (elixir) {
-        this.elixirSettingsService.upsertElixirSetting({
+        this.statisticElixirService.upsert({
           characterName: characterInfo.profile.characterName,
           className: characterInfo.profile.className,
           classEngrave: mainClassEngrave,
@@ -667,16 +693,16 @@ export class CharactersService {
         });
       }
 
-      this.engraveSettingsService.upsertEngraveSetting({
+      this.statisticEngraveService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
         engraves: characterInfo.engraves,
       });
 
-      const set = this.setSettingsService.parseSet(characterInfo.equipments);
+      const set = this.statisticSetService.parseSet(characterInfo.equipments);
       if (set) {
-        this.setSettingsService.upsertSetSetting({
+        this.statisticSetService.upsert({
           characterName: characterInfo.profile.characterName,
           className: characterInfo.profile.className,
           classEngrave: mainClassEngrave,
@@ -684,11 +710,11 @@ export class CharactersService {
         });
       }
 
-      this.skillSettingsService.upsertSkillSetting({
+      this.statisticSkillService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
-        skillUsages: this.skillSettingsService.parseSkillUsage(
+        skillUsages: this.statisticSkillService.parseSkillUsage(
           characterInfo.skills,
         ),
       });

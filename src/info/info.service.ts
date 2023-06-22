@@ -10,11 +10,11 @@ export class InfoService {
     @InjectModel(Info.name) private readonly infoModel: Model<Info>,
   ) {}
 
-  async findAll(): Promise<InfoDto[]> {
+  async find(): Promise<InfoDto[]> {
     return await this.infoModel.find({}, { _id: 0 });
   }
 
-  async find(key: string): Promise<InfoDto> {
+  async findByKey(key: string): Promise<InfoDto> {
     return await this.infoModel.findOne({ key }, { _id: 0 });
   }
 }

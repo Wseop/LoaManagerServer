@@ -9,8 +9,8 @@ const mockInfo: Info = {
 };
 
 class MockInfoService {
-  findAll = jest.fn().mockReturnValue([mockInfo]);
-  find = jest.fn().mockReturnValue(mockInfo);
+  find = jest.fn().mockReturnValue([mockInfo]);
+  findByKey = jest.fn().mockReturnValue(mockInfo);
 }
 
 describe('InfoController', () => {
@@ -37,7 +37,7 @@ describe('InfoController', () => {
       const result = infoController.findAll();
 
       expect(result).toStrictEqual([mockInfo]);
-      expect(jest.spyOn(infoService, 'findAll')).toBeCalledTimes(1);
+      expect(jest.spyOn(infoService, 'find')).toBeCalledTimes(1);
     });
   });
 
@@ -46,7 +46,7 @@ describe('InfoController', () => {
       const result = infoController.find('key');
 
       expect(result).toStrictEqual(mockInfo);
-      expect(jest.spyOn(infoService, 'find')).toBeCalledTimes(1);
+      expect(jest.spyOn(infoService, 'findByKey')).toBeCalledTimes(1);
     });
   });
 });

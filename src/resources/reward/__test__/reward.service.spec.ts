@@ -48,7 +48,7 @@ describe('RewardService', () => {
 
   describe('findRewards', () => {
     it('should return reward', async () => {
-      const result = await rewardService.findRewards();
+      const result = await rewardService.find();
       expect(result).toStrictEqual(mockReward);
       expect(jest.spyOn(rewardModel, 'find')).toBeCalledTimes(1);
     });
@@ -56,7 +56,7 @@ describe('RewardService', () => {
 
   describe('createReward', () => {
     it('should return reward', async () => {
-      const result = await rewardService.createReward(mockReward);
+      const result = await rewardService.create(mockReward);
       expect(result).toStrictEqual(mockReward);
       expect(jest.spyOn(rewardModel, 'create')).toBeCalledTimes(1);
     });
@@ -72,7 +72,7 @@ describe('RewardService', () => {
         upsertedId: null,
       });
 
-      const result = await rewardService.replaceReward(mockReward);
+      const result = await rewardService.replaceOne(mockReward);
       expect(result).toBe(null);
       expect(jest.spyOn(rewardModel, 'replaceOne')).toBeCalledTimes(1);
       expect(jest.spyOn(rewardModel, 'findOne')).toBeCalledTimes(0);
@@ -87,7 +87,7 @@ describe('RewardService', () => {
         upsertedId: null,
       });
 
-      const result = await rewardService.replaceReward(mockReward);
+      const result = await rewardService.replaceOne(mockReward);
       expect(result).toStrictEqual(mockReward);
       expect(jest.spyOn(rewardModel, 'replaceOne')).toBeCalledTimes(1);
       expect(jest.spyOn(rewardModel, 'findOne')).toBeCalledTimes(1);

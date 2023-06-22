@@ -1,29 +1,21 @@
 import { Module } from '@nestjs/common';
-import { StatisticsController } from './statistics.controller';
-import { StatisticsService } from './statistics.service';
-import { ChaosRewardsModule } from './chaos-rewards/chaos-rewards.module';
-import { GuardianRewardsModule } from './guardian-rewards/guardian-rewards.module';
-import { SkillSettingsModule } from './skill-settings/skill-settings.module';
-import { EngraveModule } from 'src/resources/engrave/engrave.module';
-import { AbilitySettingsModule } from './ability-settings/ability-settings.module';
-import { ElixirSettingsModule } from './elixir-settings/elixir-settings.module';
-import { EngraveSettingsModule } from './engrave-settings/engrave-settings.module';
-import { ProfilesModule } from './profiles/profiles.module';
-import { SetSettingsModule } from './set-settings/set-settings.module';
+import { StatisticAbilityModule } from './statistic-ability/statistic-ability.module';
+import { StatisticChaosModule } from './statistic-chaos/statistic-chaos.module';
+import { StatisticGuardianModule } from './statistic-guardian/statistic-guardian.module';
+import { StatisticElixirModule } from './statistic-elixir/statistic-elixir.module';
+import { StatisticSetModule } from './statistic-set/statistic-set.module';
+import { StatisticEngraveModule } from './statistic-engrave/statistic-engrave.module';
+import { StatisticSkillModule } from './statistic-skill/statistic-skill.module';
 
 @Module({
   imports: [
-    ChaosRewardsModule,
-    GuardianRewardsModule,
-    SkillSettingsModule,
-    AbilitySettingsModule,
-    ElixirSettingsModule,
-    EngraveSettingsModule,
-    ProfilesModule,
-    SetSettingsModule,
-    EngraveModule,
+    StatisticChaosModule,
+    StatisticGuardianModule,
+    StatisticAbilityModule,
+    StatisticElixirModule,
+    StatisticSetModule,
+    StatisticEngraveModule,
+    StatisticSkillModule,
   ],
-  controllers: [StatisticsController],
-  providers: [StatisticsService],
 })
 export class StatisticsModule {}

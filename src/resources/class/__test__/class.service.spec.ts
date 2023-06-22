@@ -37,7 +37,7 @@ describe('ClassService', () => {
 
   describe('findClasses', () => {
     it('should return class', async () => {
-      const result = await classService.findClasses();
+      const result = await classService.find();
       expect(result).toStrictEqual(mockClass);
       expect(jest.spyOn(classModel, 'find')).toBeCalledTimes(1);
     });
@@ -45,7 +45,7 @@ describe('ClassService', () => {
 
   describe('createClass', () => {
     it('should return class', async () => {
-      const result = await classService.createClass(mockClass);
+      const result = await classService.create(mockClass);
       expect(result).toStrictEqual(mockClass);
       expect(jest.spyOn(classModel, 'create')).toBeCalledTimes(1);
     });
@@ -61,7 +61,7 @@ describe('ClassService', () => {
         upsertedId: null,
       });
 
-      const result = await classService.replaceClass(mockClass);
+      const result = await classService.replaceOne(mockClass);
       expect(result).toBe(null);
       expect(jest.spyOn(classModel, 'replaceOne')).toBeCalledTimes(1);
       expect(jest.spyOn(classModel, 'findOne')).toBeCalledTimes(0);
@@ -76,7 +76,7 @@ describe('ClassService', () => {
         upsertedId: null,
       });
 
-      const result = await classService.replaceClass(mockClass);
+      const result = await classService.replaceOne(mockClass);
       expect(result).toStrictEqual(mockClass);
       expect(jest.spyOn(classModel, 'replaceOne')).toBeCalledTimes(1);
       expect(jest.spyOn(classModel, 'findOne')).toBeCalledTimes(1);

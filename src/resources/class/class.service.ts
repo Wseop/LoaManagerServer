@@ -11,15 +11,20 @@ export class ClassService {
     @InjectModel(Class.name) private readonly classModel: Model<Class>,
   ) {}
 
-  async findClasses(): Promise<ClassDto[]> {
-    return await this.classModel.find({}, { _id: 0 });
+  async find(): Promise<ClassDto[]> {
+    return await this.classModel.find({}, { _id: 0, __v: 0 });
   }
 
-  async createClass(createClassDto: CreateClassDto): Promise<ClassDto> {
-    return await this.classModel.create(createClassDto);
+  async create(createClassDto: CreateClassDto): Promise<ClassDto> {
+    const result = await this.classModel.create(createClassDto);
+
+    return {
+      parent: result.parent,
+      child: result.child,
+    };
   }
 
-  async replaceClass(replaceClassDto: CreateClassDto): Promise<ClassDto> {
+  async replaceOne(replaceClassDto: CreateClassDto): Promise<ClassDto> {
     const replaceResult = await this.classModel.replaceOne(
       { parent: replaceClassDto.parent },
       replaceClassDto,
@@ -32,7 +37,7 @@ export class ClassService {
         {
           parent: replaceClassDto.parent,
         },
-        { _id: 0 },
+        { _id: 0, __v: 0 },
       );
     }
   }
