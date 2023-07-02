@@ -42,7 +42,7 @@ export class AuctionService {
     const searchOption: AuctionSearchOption = {
       Sort: 'BUY_PRICE',
       SortCondition: 'ASC',
-      ItemTier: 3,
+      ItemTier: query.itemTier,
       PageNo: 1,
       CategoryCode: query.categoryCode,
       ItemGradeQuality: query.quality,

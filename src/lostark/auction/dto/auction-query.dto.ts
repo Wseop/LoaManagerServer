@@ -45,6 +45,12 @@ export class AuctionQueryDto {
   @Type(() => Number)
   engraveCodes?: number[];
 
+  @ApiProperty({ required: false, type: Number, example: 3 })
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  itemTier?: number;
+
   @ApiProperty({ required: false, enum: ItemGrade })
   @IsOptional()
   @IsEnum(ItemGrade)

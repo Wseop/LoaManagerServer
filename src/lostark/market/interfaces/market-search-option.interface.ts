@@ -4,6 +4,7 @@ export class MarketSearchOption {
   PageNo: number;
   CategoryCode: number;
   CharacterClass: string;
+  ItemTier: number;
   ItemGrade: string;
   ItemName: string;
 }

@@ -45,6 +45,7 @@ export class MarketService {
       PageNo: 1,
       CategoryCode: query.categoryCode,
       CharacterClass: query.className,
+      ItemTier: query.itemTier,
       ItemGrade: query.itemGrade,
       ItemName: query.itemName,
     };
