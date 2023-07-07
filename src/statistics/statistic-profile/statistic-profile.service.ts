@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Profile } from './schemas/profile.schema';
 import { Model } from 'mongoose';
+import { StatisticProfileEngraveDto } from './dto/statistic-profile-engrave.dto';
 import { StatisticProfileClassDto } from './dto/statistic-profile-class.dto';
 
 @Injectable()
@@ -23,6 +24,10 @@ export class StatisticProfileService {
     return await this.profileModel.findOne({ characterName });
   }
 
+  async findByItemLevel(itemLevel: number): Promise<Profile[]> {
+    return await this.profileModel.find({ itemLevel: { $gte: itemLevel } });
+  }
+
   async upsert(profile: Profile): Promise<Profile> {
     return await this.profileModel.findOneAndUpdate(
       { characterName: profile.characterName },
@@ -35,14 +40,47 @@ export class StatisticProfileService {
     return (await this.profileModel.deleteOne({ characterName })).deletedCount;
   }
 
-  async getStatisticProfileClass(
-    className: string,
+  async getStatisticClass(
+    itemLevel: number,
   ): Promise<StatisticProfileClassDto> {
+    const profiles =
+      itemLevel === null
+        ? await this.find()
+        : await this.findByItemLevel(itemLevel);
+    const result: StatisticProfileClassDto = {
+      count: profiles.length,
+      classCounts: [],
+    };
+    const classCountMap = new Map();
+
+    profiles.forEach((profile) => {
+      if (!classCountMap.has(profile.className))
+        classCountMap.set(profile.className, 0);
+
+      classCountMap.set(
+        profile.className,
+        classCountMap.get(profile.className) + 1,
+      );
+    });
+
+    classCountMap.forEach((value, key, _) => {
+      result.classCounts.push({
+        count: value,
+        className: key,
+      });
+    });
+
+    return result;
+  }
+
+  async getStatisticClassEngrave(
+    itemLevel: number,
+  ): Promise<StatisticProfileEngraveDto> {
     const classEngraveCountMap = new Map();
     const datas =
-      className === null
+      itemLevel === null
         ? await this.find()
-        : await this.findByClassName(className);
+        : await this.findByItemLevel(itemLevel);
 
     datas.forEach((value) => {
       if (!classEngraveCountMap.has(value.classEngrave))
@@ -54,7 +92,7 @@ export class StatisticProfileService {
       );
     });
 
-    const statisticProfileClass: StatisticProfileClassDto = {
+    const statisticProfileClass: StatisticProfileEngraveDto = {
       count: datas.length,
       classEngraveCounts: [],
     };

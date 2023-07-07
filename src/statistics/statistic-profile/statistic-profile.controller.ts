@@ -1,4 +1,12 @@
-import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -7,8 +15,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { StatisticProfileService } from './statistic-profile.service';
-import { StatisticProfileClassDto } from './dto/statistic-profile-class.dto';
+import { StatisticProfileEngraveDto } from './dto/statistic-profile-engrave.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { StatisticProfileClassDto } from './dto/statistic-profile-class.dto';
 
 @ApiTags('[Statistics] profile')
 @Controller('statistics/profile')
@@ -17,19 +26,36 @@ export class StatisticProfileController {
     private readonly statisticProfileService: StatisticProfileService,
   ) {}
 
-  @Get()
+  @Get('/class')
   @ApiOkResponse({ type: StatisticProfileClassDto })
-  getStatisticProfileClass(): Promise<StatisticProfileClassDto> {
-    return this.statisticProfileService.getStatisticProfileClass(null);
+  getStatisticClass(): Promise<StatisticProfileClassDto> {
+    return this.statisticProfileService.getStatisticClass(null);
   }
 
-  @Get('/:className')
-  @ApiParam({ name: 'className', required: true, example: '버서커' })
+  @Get('/class/:itemLevel')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiParam({ name: 'itemLevel', required: true, example: 1620 })
   @ApiOkResponse({ type: StatisticProfileClassDto })
-  getStatisticProfileClassByClassName(
-    @Param('className') className: string,
+  getStatisticClassByLevel(
+    @Param('itemLevel') itemLevel: number,
   ): Promise<StatisticProfileClassDto> {
-    return this.statisticProfileService.getStatisticProfileClass(className);
+    return this.statisticProfileService.getStatisticClass(itemLevel);
+  }
+
+  @Get('/classEngrave')
+  @ApiOkResponse({ type: StatisticProfileEngraveDto })
+  getStatisticClassEngrave(): Promise<StatisticProfileEngraveDto> {
+    return this.statisticProfileService.getStatisticClassEngrave(null);
+  }
+
+  @Get('/classEngrave/:itemLevel')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiParam({ name: 'itemLevel', required: true, example: 1620 })
+  @ApiOkResponse({ type: StatisticProfileEngraveDto })
+  getStatisticClassEngraveByLevel(
+    @Param('itemLevel') itemLevel: number,
+  ): Promise<StatisticProfileEngraveDto> {
+    return this.statisticProfileService.getStatisticClassEngrave(itemLevel);
   }
 
   @Delete('/:characterName')
