@@ -70,8 +70,6 @@ export class StatisticProfileService {
       });
     });
 
-    result.classCounts.sort((a, b) => b.count - a.count);
-
     return result;
   }
 
