@@ -82,6 +82,8 @@ export class StatisticAbilityService {
       statisticAbility.abilityCounts.push({ ability, count });
     });
 
+    statisticAbility.abilityCounts.sort((a, b) => b.count - a.count);
+
     return statisticAbility;
   }
 }

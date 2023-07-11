@@ -64,6 +64,8 @@ export class StatisticEngraveService {
       statisticEngrave.engraveCounts.push({ engrave, count });
     });
 
+    statisticEngrave.engraveCounts.sort((a, b) => b.count - a.count);
+
     return statisticEngrave;
   }
 }
