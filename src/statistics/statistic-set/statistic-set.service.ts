@@ -93,8 +93,6 @@ export class StatisticSetService {
       statisticSet.setCounts.push({ set, count });
     });
 
-    statisticSet.setCounts.sort((a, b) => b.count - a.count);
-
     return statisticSet;
   }
 }
