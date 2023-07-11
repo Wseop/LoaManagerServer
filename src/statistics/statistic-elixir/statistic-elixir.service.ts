@@ -94,8 +94,6 @@ export class StatisticElixirService {
       statisticElixir.elixirCounts.push({ elixir, count });
     });
 
-    statisticElixir.elixirCounts.sort((a, b) => b.count - a.count);
-
     return statisticElixir;
   }
 }
