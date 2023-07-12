@@ -314,7 +314,7 @@ export class CharactersService {
   ): Promise<CharacterEngrave[]> {
     const characterEngraves: CharacterEngrave[] = [];
 
-    if (engraves) {
+    if (engraves?.Effects) {
       await Promise.all(
         engraves.Effects.map((engrave) => {
           const engraveStr = engrave.Name;
