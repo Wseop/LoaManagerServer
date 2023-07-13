@@ -1,23 +1,13 @@
 import {
   Controller,
-  Delete,
   Get,
   Param,
-  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiParam,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { StatisticProfileService } from './statistic-profile.service';
-import { StatisticProfileEngraveDto } from './dto/statistic-profile-engrave.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { StatisticProfileClassDto } from './dto/statistic-profile-class.dto';
+import { StatisticProfileDto } from './dto/statistic-profile.dto';
 
 @ApiTags('[Statistics] profile')
 @Controller('statistics/profile')
@@ -27,45 +17,86 @@ export class StatisticProfileController {
   ) {}
 
   @Get('/class')
-  @ApiOkResponse({ type: StatisticProfileClassDto })
-  getStatisticClass(): Promise<StatisticProfileClassDto> {
-    return this.statisticProfileService.getStatisticClass(null);
+  @ApiOkResponse({ type: StatisticProfileDto })
+  getStatisticClass(): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('className');
   }
 
   @Get('/class/:itemLevel')
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiParam({ name: 'itemLevel', required: true, example: 1620 })
-  @ApiOkResponse({ type: StatisticProfileClassDto })
+  @ApiOkResponse({ type: StatisticProfileDto })
   getStatisticClassByLevel(
     @Param('itemLevel') itemLevel: number,
-  ): Promise<StatisticProfileClassDto> {
-    return this.statisticProfileService.getStatisticClass(itemLevel);
+  ): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('className', {
+      itemLevel: { $gte: itemLevel },
+    });
   }
 
   @Get('/classEngrave')
-  @ApiOkResponse({ type: StatisticProfileEngraveDto })
-  getStatisticClassEngrave(): Promise<StatisticProfileEngraveDto> {
-    return this.statisticProfileService.getStatisticClassEngrave(null);
+  @ApiOkResponse({ type: StatisticProfileDto })
+  getStatisticClassEngrave(): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('classEngrave');
   }
 
   @Get('/classEngrave/:itemLevel')
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiParam({ name: 'itemLevel', required: true, example: 1620 })
-  @ApiOkResponse({ type: StatisticProfileEngraveDto })
+  @ApiOkResponse({ type: StatisticProfileDto })
   getStatisticClassEngraveByLevel(
     @Param('itemLevel') itemLevel: number,
-  ): Promise<StatisticProfileEngraveDto> {
-    return this.statisticProfileService.getStatisticClassEngrave(itemLevel);
+  ): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('classEngrave', {
+      itemLevel: { $gte: itemLevel },
+    });
   }
 
-  @Delete('/:characterName')
-  @UseGuards(AuthGuard('access'))
-  @ApiOkResponse({ type: Number })
-  @ApiUnauthorizedResponse()
-  @ApiBearerAuth()
-  deleteByCharacterName(
-    @Param('characterName') characterName: string,
-  ): Promise<number> {
-    return this.statisticProfileService.deleteByCharacterName(characterName);
+  @Get('/ability/:classEngrave')
+  @ApiParam({ name: 'classEngrave', required: true, example: '축복의 오라' })
+  @ApiOkResponse({ type: StatisticProfileDto })
+  getStatisticAbility(
+    @Param('classEngrave') classEngrave: string,
+  ): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('ability', {
+      classEngrave,
+    });
+  }
+
+  @Get('/set/:classEngrave')
+  @ApiParam({ name: 'classEngrave', required: true, example: '축복의 오라' })
+  @ApiOkResponse({ type: StatisticProfileDto })
+  getStatisticSet(
+    @Param('classEngrave') classEngrave: string,
+  ): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('set', {
+      classEngrave,
+    });
+  }
+
+  @Get('/elixir/:classEngrave')
+  @ApiParam({ name: 'classEngrave', required: true, example: '축복의 오라' })
+  @ApiOkResponse({ type: StatisticProfileDto })
+  getStatisticElixir(
+    @Param('classEngrave') classEngrave: string,
+  ): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticProfile('elixir', {
+      classEngrave,
+    });
+  }
+
+  @Get('/engrave/:classEngrave/:engraveLevel')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiParam({ name: 'classEngrave', required: true, example: '축복의 오라' })
+  @ApiParam({ name: 'engraveLevel', required: true, example: 3 })
+  @ApiOkResponse({ type: StatisticProfileDto })
+  getStatisticEngrave(
+    @Param('classEngrave') classEngrave: string,
+    @Param('engraveLevel') engraveLevel: number,
+  ): Promise<StatisticProfileDto> {
+    return this.statisticProfileService.getStatisticEngrave(
+      { classEngrave },
+      engraveLevel,
+    );
   }
 }
