@@ -3,8 +3,8 @@ import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { StatisticSkillService } from './statistic-skill.service';
 import { StatisticSkillDto } from './dto/statistic-skill.dto';
 
-@ApiTags('[Statistics] skill')
-@Controller('statistics/skill')
+@ApiTags('[Statistics] skill-setting')
+@Controller('statistics/skillsetting')
 export class StatisticSkillController {
   constructor(private readonly statisticSkillService: StatisticSkillService) {}
 
