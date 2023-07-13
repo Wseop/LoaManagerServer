@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { RewardElement } from '../interfaces/reward.interface';
 
-@Schema()
+@Schema({ versionKey: false })
 export class Reward {
   @Prop()
   content: string;
