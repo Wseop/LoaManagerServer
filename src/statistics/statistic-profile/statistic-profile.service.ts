@@ -12,14 +12,16 @@ export class StatisticProfileService {
   async getStatisticProfile(field: string, filter?: FilterQuery<Profile>) {
     const profiles = await this.profilesService.find(filter, [field]);
     const statisticProfile: StatisticProfileDto = {
-      total: profiles.length,
+      total: 0,
       data: [],
     };
     const dataMap = new Map();
 
     profiles.forEach((profile) => {
-      if (!dataMap.has(profile[field])) dataMap.set(profile[field], 0);
-      dataMap.set(profile[field], dataMap.get(profile[field]) + 1);
+      if (profile[field]) {
+        if (!dataMap.has(profile[field])) dataMap.set(profile[field], 0);
+        dataMap.set(profile[field], dataMap.get(profile[field]) + 1);
+      }
     });
 
     dataMap.forEach((count, value, _) => {
