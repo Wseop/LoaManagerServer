@@ -1,113 +1,66 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Profile } from './schemas/profile.schema';
-import { Model } from 'mongoose';
-import { StatisticProfileEngraveDto } from './dto/statistic-profile-engrave.dto';
-import { StatisticProfileClassDto } from './dto/statistic-profile-class.dto';
+import { StatisticProfileDto } from './dto/statistic-profile.dto';
+import { ProfilesService } from 'src/users/profiles/profiles.service';
+import { FilterQuery } from 'mongoose';
+import { Profile } from 'src/users/profiles/schemas/profile.schema';
+import { CharacterEngrave } from 'src/lostark/characters/interfaces/character-engrave.interface';
 
 @Injectable()
 export class StatisticProfileService {
-  constructor(
-    @InjectModel(Profile.name)
-    private readonly profileModel: Model<Profile>,
-  ) {}
+  constructor(private readonly profilesService: ProfilesService) {}
 
-  async find(): Promise<Profile[]> {
-    return await this.profileModel.find();
-  }
-
-  async findByClassName(className: string): Promise<Profile[]> {
-    return await this.profileModel.find({ className });
-  }
-
-  async findByName(characterName: string): Promise<Profile> {
-    return await this.profileModel.findOne({ characterName });
-  }
-
-  async findByItemLevel(itemLevel: number): Promise<Profile[]> {
-    return await this.profileModel.find({ itemLevel: { $gte: itemLevel } });
-  }
-
-  async upsert(profile: Profile): Promise<Profile> {
-    return await this.profileModel.findOneAndUpdate(
-      { characterName: profile.characterName },
-      profile,
-      { upsert: true, new: true },
-    );
-  }
-
-  async deleteByCharacterName(characterName: string): Promise<number> {
-    return (await this.profileModel.deleteOne({ characterName })).deletedCount;
-  }
-
-  async getStatisticClass(
-    itemLevel: number,
-  ): Promise<StatisticProfileClassDto> {
-    const profiles =
-      itemLevel === null
-        ? await this.find()
-        : await this.findByItemLevel(itemLevel);
-    const result: StatisticProfileClassDto = {
-      count: profiles.length,
-      classCounts: [],
+  async getStatisticProfile(field: string, filter?: FilterQuery<Profile>) {
+    const profiles = await this.profilesService.find(filter, [field]);
+    const statisticProfile: StatisticProfileDto = {
+      total: profiles.length,
+      data: [],
     };
-    const classCountMap = new Map();
+    const dataMap = new Map();
 
     profiles.forEach((profile) => {
-      if (!classCountMap.has(profile.className))
-        classCountMap.set(profile.className, 0);
-
-      classCountMap.set(
-        profile.className,
-        classCountMap.get(profile.className) + 1,
-      );
+      if (!dataMap.has(profile[field])) dataMap.set(profile[field], 0);
+      dataMap.set(profile[field], dataMap.get(profile[field]) + 1);
     });
 
-    classCountMap.forEach((value, key, _) => {
-      result.classCounts.push({
-        count: value,
-        className: key,
-      });
+    dataMap.forEach((count, value, _) => {
+      statisticProfile.data.push({ count, value });
     });
 
-    result.classCounts.sort((a, b) => b.count - a.count);
+    statisticProfile.data.sort((a, b) => b.count - a.count);
 
-    return result;
+    return statisticProfile;
   }
 
-  async getStatisticClassEngrave(
-    itemLevel: number,
-  ): Promise<StatisticProfileEngraveDto> {
-    const classEngraveCountMap = new Map();
-    const datas =
-      itemLevel === null
-        ? await this.find()
-        : await this.findByItemLevel(itemLevel);
-
-    datas.forEach((value) => {
-      if (!classEngraveCountMap.has(value.classEngrave))
-        classEngraveCountMap.set(value.classEngrave, 0);
-
-      classEngraveCountMap.set(
-        value.classEngrave,
-        classEngraveCountMap.get(value.classEngrave) + 1,
-      );
-    });
-
-    const statisticProfileClass: StatisticProfileEngraveDto = {
-      count: datas.length,
-      classEngraveCounts: [],
+  async getStatisticEngrave(
+    filter: FilterQuery<Profile>,
+    engraveLevel: number,
+  ) {
+    const profiles = await this.profilesService.find(filter, ['engraves']);
+    const statisticEngrave: StatisticProfileDto = {
+      total: profiles.length,
+      data: [],
     };
+    const dataMap = new Map();
 
-    classEngraveCountMap.forEach((value, key, _) => {
-      statisticProfileClass.classEngraveCounts.push({
-        count: value,
-        classEngrave: key,
+    profiles.forEach((profile) => {
+      profile.engraves.forEach((engrave: CharacterEngrave) => {
+        if (engrave.engraveLevel === engraveLevel) {
+          if (!dataMap.has(engrave.engraveName))
+            dataMap.set(engrave.engraveName, 0);
+          dataMap.set(
+            engrave.engraveName,
+            dataMap.get(engrave.engraveName) + 1,
+          );
+        }
       });
     });
 
-    statisticProfileClass.classEngraveCounts.sort((a, b) => b.count - a.count);
+    dataMap.forEach((count, value, _) => {
+      statisticEngrave.data.push({ count, value });
+    });
 
-    return statisticProfileClass;
+    statisticEngrave.data.sort((a, b) => b.count - a.count);
+
+    return statisticEngrave;
   }
 }

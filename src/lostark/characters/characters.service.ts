@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { EngraveService } from '../../resources/engrave/engrave.service';
 import { SiblingDto } from './dto/sibling.dto';
 import { CharacterInfoDto } from './dto/characterInfo.dto';
-import { StatisticAbilityService } from '../../statistics/statistic-ability/statistic-ability.service';
-import { CharacterProfile } from './interfaces/character-profile.interface';
+import {
+  CharacterProfile,
+  ProfileStat,
+} from './interfaces/character-profile.interface';
 import { CharacterEquipment } from './interfaces/character-equipment.interface';
 import { CharacterSkill } from './interfaces/character-skill.interface';
 import { CharacterGem } from './interfaces/character-gem.interface';
@@ -11,23 +13,22 @@ import { CharacterEngrave } from './interfaces/character-engrave.interface';
 import { CharacterCard } from './interfaces/character-card.interface';
 import { CharacterCollectible } from './interfaces/character-collectible.interface';
 import { ApiRequestService } from '../api-request/api-request.service';
-import { StatisticElixirService } from 'src/statistics/statistic-elixir/statistic-elixir.service';
-import { StatisticSetService } from 'src/statistics/statistic-set/statistic-set.service';
-import { StatisticEngraveService } from 'src/statistics/statistic-engrave/statistic-engrave.service';
 import { StatisticSkillService } from 'src/statistics/statistic-skill/statistic-skill.service';
 import { StatisticProfileService } from 'src/statistics/statistic-profile/statistic-profile.service';
+import { ProfilesService } from 'src/users/profiles/profiles.service';
+import { SkillSettingsService } from 'src/users/skill-settings/skill-settings.service';
+import { SkillUsage } from 'src/users/skill-settings/schemas/skill-setting.schema';
 
 @Injectable()
 export class CharactersService {
   constructor(
     private readonly apiRequestService: ApiRequestService,
     private readonly statisticProfileService: StatisticProfileService,
-    private readonly statisticAbilityService: StatisticAbilityService,
-    private readonly statisticElixirService: StatisticElixirService,
-    private readonly statisticEngraveService: StatisticEngraveService,
-    private readonly statisticSetService: StatisticSetService,
     private readonly statisticSkillService: StatisticSkillService,
     private readonly engraveService: EngraveService,
+
+    private readonly profilesService: ProfilesService,
+    private readonly skillSettingsService: SkillSettingsService,
   ) {}
 
   async getCharacterInfo(characterName: string): Promise<CharacterInfoDto> {
@@ -126,7 +127,9 @@ export class CharactersService {
       }
     }
 
-    if (isValid) this.addToStatistic(result);
+    if (isValid && result.profile.itemLevel >= 1600) {
+      this.insertToDb(result);
+    }
 
     return result;
   }
@@ -638,86 +641,168 @@ export class CharactersService {
     }
   }
 
-  async addToStatistic(characterInfo: CharacterInfoDto) {
-    if (characterInfo.profile.itemLevel >= 1560) {
-      const classEngraveNames = await this.engraveService.findClassEngraveNames(
-        characterInfo.profile.className,
-      );
+  async parseMainClassEngrave(characterInfo: CharacterInfoDto) {
+    const classEngraveNames = await this.engraveService.findClassEngraveNames(
+      characterInfo.profile.className,
+    );
+    const classEngraves = characterInfo.engraves
+      .map((engrave) => {
+        if (classEngraveNames.includes(engrave.engraveName)) {
+          return engrave;
+        }
+      })
+      .filter((element) => element);
+    let mainClassEngrave: string = null;
 
-      // 메인 직업각인 추출
-      let mainClassEngrave: string = '';
-      let classEngraves = characterInfo.engraves
-        .map((engrave) => {
-          if (classEngraveNames.includes(engrave.engraveName)) {
-            return engrave;
-          }
-        })
-        .filter((element) => element);
+    if (classEngraves.length === 1) {
+      mainClassEngrave = classEngraves[0].engraveName;
+    } else if (classEngraves.length === 2) {
+      mainClassEngrave =
+        classEngraves[0].engraveLevel === 3
+          ? classEngraves[0].engraveName
+          : classEngraves[1].engraveName;
+    }
 
-      if (classEngraves.length === 1) {
-        mainClassEngrave = classEngraves[0].engraveName;
-      } else if (classEngraves.length === 2) {
-        mainClassEngrave =
-          classEngraves[0].engraveLevel === 3
-            ? classEngraves[0].engraveName
-            : classEngraves[1].engraveName;
+    return mainClassEngrave;
+  }
+
+  async parseAbility(stats: ProfileStat) {
+    const keys = ['치명', '특화', '신속', '제압', '인내', '숙련'];
+    const abilities: { ability: string; value: number }[] = [];
+    let result: string = '';
+
+    for (const key of keys) {
+      if (stats[key] >= 200) {
+        abilities.push({ ability: key, value: stats[key] });
       }
+    }
 
-      if (mainClassEngrave === '') return null;
+    abilities.sort((a, b) => {
+      return b.value - a.value;
+    });
 
-      // statistic 데이터로 추가
-      this.statisticProfileService.upsert({
+    for (const ability of abilities) {
+      result += ability.ability[0];
+    }
+
+    return result;
+  }
+
+  async parseSet(equipments: CharacterEquipment[]) {
+    const itemSetNames = [
+      '악몽',
+      '사멸',
+      '지배',
+      '환각',
+      '구원',
+      '갈망',
+      '배신',
+      '매혹',
+      '파괴',
+    ];
+    const itemSetCounts = Array.from({ length: itemSetNames.length }, () => 0);
+
+    for (const equipment of equipments) {
+      if (
+        equipment.type === '무기' ||
+        equipment.type === '투구' ||
+        equipment.type === '상의' ||
+        equipment.type === '하의' ||
+        equipment.type === '장갑' ||
+        equipment.type === '어깨'
+      ) {
+        itemSetCounts[itemSetNames.indexOf(equipment.itemSet.setName)]++;
+      }
+    }
+
+    let result = '';
+
+    itemSetCounts.forEach((count, i) => {
+      if (count > 0) {
+        result += `${count}${itemSetNames[i]}`;
+      }
+    });
+
+    return result;
+  }
+
+  async parseElixir(equipments: CharacterEquipment[]) {
+    let elixirLevelSum = 0;
+    let elixirHead = '질서';
+    let elixirHand = '혼돈';
+
+    for (const equipment of equipments) {
+      if (
+        equipment.type === '투구' ||
+        equipment.type === '상의' ||
+        equipment.type === '하의' ||
+        equipment.type === '장갑' ||
+        equipment.type === '어깨'
+      ) {
+        const elixirs = equipment.elixirs;
+
+        if (elixirs) {
+          for (const elixir in elixirs) {
+            if (elixir.includes('질서')) {
+              elixirHead = elixir.substring(0, elixir.indexOf('(') - 1);
+            } else if (elixir.includes('혼돈')) {
+              elixirHand = elixir.substring(0, elixir.indexOf('(') - 1);
+            }
+
+            elixirLevelSum += elixirs[elixir];
+          }
+        }
+      }
+    }
+
+    if (elixirHead === elixirHand && elixirLevelSum >= 35) {
+      return elixirHead;
+    } else {
+      return null;
+    }
+  }
+
+  async parseSkillUsage(skills: CharacterSkill[]) {
+    const skillUsages = [];
+
+    skills.forEach((skill) => {
+      const skillUsage: SkillUsage = {
+        skillName: skill?.skillName,
+        skillLevel: skill?.skillLevel,
+        tripodNames: [],
+        runeName: skill?.rune?.runeName,
+      };
+
+      skill.tripods.forEach((tripod) => {
+        skillUsage.tripodNames.push(tripod.tripodName);
+      });
+
+      skillUsages.push(skillUsage);
+    });
+
+    return skillUsages;
+  }
+
+  async insertToDb(characterInfo: CharacterInfoDto) {
+    const mainClassEngrave = await this.parseMainClassEngrave(characterInfo);
+
+    if (mainClassEngrave) {
+      this.profilesService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
         itemLevel: characterInfo.profile.itemLevel,
-      });
-
-      this.statisticAbilityService.upsert({
-        characterName: characterInfo.profile.characterName,
-        className: characterInfo.profile.className,
-        classEngrave: mainClassEngrave,
-        ability: await this.statisticAbilityService.parseMainAbilities(
-          characterInfo.profile.stats,
-        ),
-      });
-
-      const elixir = this.statisticElixirService.parseElixir(
-        characterInfo.equipments,
-      );
-      if (elixir) {
-        this.statisticElixirService.upsert({
-          characterName: characterInfo.profile.characterName,
-          className: characterInfo.profile.className,
-          classEngrave: mainClassEngrave,
-          elixir: elixir,
-        });
-      }
-
-      this.statisticEngraveService.upsert({
-        characterName: characterInfo.profile.characterName,
-        className: characterInfo.profile.className,
-        classEngrave: mainClassEngrave,
         engraves: characterInfo.engraves,
+        ability: await this.parseAbility(characterInfo.profile.stats),
+        set: await this.parseSet(characterInfo.equipments),
+        elixir: await this.parseElixir(characterInfo.equipments),
       });
 
-      const set = this.statisticSetService.parseSet(characterInfo.equipments);
-      if (set) {
-        this.statisticSetService.upsert({
-          characterName: characterInfo.profile.characterName,
-          className: characterInfo.profile.className,
-          classEngrave: mainClassEngrave,
-          set: set,
-        });
-      }
-
-      this.statisticSkillService.upsert({
+      this.skillSettingsService.upsert({
         characterName: characterInfo.profile.characterName,
         className: characterInfo.profile.className,
         classEngrave: mainClassEngrave,
-        skillUsages: this.statisticSkillService.parseSkillUsage(
-          characterInfo.skills,
-        ),
+        skillUsages: await this.parseSkillUsage(characterInfo.skills),
       });
     }
   }

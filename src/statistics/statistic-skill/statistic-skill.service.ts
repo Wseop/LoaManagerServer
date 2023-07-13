@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SkillSetting, SkillUsage } from './schemas/skill-setting.schema';
+import {
+  SkillSetting,
+  SkillUsage,
+} from '../../users/skill-settings/schemas/skill-setting.schema';
 import { CharacterSkill } from 'src/lostark/characters/interfaces/character-skill.interface';
 import { StatisticSkillDto } from './dto/statistic-skill.dto';
 import {
@@ -9,34 +12,11 @@ import {
   SkillLevelCount,
   TripodCount,
 } from './interfaces/skill-count.interface';
+import { SkillSettingsService } from 'src/users/skill-settings/skill-settings.service';
 
 @Injectable()
 export class StatisticSkillService {
-  constructor(
-    @InjectModel(SkillSetting.name)
-    private readonly skillSettingModel: Model<SkillSetting>,
-  ) {}
-
-  async find(): Promise<SkillSetting[]> {
-    return await this.skillSettingModel.find();
-  }
-
-  async findByClassEngrave(classEngrave: string): Promise<SkillSetting[]> {
-    return await this.skillSettingModel.find({ classEngrave });
-  }
-
-  async upsert(skillSetting: SkillSetting): Promise<SkillSetting> {
-    return await this.skillSettingModel.findOneAndUpdate(
-      { characterName: skillSetting.characterName },
-      skillSetting,
-      { upsert: true, new: true },
-    );
-  }
-
-  async deleteByCharacterName(characterName: string): Promise<number> {
-    return (await this.skillSettingModel.deleteOne({ characterName }))
-      .deletedCount;
-  }
+  constructor(private readonly skillSettingsService: SkillSettingsService) {}
 
   parseSkillUsage(skills: CharacterSkill[]): SkillUsage[] {
     const skillUsages = [];
@@ -61,7 +41,7 @@ export class StatisticSkillService {
 
   async getStatisticSkill(classEngrave: string): Promise<StatisticSkillDto> {
     const skillCountMap = new Map();
-    const datas = await this.findByClassEngrave(classEngrave);
+    const datas = await this.skillSettingsService.find({ classEngrave });
 
     datas.forEach((skillSetting) => {
       skillSetting.skillUsages.forEach((skillUsage) => {

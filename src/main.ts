@@ -9,8 +9,8 @@ async function bootstrap() {
 
   // swagger
   const config = new DocumentBuilder()
-    .setTitle('LoaManager API')
-    .setDescription('LoaManager API description')
+    .setTitle('LoaStat API')
+    .setDescription('LoaStat API description')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
