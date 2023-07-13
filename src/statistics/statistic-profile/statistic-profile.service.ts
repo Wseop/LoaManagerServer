@@ -19,6 +19,8 @@ export class StatisticProfileService {
 
     profiles.forEach((profile) => {
       if (profile[field]) {
+        statisticProfile.total++;
+
         if (!dataMap.has(profile[field])) dataMap.set(profile[field], 0);
         dataMap.set(profile[field], dataMap.get(profile[field]) + 1);
       }
