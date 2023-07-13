@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import {
-  SkillSetting,
-  SkillUsage,
-} from '../../users/skill-settings/schemas/skill-setting.schema';
+import { SkillUsage } from '../../users/skill-settings/schemas/skill-setting.schema';
 import { CharacterSkill } from 'src/lostark/characters/interfaces/character-skill.interface';
 import { StatisticSkillDto } from './dto/statistic-skill.dto';
 import {
